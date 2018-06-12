@@ -14,7 +14,6 @@ public class CustomerW extends JFrame{
     private static CustomerW instance;
     private  Login l;
     private JPanel current;
-    private Customer currentUser;
     CustomerW(String id,Login l){
 
         instance = this;
