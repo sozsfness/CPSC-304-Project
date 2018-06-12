@@ -12,8 +12,10 @@ public class Login extends JFrame  {
     private JTextField pw;
     private boolean isvalid;
     private Choice typeChooser;
+    Login t;
 
     Login(){
+        t = this;
 
         setLayout(new FlowLayout());
         JPanel p1 = new JPanel(new FlowLayout());
@@ -106,18 +108,18 @@ public class Login extends JFrame  {
                     switch (type){
                         case "customer":
                             System.out.println("customer.");
-                            new CustomerW(id);
-                            hide();
+                            new CustomerW(id,t);
+                            t.setVisible(false);
                             break;
                         case "restaurant manager":
                             System.out.println("manager.");
-                            new ManagerW();
-                            hide();
+//                            new ManagerW(id,t);
+                            t.setVisible(false);
                             break;
                         case "courier":
                             System.out.println("courier.");
-                            new CourierW();
-                            hide();
+//                            new CourierW(id,t);
+                            t.setVisible(false);
                             break;
                     }
 
@@ -128,6 +130,8 @@ public class Login extends JFrame  {
 
     }
     public static void main(String[] args){
-        new Login();
+
+        Login loginWindow;
+        loginWindow= new Login();
     }
 }
