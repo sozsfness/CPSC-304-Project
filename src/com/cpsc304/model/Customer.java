@@ -10,8 +10,8 @@ public class Customer extends User{
     private Set<Address> addresses;
     private Set<Order> orders;
 
-    public Customer(int userID, String name, String password, String phoneNum, double spending, int vipLevel, int points, Set<Address> addresses, Set<Order> orders) {
-        super(userID, name, password, phoneNum);
+    public Customer(int userID, String name, String phoneNum, double spending, int vipLevel, int points, Set<Address> addresses, Set<Order> orders) {
+        super(userID, name, phoneNum);
         this.spending = spending;
         this.vipLevel = vipLevel;
         this.points = points;
@@ -25,10 +25,6 @@ public class Customer extends User{
 
     public void setVipLevel(int vipLevel) {
         this.vipLevel = vipLevel;
-    }
-
-    public void setPoints(int points) {
-        this.points = points;
     }
 
     public void setAddresses(Set<Address> addresses) {
@@ -57,5 +53,21 @@ public class Customer extends User{
 
     public Set<Order> getOrders() {
         return orders;
+    }
+
+    // TBC
+    public void addSpending(double money) {
+        this.spending += money;
+        addPoints(money / 100);
+    }
+
+    private void addPoints(double points) {
+        this.points += points;
+        checkVipLevel();
+    }
+
+    // TBC
+    private void checkVipLevel() {
+
     }
 }

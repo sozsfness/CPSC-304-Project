@@ -10,7 +10,7 @@ public class Delivery extends Order {
     private Time arrivalTime;
     private Courier courier;
 
-    public Delivery(Customer customer, int orderID, Date date, Time time, double amount, String status, Restaurant restOrderedAt, Map<Food, Integer> quantity, double deliveryFee, Time arrivalTime, Courier courier) {
+    public Delivery(Customer customer, int orderID, Date date, Time time, double amount, OrderStatus status, Restaurant restOrderedAt, Map<Food, Integer> quantity, double deliveryFee, Time arrivalTime, Courier courier) {
         super(customer, orderID, date, time, amount, status, restOrderedAt, quantity);
         this.deliveryFee = deliveryFee;
         this.arrivalTime = arrivalTime;

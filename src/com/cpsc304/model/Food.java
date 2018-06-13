@@ -5,26 +5,24 @@ import java.util.Set;
 public class Food {
 
     private String name;
-    private Set<Food> offeringRes;
+    private Restaurant restaurant;
+    private double price;
 
-    public Food(String name, Set<Food> offeringRes) {
+    public Food(String name, Restaurant restaurant, double price) {
         this.name = name;
-        this.offeringRes = offeringRes;
+        this.restaurant = restaurant;
+        this.price = price;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Restaurant getRestaurant() {
+        return restaurant;
     }
 
-    public Set<Food> getOfferingRes() {
-        return offeringRes;
-    }
-
-    public void setOfferingRes(Set<Food> offeringRes) {
-        this.offeringRes = offeringRes;
+    public double getPrice() {
+        return price;
     }
 }

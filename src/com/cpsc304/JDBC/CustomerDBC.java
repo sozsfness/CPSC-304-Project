@@ -1,16 +1,29 @@
 package com.cpsc304.JDBC;
 
-import com.cpsc304.model.Food;
-import com.cpsc304.model.Order;
-import com.cpsc304.model.OrderStatus;
-import com.cpsc304.model.Restaurant;
+import com.cpsc304.model.*;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+import java.util.Set;
 
 public class CustomerDBC extends UserDBC {
-    public static void commitOrder(Order order) {
 
+    private static Connection con = DBConnection.getCon();
+
+    public static void commitOrder(Order order) throws SQLException {
+        Statement stmt = con.createStatement();
+        String insertString = "INSERT INTO orders VALUES (";
+        insertString += order.getOrderID() + ", to_date('" + order.getDate() + "','yyyy-mm-dd'), '";
+        insertString += order.getTime() + "'," + order.getAmount() + ", '";
+        insertString += order.getStatus() + "', '" + order.getCustomer().getUserID() + "', ";
+        insertString += order.getRestOrderedAt().getId() + ")";
+        stmt.executeUpdate(insertString);
+        /* if (order instanceof Pickup) {
+            insertString += "Pickup"
+        }*/
     }
 
     public static void updateOrderStatus(int OrderID, OrderStatus orderStatus) {
@@ -43,5 +56,13 @@ public class CustomerDBC extends UserDBC {
 
     public static int getChangedPoints(Date startDate, Date endDate) {
         return 0;
+    }
+
+    protected static Set<Order> getOrdersInProgress(Date startDate, Date endDate) {
+        return null;
+    }
+
+    protected static Set<Order> getOrders() {
+        return null;
     }
 }

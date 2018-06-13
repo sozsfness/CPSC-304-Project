@@ -1,5 +1,7 @@
 package com.cpsc304.model;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Map;
@@ -11,11 +13,11 @@ public abstract class Order {
     protected Date date;
     protected Time time;
     protected double amount;
-    protected String status;
+    protected OrderStatus status;
     protected Restaurant restOrderedAt;
     protected Map<Food, Integer> quantity;
 
-    public Order(Customer customer, int orderID, Date date, Time time, double amount, String status, Restaurant restOrderedAt, Map<Food, Integer> quantity) {
+    protected Order(Customer customer, int orderID, Date date, Time time, double amount, OrderStatus status, Restaurant restOrderedAt, Map<Food, Integer> quantity) {
         this.customer = customer;
         this.orderID = orderID;
         this.date = date;
@@ -66,12 +68,15 @@ public abstract class Order {
         this.amount = amount;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    // check update customer's vipLevel
+    public void setStatus(OrderStatus status) {
         this.status = status;
+        if (status == OrderStatus.COMPLETE)
+            customer.addSpending(amount);
     }
 
     public Restaurant getRestOrderedAt() {

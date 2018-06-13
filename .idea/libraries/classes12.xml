@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="classes12">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/classes12.zip!/" />
+      <root url="jar://$PROJECT_DIR$/hb15.zip!/" />
+      <root url="file://$PROJECT_DIR$" />
+      <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-api-5.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/src" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$" recursive="false" />
+  </library>
+</component>

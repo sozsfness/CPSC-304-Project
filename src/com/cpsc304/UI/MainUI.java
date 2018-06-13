@@ -1,4 +1,5 @@
 package com.cpsc304.UI;
+import com.cpsc304.JDBC.DBConnection;
 import com.cpsc304.model.User;
 
 public class MainUI {
@@ -21,8 +22,8 @@ public class MainUI {
     }
 
     public static CustomerW getCustomerUI () {
-        if (customerUI == null)
-            customerUI = new CustomerW();
+        //if (customerUI == null)
+        //    customerUI = new CustomerW();
         return customerUI;
     }
 
@@ -32,7 +33,9 @@ public class MainUI {
         return loginUI;
     }
 
-    public static void main (){
+    public static void main (String[] args){
+        if (!DBConnection.connect())
+            System.out.println("Connection failed");
         getLoginUI();
     }
 }
