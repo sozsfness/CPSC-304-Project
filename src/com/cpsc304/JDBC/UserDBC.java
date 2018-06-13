@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class UserDBC {
-    protected static void updateUserInfo(User user) {
+    public static void updateUserInfo(User user) {
 
     }
 
