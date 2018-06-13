@@ -2,6 +2,13 @@ package com.cpsc304.UI;
 
 import com.cpsc304.JDBC.UserDBC;
 import com.cpsc304.model.Customer;
+import com.cpsc304.model.Delivery;
+import com.cpsc304.model.Order;
+import com.cpsc304.UI.MainUI;
+import com.cpsc304.model.OrderStatus;
+import com.sun.deploy.util.StringUtils;
+import sun.applet.Main;
+import sun.print.CUPSPrinter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +16,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class CustomerW extends JFrame{
 
@@ -39,7 +48,6 @@ public class CustomerW extends JFrame{
 
         Container c = getContentPane();
         c.setPreferredSize(new Dimension(800,800));
-        setResizable(false);
         pack();
         setVisible(true);
         //user info
@@ -135,7 +143,7 @@ public class CustomerW extends JFrame{
     }
 
 
-    class historyOrderListner implements ActionListener {
+    class historySubmitListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -168,9 +176,128 @@ public class CustomerW extends JFrame{
             p2.add(res);
             current.add(p2,BorderLayout.CENTER);
             Button b = new Button("submit");
-            b.addActionListener(new historyOrderListner());
+            b.addActionListener(new historySubmitListener());
             current.add(b,BorderLayout.LINE_END);
 
+
+        }
+        //listener for buttons of order
+        private class historyOrderListener implements ActionListener{
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String evt = e.getActionCommand();
+                showDetailsOfOrder(evt);
+            }
+        }
+        //showing details of selected order
+        private void showDetailsOfOrder(String orderID){
+            if (orderID=="test") {
+                new OrderDetails(new Delivery((Customer) MainUI.currentUser,1,null,null,0,"submitted",null,null,0,null,null) {
+                });
+            }else{
+                Order order = UserDBC.getOrder(orderID);
+                new OrderDetails(order);
+            }
+
+            //TODO:open a new window for details of clicked order#
+        }
+
+        private class OrderDetails extends Frame{
+            boolean canCancel = false;
+            boolean isDelivery = false;
+            boolean canChange = false;
+
+            OrderDetails(Order order){
+                setLayout(new FlowLayout());
+                JPanel toAdd = new JPanel(new FlowLayout());
+                add(toAdd);
+                if (order.getStatus().equals(OrderStatus.SUBMITTED)){
+                    canCancel = true;
+                }
+
+                if (!order.getStatus().equals(OrderStatus.CANCELLED)&&!order.getStatus().equals(OrderStatus.COMPLETE)){
+                    canChange = true;
+                }
+                if (order  instanceof Delivery){
+                    isDelivery = true;
+                }
+                toAdd.invalidate();
+                toAdd.revalidate();
+                toAdd.setLayout(null);
+                toAdd.setLayout(new BoxLayout(toAdd,BoxLayout.PAGE_AXIS));
+                setSize(800,800);
+                Container c = getContentPane();
+                c.setPreferredSize(new Dimension(800,800));
+                setVisible(true);
+                setResizable(false);
+
+                addWindowListener(new detailWindowListener());
+                toAdd.add(new Label("Order Details"));
+                toAdd.add(new Label("Order id: "+order.getOrderID()));
+                toAdd.add(new Label("Date and Time submitted: "+order.getDate()+" "+order.getTime()));
+                toAdd.add(new Label("Ordered at: " + order.getRestOrderedAt()));
+                toAdd.add(new Label("Amount spent: "+order.getAmount()));
+                //TODO: construct a panel showing all food&quantities
+                if (isDelivery){
+                    toAdd.add(new Label("Delivery fee: "+((Delivery)order).getDeliveryFee()));
+                    toAdd.add(new Label("Delivered by: "+((Delivery)order).getCourier()));
+                    if (!canChange){
+                        toAdd.add(new Label("Arrival Time: "+((Delivery)order).getArrivalTime()));
+                    }
+                }
+                JTextField status = new JTextField("default",8);
+                toAdd.add(status);
+                status.setEditable(canChange);
+                if (canChange){
+                    Button changeStatus = new Button("Change status");
+                    toAdd.add(changeStatus);
+                }
+                if (canCancel){
+                    Button cancel = new Button("cancel order");
+                    toAdd.add(cancel);
+                }
+                pack();
+
+
+            }
+            private class detailWindowListener implements WindowListener{
+
+                @Override
+                public void windowOpened(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    dispose();
+                }
+
+                @Override
+                public void windowClosed(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowIconified(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeiconified(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowActivated(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+
+                }
+            }
 
         }
 
@@ -180,21 +307,33 @@ public class CustomerW extends JFrame{
             current.invalidate();
             current.revalidate();
             current.setLayout(null);
-            current.setLayout(new BorderLayout());
+            current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
+            String tmp = new String(new char[80]);
+            current.add(new Label(tmp.replace('\0','*')));
             Label title = new Label("\t\t\t\t\t\t\tHistory Orders\t\t\t\t\t\t\t");
-            current.add(title,BorderLayout.PAGE_START);
+            current.add(title);
+            current.add(new Label("\t\t\t\t\t\t\tPlease click on order id to see details\t\t\t\t\t\t\t"));
             //panel for dynamic list of orders
-            JPanel orderNumbers = new JPanel(new FlowLayout());
-            current.add(orderNumbers,BorderLayout.LINE_START);
+            JPanel orderNumbers = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            current.add(orderNumbers);
             orderNumbers.add(new Label("order#"));
             //TODO:construct a jpanel containing dynamic # of orderids, which allows selection
-
-            //panel for details of selected order
-            JPanel details = new JPanel(new FlowLayout());
-            details.add(new Label("details of order"));
-            current.add(details,BorderLayout.LINE_END);
-            //TODO:show details of order selected
-
+            Set<Order> orders = ((Customer)MainUI.currentUser).getOrders();
+            historyOrderListener l = new historyOrderListener();
+            if (MainUI.currentUser.getUserID()==1){
+                Button o = new Button("test");
+                current.add(o);
+                o.addActionListener(l);
+            }else {
+                for (Order next : orders) {
+                    Button o = new Button(Integer.toString(next.getOrderID()) + "(submitted on" + next.getDate() + ")");
+                    current.add(o);
+                    o.addActionListener(l);
+                }
+                Button o = new Button("test");
+                current.add(o);
+                o.addActionListener(l);
+            }
 
         }
 
