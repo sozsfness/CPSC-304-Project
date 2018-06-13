@@ -1,5 +1,7 @@
 package com.cpsc304.UI;
 import com.cpsc304.JDBC.LoginDBC;
+import com.cpsc304.model.Customer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -98,6 +100,7 @@ public class Login extends JFrame  {
                 String type=typeChooser.getSelectedItem();
                 System.out.println("logging in...");
                 if (id.equals("id")&&password.equals("password")){
+                    MainUI.currentUser = new Customer(1,"test","1","123456",123,0,0,null,null);
                     isvalid = true;
 
                 }else {
@@ -108,7 +111,7 @@ public class Login extends JFrame  {
                     switch (type){
                         case "customer":
                             System.out.println("customer.");
-                            new CustomerW(id,t);
+                            new CustomerW(t);
                             t.setVisible(false);
                             break;
                         case "restaurant manager":

@@ -2,7 +2,7 @@ package com.cpsc304.UI;
 import com.cpsc304.model.User;
 
 public class MainUI {
-    public User currentUser;
+    public static User currentUser;
     private static Login loginUI;
     private static ManagerW managerUI;
     private static CustomerW customerUI;
@@ -22,7 +22,7 @@ public class MainUI {
 
     public static CustomerW getCustomerUI () {
         if (customerUI == null)
-            customerUI = new CustomerW();
+            customerUI = new CustomerW(loginUI);
         return customerUI;
     }
 
