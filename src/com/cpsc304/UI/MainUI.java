@@ -3,7 +3,7 @@ import com.cpsc304.JDBC.DBConnection;
 import com.cpsc304.model.User;
 
 public class MainUI {
-    public User currentUser;
+    public static User currentUser;
     private static Login loginUI;
     private static ManagerW managerUI;
     private static CustomerW customerUI;

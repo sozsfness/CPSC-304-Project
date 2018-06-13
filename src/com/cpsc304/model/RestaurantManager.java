@@ -8,8 +8,8 @@ public class RestaurantManager extends User{
 
     private Set<Restaurant> restaurants;
 
-    public RestaurantManager(int userID, String name, String phoneNum, Set<Restaurant> restaurants) {
-        super(userID, name, phoneNum);
+    public RestaurantManager(int userID, String name, String password, String phoneNum, Set<Restaurant> restaurants) {
+        super(userID, name, password, phoneNum);
         this.restaurants = restaurants;
     }
 

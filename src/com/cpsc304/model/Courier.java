@@ -6,8 +6,8 @@ public class Courier extends User {
     private Set<Restaurant> workRes;
     private Set<Delivery> deliveries;
 
-    public Courier(int userID, String name, String phoneNum, Set<Restaurant> workRes, Set<Delivery> deliveries) {
-        super(userID, name, phoneNum);
+    public Courier(int userID, String name, String password, String phoneNum, Set<Restaurant> workRes, Set<Delivery> deliveries) {
+        super(userID, name, password, phoneNum);
         this.workRes = workRes;
         this.deliveries = deliveries;
     }

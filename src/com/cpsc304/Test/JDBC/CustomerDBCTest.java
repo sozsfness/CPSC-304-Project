@@ -21,7 +21,7 @@ public class CustomerDBCTest {
         date = new Date(100000);
         time = new Time(1000);
         restaurant = new Restaurant(null, 5, null,null, null, 2000, true, null, null, null , null);
-        customer = new Customer(1111, "Harvey", "77879991234", 10000, 5, 100, null, null);
+        customer = new Customer(1111, "Harvey", "11111","77879991234", 10000, 5, 100, null, null);
         order = new Pickup(customer, 10000, date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, null);
 
     }

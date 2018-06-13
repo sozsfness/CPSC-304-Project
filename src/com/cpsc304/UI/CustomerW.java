@@ -2,11 +2,6 @@ package com.cpsc304.UI;
 
 import com.cpsc304.JDBC.UserDBC;
 import com.cpsc304.model.Customer;
-import com.cpsc304.model.Order;
-import com.cpsc304.UI.MainUI;
-import com.sun.deploy.util.StringUtils;
-import sun.applet.Main;
-import sun.print.CUPSPrinter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,9 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+
 
 public class CustomerW extends JFrame{
 
