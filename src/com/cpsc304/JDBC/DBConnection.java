@@ -19,13 +19,24 @@ public class DBConnection {
         {
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             con = DriverManager.getConnection(connectURL,username,password);
-
+            con.commit();
             System.out.println("\nConnected to Oracle!");
             return true;
         }
         catch (SQLException ex)
         {
             System.out.println("Message: " + ex.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean close() {
+        try {
+            con.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Close Error");
             return false;
         }
     }

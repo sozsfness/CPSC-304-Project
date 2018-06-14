@@ -2,12 +2,12 @@ package com.cpsc304.model;
 
 public abstract class User {
 
-    protected int userID;
+    protected String userID;
     protected String name;
     protected String password;
     protected String phoneNum;
 
-    public User(int userID, String name, String password, String phoneNum) {
+    public User(String userID, String name, String password, String phoneNum) {
         this.userID = userID;
         this.password = password;
         this.name = name;
@@ -22,7 +22,7 @@ public abstract class User {
         this.password = password;
     }
 
-    public int getUserID() {
+    public String getUserID() {
         return userID;
     }
 

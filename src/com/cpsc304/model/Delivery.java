@@ -9,12 +9,14 @@ public class Delivery extends Order {
     private double deliveryFee;
     private Time arrivalTime;
     private Courier courier;
+    private Address dest;
 
-    public Delivery(Customer customer, int orderID, Date date, Time time, double amount, OrderStatus status, Restaurant restOrderedAt, Map<Food, Integer> quantity, double deliveryFee, Time arrivalTime, Courier courier) {
+    public Delivery(Customer customer, int orderID, Date date, Time time, double amount, OrderStatus status, Restaurant restOrderedAt, Map<Food, Integer> quantity, double deliveryFee, Time arrivalTime, Courier courier, Address dest) {
         super(customer, orderID, date, time, amount, status, restOrderedAt, quantity);
         this.deliveryFee = deliveryFee;
         this.arrivalTime = arrivalTime;
         this.courier = courier;
+        this.dest = dest;
     }
 
     public double getDeliveryFee() {
@@ -39,5 +41,9 @@ public class Delivery extends Order {
 
     public void setCourier(Courier courier) {
         this.courier = courier;
+    }
+
+    public Address getDest() {
+        return dest;
     }
 }
