@@ -6,9 +6,6 @@ import com.cpsc304.model.Delivery;
 import com.cpsc304.model.Order;
 import com.cpsc304.UI.MainUI;
 import com.cpsc304.model.OrderStatus;
-import com.sun.deploy.util.StringUtils;
-import sun.applet.Main;
-import sun.print.CUPSPrinter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -193,7 +190,7 @@ public class CustomerW extends JFrame{
         //showing details of selected order
         private void showDetailsOfOrder(String orderID){
             if (orderID=="test") {
-                new OrderDetails(new Delivery((Customer) MainUI.currentUser,1,null,null,0,"submitted",null,null,0,null,null) {
+                new OrderDetails(new Delivery((Customer) MainUI.currentUser,1,null,null,0,OrderStatus.SUBMITTED,null,null,0,null,null) {
                 });
             }else{
                 Order order = UserDBC.getOrder(orderID);
@@ -320,7 +317,7 @@ public class CustomerW extends JFrame{
             //TODO:construct a jpanel containing dynamic # of orderids, which allows selection
             Set<Order> orders = ((Customer)MainUI.currentUser).getOrders();
             historyOrderListener l = new historyOrderListener();
-            if (MainUI.currentUser.getUserID()==1){
+            if (MainUI.currentUser.getUserID()=="1"){
                 Button o = new Button("test");
                 current.add(o);
                 o.addActionListener(l);
@@ -447,7 +444,7 @@ public class CustomerW extends JFrame{
             JPanel id = new JPanel(new FlowLayout());
             current.add(id);
             id.add(new Label("user id:"));
-            JTextField uid = new JTextField(((Integer)c.getUserID()).toString(),15);
+            JTextField uid = new JTextField(((String)c.getUserID()).toString(),15);
             uid.setEditable(false);
             id.add(uid);
             //panel for name

@@ -6,12 +6,14 @@ import java.util.Map;
 
 public class Pickup extends Order {
 
-    private String readyTime;
+    private Time readyTime;
 
-    public Pickup(Customer customer, int orderID, Date date, Time time, double amount, OrderStatus status, Restaurant restOrderedAt, Map<Food, Integer> quantity, String readyTime) {
+    public Pickup(Customer customer, int orderID, Date date, Time time, double amount, OrderStatus status, Restaurant restOrderedAt, Map<Food, Integer> quantity, Time readyTime) {
         super(customer, orderID, date, time, amount, status, restOrderedAt, quantity);
         this.readyTime = readyTime;
     }
 
-
+    public Time getReadyTime() {
+        return readyTime;
+    }
 }

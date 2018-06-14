@@ -10,7 +10,7 @@ public class Customer extends User{
     private Set<Address> addresses;
     private Set<Order> orders;
 
-    public Customer(int userID, String name, String password, String phoneNum, double spending, int vipLevel, int points, Set<Address> addresses, Set<Order> orders) {
+    public Customer(String userID, String name, String password, String phoneNum, double spending, int vipLevel, int points, Set<Address> addresses, Set<Order> orders) {
         super(userID, name, password, phoneNum);
         this.spending = spending;
         this.vipLevel = vipLevel;

@@ -3,7 +3,6 @@ package com.cpsc304.JDBC;
 import com.cpsc304.model.Order;
 import com.cpsc304.model.Restaurant;
 import com.cpsc304.model.User;
-import com.sun.tools.corba.se.idl.constExpr.Or;
 
 import java.sql.Date;
 import java.util.List;
