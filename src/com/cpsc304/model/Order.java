@@ -6,7 +6,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.Map;
 
-public abstract class Order {
+public class Order {
 
     protected Customer customer;
     protected int orderID;
@@ -26,6 +26,9 @@ public abstract class Order {
         this.status = status;
         this.restOrderedAt = restOrderedAt;
         this.quantity = quantity;
+    }
+    public Order(Customer customer,double amount, Restaurant restOrderedAt, Map<Food, Integer> quantity) {
+        //generate new order
     }
 
     public Customer getCustomer() {
@@ -93,5 +96,9 @@ public abstract class Order {
 
     public void setQuantity(Map<Food, Integer> quantity) {
         this.quantity = quantity;
+    }
+
+    private int generateOrderID(){
+        return 0;
     }
 }

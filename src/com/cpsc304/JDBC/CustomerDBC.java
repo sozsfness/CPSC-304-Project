@@ -30,7 +30,7 @@ public class CustomerDBC extends UserDBC {
 
     }
 
-    public static List<Restaurant> getRestaurants(List<Food> foods) {
+    public static List<Restaurant> getRestaurants(List<String> foods) {
         return null;
     }
 
@@ -41,12 +41,14 @@ public class CustomerDBC extends UserDBC {
     public static List<Restaurant> getClosestRestaurants(String type) {
         return null;
     }
+    public static List<Restaurant> getRestaurantsOfRating(Integer rating){return null;
+    }
 
     public static List<Restaurant> getRecommendedRestaurants() {
         return null;
     }
 
-    public static List<Restaurant> getRankedRestaurants(Food food) {
+    public static List<Restaurant> getRankedRestaurants(String food) {
         return null;
     }
 
@@ -58,7 +60,7 @@ public class CustomerDBC extends UserDBC {
         return 0;
     }
 
-    protected static Set<Order> getOrdersInProgress(Date startDate, Date endDate) {
+    protected static Set<Order> getOrders(Date startDate, Date endDate) {
         return null;
     }
 

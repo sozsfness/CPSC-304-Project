@@ -22,9 +22,11 @@ public abstract class UserDBC {
         return null;
     }
 
-    protected static List<Order> getOrders(Restaurant restaurant, Date startDate, Date endDate) {
+    public static List<Order> getOrders(String restaurantName, Date startDate, Date endDate) {
         return null;
+        //use MAINUI currentUser to get orders for a specific customer
     }
+
     public static Order getOrder(String orderID){
         return null;
     }
