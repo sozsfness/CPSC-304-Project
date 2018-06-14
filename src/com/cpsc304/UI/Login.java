@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.sql.SQLException;
 
 public class Login extends JFrame  {
     private JTextField userID;
@@ -104,7 +105,11 @@ public class Login extends JFrame  {
                     isvalid = true;
 
                 }else {
-                    isvalid = LoginDBC.verify(type, id, password);
+                    try {
+                        isvalid = LoginDBC.verify(type, id, password);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
                 //submit the userid and pw to remote server
                 if (isvalid){
