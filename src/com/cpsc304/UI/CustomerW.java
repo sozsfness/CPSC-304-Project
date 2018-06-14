@@ -12,7 +12,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -20,7 +19,7 @@ import static com.cpsc304.UI.MainUI.currentUser;
 
 public class CustomerW extends JFrame{
 
-    private CustomerW instance;
+
     private Login l;
     private JPanel current;
     private JTextField na;
@@ -41,8 +40,6 @@ public class CustomerW extends JFrame{
 
 
     CustomerW(Login l){
-
-        instance = this;
 
         this.l = l;
         //initializing basic view...
@@ -65,7 +62,7 @@ public class CustomerW extends JFrame{
         l3.addActionListener(b);
         Button l4 = new Button("My INFO");
         l4.addActionListener(b);
-        Button l5 = new Button("Reports");
+        Button l5 = new Button("Report");
         l5.addActionListener(b);
         userINFO.add(l1);
         userINFO.add(l3);
@@ -135,7 +132,7 @@ public class CustomerW extends JFrame{
                     case "My INFO":
                         buildINFO(current);
                         break;
-                    case "Reports":
+                    case "Report":
                         beforeBuildingReport(current);
                         break;
                 }
@@ -220,7 +217,7 @@ public class CustomerW extends JFrame{
                     canCancel = true;
                 }
 
-                if (order.getStatus().equals(OrderStatus.DELIVERED)){
+                if (order.getStatus().equals(OrderStatus.DELIVERED)||order.getStatus().equals(OrderStatus.READY)){
                     canChange = true;
                 }
                 if (order  instanceof Delivery){
@@ -789,13 +786,33 @@ public class CustomerW extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 String fromDate = reportFrom.getText();
                 String toDate = reportTo.getText();
-                Long from = Long.parseLong(fromDate);
-                Long to = Long.parseLong(toDate);
-                buildReport(new Date(from),new Date(to));
+                if (fromDate.equals("all")&&toDate.equals("all")){
+                    buildReport(null,null);
+                }else {
+                    Long from = Long.parseLong(fromDate);
+                    Long to = Long.parseLong(toDate);
+                    buildReport(new Date(from), new Date(to));
+                }
             }
         }
 
         private void buildReport(Date from, Date to){
+            List<Order> orders = CustomerDBC.getOrdersInTimePeriod(from,to);
+            removeComponents(current);
+            current.invalidate();
+            current.revalidate();
+            current.setLayout(null);
+            current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
+            String tmp = new String(new char[80]);
+            current.add(new Label(tmp.replace('\0','*')));
+            current.add(new Label("REPORT FOR CUSTOMER "+ currentUser.getUserID()+ " FROM DATE "+from+" TO "+to));
+            if (orders!=null) {
+                for (Order next : orders) {
+                    current.add(new Label("OrderID: " + next.getOrderID() + " ordered at restaurant " + next.getRestOrderedAt().getName() + " total amount: " + next.getAmount()));
+                }
+            }
+            current.add(new Label("Total spending in selected time period: "+CustomerDBC.getSpending(from,to)));
+            current.add(new Label("Change in vip points: "+CustomerDBC.getChangedPoints(from,to)));
 
         }
 }

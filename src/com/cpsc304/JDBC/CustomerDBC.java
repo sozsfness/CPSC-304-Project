@@ -101,7 +101,7 @@ public class CustomerDBC extends UserDBC {
         return 0;
     }
 
-    protected static List<Order> getOrdersInTimePeriod(Date startDate, Date endDate) {
+    public static List<Order> getOrdersInTimePeriod(Date startDate, Date endDate) {
         return null;
     }
 
