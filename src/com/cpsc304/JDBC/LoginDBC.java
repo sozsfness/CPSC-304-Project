@@ -18,10 +18,10 @@ public class LoginDBC {
         sqlString = "SELECT * FROM ";
         switch (type) {
             case "customer":
-                sqlString += "customer WHERE cus_";
+                sqlString += "CUSTOMER WHERE cus_";
                 break;
             case "restaurant manager":
-                sqlString += "restaurant_manager WHERE res_";
+                sqlString += "restaurant_managers WHERE res_";
                 break;
             case "courier":
                 sqlString += "courier WHERE ";
@@ -31,6 +31,7 @@ public class LoginDBC {
                 return false;
         }
         sqlString += "userID = '" + userID + "'";
+        System.out.println(sqlString);
         rs = stmt.executeQuery(sqlString);
         stmt.close();
         if (rs.getInt(1) == 0) {

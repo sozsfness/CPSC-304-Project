@@ -5,10 +5,8 @@ import com.cpsc304.model.*;
 import com.sun.org.apache.xpath.internal.operations.Or;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Date;
+import java.util.*;
 
 public class CourierDBC extends UserDBC {
 
@@ -126,6 +124,18 @@ public class CourierDBC extends UserDBC {
             deliveries.add(delivery);
         }
         return deliveries;
+    }
+
+    public static Map<Integer, Double> getMonthlyIncomes(Date startDate, Date endDate) {
+        return null;
+    }
+
+    public static int getMaxMonth(Date startDate, Date endDate) {
+        return 0;
+    }
+
+    public static int getMinMonth(Date startDate, Date endDate) {
+        return 0;
     }
 
     public static double getIncome(Date startDate, Date endDate){
