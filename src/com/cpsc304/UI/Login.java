@@ -1,5 +1,6 @@
 package com.cpsc304.UI;
 import com.cpsc304.JDBC.LoginDBC;
+import com.cpsc304.model.Courier;
 import com.cpsc304.model.Customer;
 import com.cpsc304.model.RestaurantManager;
 
@@ -102,8 +103,8 @@ public class Login extends JFrame  {
                 String type=typeChooser.getSelectedItem();
                 System.out.println("logging in...");
                 if (id.equals("id")&&password.equals("password")){
-                    MainUI.currentUser = new Customer("1","test","1","123456",123,0,0,null,null);
-//                    MainUI.currentUser = new RestaurantManager("1","test","1","123456",null);
+//                    MainUI.currentUser = new Customer("1","test","1","123456",123,0,0,null,null);
+                    MainUI.currentUser = new Courier("1","test","1","123456",null,null);
                     isvalid = true;
 
                 }else {
@@ -117,6 +118,8 @@ public class Login extends JFrame  {
                 if (isvalid){
                     switch (type){
                         case "customer":
+                            //TODO:HOW CONSTRUCTORS WORKS? CONSTRUCTOR CALLS METHOD IN JDBC TO RETRIEVE DATA FROM REMOTE DB
+//                            MainUI.currentUser = new Customer();
                             System.out.println("customer.");
                             new CustomerW(t);
                             t.setVisible(false);
@@ -128,7 +131,7 @@ public class Login extends JFrame  {
                             break;
                         case "courier":
                             System.out.println("courier.");
-//                            new CourierW(id,t);
+                            new CourierW(t);
                             t.setVisible(false);
                             break;
                     }
