@@ -15,34 +15,34 @@ public class LoginDBC {
         Statement stmt = con.createStatement();
         ResultSet rs;
         con.setAutoCommit(true);
-        sqlString = "SELECT COUNT(*) FROM ";
+        sqlString = "SELECT * FROM ";
         switch (type) {
             case "customer":
-                sqlString += "customer";
+                sqlString += "customer WHERE cus_";
                 break;
             case "restaurant manager":
-                sqlString += "restaurant_manager";
+                sqlString += "restaurant_manager WHERE res_";
                 break;
             case "courier":
-                sqlString += "courier";
+                sqlString += "courier WHERE ";
                 break;
             default:
                 System.out.println("type error");
                 return false;
         }
-        sqlString += "WHERE userID = " + userID;
+        sqlString += "userID = '" + userID + "'";
         rs = stmt.executeQuery(sqlString);
         stmt.close();
         if (rs.getInt(1) == 0) {
             System.out.println("User in current type doesn't exist.");
             return false;
         }
-        sqlString = "SELECT COUNT(*) FROM users WHERE userID = " + userID;
-        sqlString = "AND userPass = " + password;
+        sqlString = "SELECT * FROM users WHERE userID = '" + userID + "' ";
+        sqlString += "AND userPass = '" + password + "'";
         stmt = con.createStatement();
         rs = stmt.executeQuery(sqlString);
         //con.commit();
-        if (rs.getInt(1) == 0) {
+        if (rs.getRow() == 0) {
             System.out.println("Password Error");
             return false;
         }
