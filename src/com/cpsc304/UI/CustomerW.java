@@ -381,7 +381,12 @@ public class CustomerW extends JFrame{
                 current.add(o);
                 o.addActionListener(l);
             }else {
-                List<Order> orders = UserDBC.getOrders(resN, new Date(from),new Date(to));
+                Set<Order> orders = null;
+                try {
+                    orders = CustomerDBC.getOrders(0, new Date(from),new Date(to));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
                 for (Order next : orders) {
                     Button o = new Button(Integer.toString(next.getOrderID()) + "(submitted on" + next.getDate() + ")");

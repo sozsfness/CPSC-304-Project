@@ -203,7 +203,7 @@ public class ManagerW extends JFrame {
             temp.setName("0");
             p.add(temp);
             temp.addActionListener(b);
-            integerRestaurantMap.put(0,new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null,null));
+            integerRestaurantMap.put(0,new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null));
         }
 //        Button addNew = new Button("Add new restaurant");
 //        addNew.addActionListener(new btnListner());
