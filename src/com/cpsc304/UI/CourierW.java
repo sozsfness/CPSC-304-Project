@@ -311,7 +311,7 @@ public class CourierW extends JFrame{
         }
     }
     private void buildReport(Date from, Date to) throws SQLException {
-        Set<Order> orders = CourierDBC.getOrders(from,to);
+        List<Order> orders = CourierDBC.getOrders(from,to);
         removeComponents(current);
         current.invalidate();
         current.revalidate();
