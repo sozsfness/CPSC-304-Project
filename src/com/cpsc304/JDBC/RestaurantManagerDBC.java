@@ -1,9 +1,6 @@
 package com.cpsc304.JDBC;
 
-import com.cpsc304.model.Food;
-import com.cpsc304.model.Order;
-import com.cpsc304.model.OrderStatus;
-import com.cpsc304.model.Restaurant;
+import com.cpsc304.model.*;
 
 import java.sql.*;
 import java.util.List;
@@ -11,6 +8,10 @@ import java.util.List;
 public class RestaurantManagerDBC extends UserDBC{
 
     private static Connection con = DBConnection.getCon();
+
+    public static RestaurantManager getManager(String managerID) {
+        return null;
+    }
 
     public static void addRestaurant(Restaurant restaurant) {
 

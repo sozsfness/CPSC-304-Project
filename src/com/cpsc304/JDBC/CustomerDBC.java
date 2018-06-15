@@ -11,6 +11,10 @@ public class CustomerDBC extends UserDBC {
 
     private static Connection con = DBConnection.getCon();
 
+    public static Customer getCustomer(String custID) {
+        return null;
+    }
+
     public static void commitOrder(Order order) throws SQLException {
         String insertString;
         PreparedStatement pstmt;

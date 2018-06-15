@@ -39,8 +39,8 @@ public class MainUI {
 
     public static void main (String[] args){
         System.out.println(OrderStatus.valueOf("READY"));
-//        if (!DBConnection.connect())
-//            System.out.println("Connection failed");
-//        getLoginUI();
+        if (!DBConnection.connect())
+            System.out.println("Connection failed");
+        getLoginUI();
     }
 }
