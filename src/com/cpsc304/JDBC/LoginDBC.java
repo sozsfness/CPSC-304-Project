@@ -30,7 +30,8 @@ public class LoginDBC {
                 System.out.println("type error");
                 return false;
         }
-        sqlString += "WHERE userID = " + userID;
+        sqlString += " WHERE userID = " + userID;
+        System.out.println(sqlString);
         rs = stmt.executeQuery(sqlString);
         stmt.close();
         if (rs.getInt(1) == 0) {
@@ -38,7 +39,7 @@ public class LoginDBC {
             return false;
         }
         sqlString = "SELECT COUNT(*) FROM users WHERE userID = " + userID;
-        sqlString = "AND userPass = " + password;
+        sqlString += " AND userPass = " + password;
         stmt = con.createStatement();
         rs = stmt.executeQuery(sqlString);
         //con.commit();

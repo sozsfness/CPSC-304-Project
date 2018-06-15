@@ -174,7 +174,7 @@ public class CourierW extends JFrame{
             this.delivery = d;
             current.setLayout(null);
             current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
-            if (delivery.getStatus().equals(OrderStatus.READY)){
+            if (delivery.getStatus().equals(OrderStatus.READY)||delivery.getStatus().equals(OrderStatus.DELIVERING)){
                 canChange = true;
             }
             current.add(new Label("Order Details"));
@@ -206,12 +206,23 @@ public class CourierW extends JFrame{
                 current.revalidate();
                 current.remove(change);
                 current.remove(status);
+                OrderStatus s = delivery.getStatus() ;
                 try {
-                    CustomerDBC.updateOrderStatus(delivery.getOrderID(),OrderStatus.DELIVERED);
+                    if (delivery.getStatus().equals(OrderStatus.READY)){
+                        s = OrderStatus.DELIVERING;
+                        CustomerDBC.updateOrderStatus(delivery.getOrderID(),OrderStatus.DELIVERING);
+                    }else {
+                        s = OrderStatus.DELIVERED;
+                        CustomerDBC.updateOrderStatus(delivery.getOrderID(), OrderStatus.DELIVERED);
+                    }
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
-                current.add(new Label("Status: "+OrderStatus.DELIVERED));
+
+                current.add(new Label("Status: "+s));
+                if (s.equals(OrderStatus.DELIVERING)){
+                    current.add(change);
+                }
             }
         }
     }
