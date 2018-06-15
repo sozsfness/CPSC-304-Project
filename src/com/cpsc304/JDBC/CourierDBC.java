@@ -5,7 +5,9 @@ import com.cpsc304.model.*;
 import com.sun.org.apache.xpath.internal.operations.Or;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CourierDBC extends UserDBC {
@@ -83,14 +85,14 @@ public class CourierDBC extends UserDBC {
         return true;
     }
 
-    public static Set<Order> getOrders(Date startDate, Date endDate) throws SQLException {
+    public static List<Order> getOrders(Date startDate, Date endDate) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
         Delivery delivery;
         Address address;
         ResourceManager rm = ResourceManager.getInstance();
-        Set<Order> deliveries = new HashSet<>();
+        List<Order> deliveries = new ArrayList<>();
         con.setAutoCommit(false);
         if (MainUI.currentUser == null) return null;
         sqlString = "SELECT o.*, resID, delivery_fee, d.house#, d.street, province, city, d.postal_code ";
