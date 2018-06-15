@@ -247,8 +247,10 @@ public class CustomerW extends JFrame{
                 foodq.setLayout(new BoxLayout(foodq,BoxLayout.PAGE_AXIS));
                 Map<Food,Integer> foodmap = order.getQuantity();
                 toAdd.add(foodq);
-                for (Map.Entry<Food,Integer> next : foodmap.entrySet()){
-                    foodq.add(new Label(next.getKey().getName()+ " quantity: "+next.getValue()));
+                if (foodmap!=null) {
+                    for (Map.Entry<Food, Integer> next : foodmap.entrySet()) {
+                        foodq.add(new Label(next.getKey().getName() + " quantity: " + next.getValue()));
+                    }
                 }
                 if (isDelivery){
                     toAdd.add(new Label("Delivery fee: "+((Delivery)order).getDeliveryFee()));
@@ -259,6 +261,7 @@ public class CustomerW extends JFrame{
                 }else{
                     toAdd.add(new Label("Ready time: "+((Pickup)order).getReadyTime()));
                 }
+
                 //Jpanel for status
                 JPanel s = new JPanel(new FlowLayout());
                 status = new JTextField(order.getStatus().toString());
@@ -367,7 +370,7 @@ public class CustomerW extends JFrame{
             Long from = null;
             Long to = null;
 
-            if (dateF=="all"&&dateT=="all"){}else {
+            if (dateF.equals("all")&&dateT.equals("all")){}else {
                 from = Long.parseLong(dateF);
                 to = Long.parseLong(dateT);
             }
@@ -403,7 +406,7 @@ public class CustomerW extends JFrame{
                     case "Search":
                         buildNewOrder(food.getText(),type.getText(),rating.getText());
                         break;
-                    case "Recommendation":
+                    case "re":
                         buildNewOrder();
                         break;
 
@@ -448,9 +451,11 @@ public class CustomerW extends JFrame{
             submitSearch.addActionListener(new orderListener());
             current.add(submitSearch);
             //button for recommendation
-            Button recommend = new Button("Recommendation");
+            Button recommend = new Button("Recommendation based on previous Order");
             recommend.addActionListener(new orderListener());
+            recommend.setActionCommand("re");
             current.add(recommend);
+
         }
 
         private void buildNewOrder(String food, String resType, String rating){
@@ -468,7 +473,11 @@ public class CustomerW extends JFrame{
 
             current.add(new Label("List of restaurants"));
             if (!foodList.get(0).equals("all")) {
-                restaurants = CustomerDBC.getRestaurants(foodList);
+                if (rate.equals("all")){
+                    restaurants = CustomerDBC.getRankedRestaurants(foodList);
+                }else {
+                    restaurants = CustomerDBC.getRankedRestaurants(foodList,Integer.parseInt(rating));
+                }
             }else{
                 if (!type.equals("all")) {
                     restaurants = CustomerDBC.getBestRestaurants(type);

@@ -89,7 +89,12 @@ public class CustomerDBC extends UserDBC {
         return null;
     }
 
-    public static List<Restaurant> getRankedRestaurants(Food food) {
+    public static List<Restaurant> getRankedRestaurants(List<String> food) {
+        //note food may be a string containing multiple food names,separated with commas
+        return null;
+    }
+    public static List<Restaurant> getRankedRestaurants(List<String> food,Integer rating) {
+        //note food may be a string containing multiple food names,separated with commas
         return null;
     }
 
