@@ -1,6 +1,7 @@
 package com.cpsc304.UI;
 import com.cpsc304.JDBC.LoginDBC;
 import com.cpsc304.model.Customer;
+import com.cpsc304.model.RestaurantManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.sql.SQLException;
 
 public class Login extends JFrame  {
     private JTextField userID;
@@ -101,10 +103,15 @@ public class Login extends JFrame  {
                 System.out.println("logging in...");
                 if (id.equals("id")&&password.equals("password")){
                     MainUI.currentUser = new Customer("1","test","1","123456",123,0,0,null,null);
+//                    MainUI.currentUser = new RestaurantManager("1","test","1","123456",null);
                     isvalid = true;
 
                 }else {
-                    isvalid = LoginDBC.verify(type, id, password);
+                    try {
+                        isvalid = LoginDBC.verify(type, id, password);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
                 //submit the userid and pw to remote server
                 if (isvalid){
@@ -116,7 +123,7 @@ public class Login extends JFrame  {
                             break;
                         case "restaurant manager":
                             System.out.println("manager.");
-//                            new ManagerW(id,t);
+                            new ManagerW(t);
                             t.setVisible(false);
                             break;
                         case "courier":
@@ -132,9 +139,5 @@ public class Login extends JFrame  {
         }
 
     }
-    public static void main(String[] args){
 
-        Login loginWindow;
-        loginWindow= new Login();
-    }
 }

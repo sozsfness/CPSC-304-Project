@@ -17,7 +17,7 @@ public class MainUI {
 
     public static ManagerW getManagerUI() {
         if (managerUI == null)
-            managerUI = new ManagerW();
+            managerUI = new ManagerW(loginUI);
         return managerUI;
     }
 

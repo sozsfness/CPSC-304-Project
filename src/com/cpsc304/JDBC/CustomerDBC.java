@@ -67,10 +67,10 @@ public class CustomerDBC extends UserDBC {
         stmt.close();
     }
 
-    public static List<Restaurant> getRestaurants(List<Food> foods) {
+    public static List<Restaurant> getRestaurants(List<String> foods) {
         List<Restaurant> restaurants = new ArrayList<>();
         String sqlString = "SELECT ";
-        for (Food food : foods) {
+        for (String food : foods) {
 
         }
         return null;
@@ -87,8 +87,16 @@ public class CustomerDBC extends UserDBC {
     public static List<Restaurant> getRecommendedRestaurants() {
         return null;
     }
+    public static List<Restaurant> getRestaurantsOfRating(Integer rating) {
+        return null;
+    }
 
-    public static List<Restaurant> getRankedRestaurants(Food food) {
+    public static List<Restaurant> getRankedRestaurants(List<String> food) {
+        //note food may be a string containing multiple food names,separated with commas
+        return null;
+    }
+    public static List<Restaurant> getRankedRestaurants(List<String> food,Integer rating) {
+        //note food may be a string containing multiple food names,separated with commas
         return null;
     }
 
@@ -100,7 +108,7 @@ public class CustomerDBC extends UserDBC {
         return 0;
     }
 
-    protected static List<Order> getOrdersInProgress(Date startDate, Date endDate) {
+    public static List<Order> getOrdersInTimePeriod(Date startDate, Date endDate) {
         return null;
     }
 

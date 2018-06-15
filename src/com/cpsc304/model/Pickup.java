@@ -12,8 +12,9 @@ public class Pickup extends Order {
         super(customer, orderID, date, time, amount, status, restOrderedAt, quantity);
         this.readyTime = readyTime;
     }
-
-    public Time getReadyTime() {
+    public Time getReadyTime(){
         return readyTime;
     }
+
+
 }
