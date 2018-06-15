@@ -596,8 +596,8 @@ public class CustomerW extends JFrame{
                     quantity.setName(next.getKey());
                     tmpFood.add(quantity);
                     j.add(tmpFood);
-                    fields.put(next.getKey(),quantity);
-                }//TODO: CHANGE QUANTITY
+                    fields.put(next.getValue(),quantity);
+                }
 
                 if (r.isDeliveryOption()){
                     JPanel de = new JPanel(new FlowLayout());
@@ -614,9 +614,6 @@ public class CustomerW extends JFrame{
                 Button comfirm = new Button("Calculate subtotal");
                 comfirm.addActionListener(new submitListener());
                 add(comfirm);
-                Button submit = new Button("Submit");
-                submit.addActionListener(new submitListener());
-                add(submit);
                 addWindowListener(new windowListener());
                 pack();
 
@@ -668,6 +665,10 @@ public class CustomerW extends JFrame{
                         j.revalidate();
                         subtotal.setText(total.toString());
                         subtotal.setVisible(true);
+
+                        Button submit = new Button("Submit");
+                        submit.addActionListener(new submitListener());
+                        add(submit);
                     }else{
                         currentOrder = new Order((Customer) currentUser,total,restaurant,quantity);
                         try {
