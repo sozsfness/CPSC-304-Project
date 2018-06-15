@@ -12,6 +12,10 @@ public class CourierDBC extends UserDBC {
 
     private static Connection con = DBConnection.getCon();
 
+    public static Courier getCurier(String courierID) {
+        return null;
+    }
+
     public static Time getScheduledTime(int orderID) throws SQLException {
         Time arivalTime;
         String sqlString;
