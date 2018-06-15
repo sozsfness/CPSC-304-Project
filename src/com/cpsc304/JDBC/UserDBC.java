@@ -13,17 +13,14 @@ public abstract class UserDBC {
 
     }
 
-    protected static Set<Order> getOrders(Restaurant restaurant) {
+    public static Set<Order> getOrders(Restaurant restaurant) {
         return null;
     }
 
-    protected static Set<Order> getOrders(Date startDate, Date endDate) {
+    public static List<Order> getOrders(Restaurant restaurant, Date startDate, Date endDate) {
         return null;
     }
 
-    protected static List<Order> getOrders(Restaurant restaurant, Date startDate, Date endDate) {
-        return null;
-    }
     public static Order getOrder(String orderID){
         return null;
     }

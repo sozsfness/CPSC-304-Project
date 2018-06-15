@@ -1,9 +1,11 @@
 package com.cpsc304.JDBC;
 
+import com.cpsc304.UI.MainUI;
 import com.cpsc304.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -104,5 +106,51 @@ public class CustomerDBC extends UserDBC {
 
     public static List<Order> getOrders() {
         return null;
+    }
+    public static Set<Order> getOrders(Date startDate, Date endDate) throws SQLException {
+        HashSet<Order> orders = new HashSet<>();
+        Set<Pickup> pickups = getPickups(startDate, endDate);
+        Set<Delivery> deliveries = getDeliveries(startDate, endDate);
+        con.setAutoCommit(false);
+        for (Order order : pickups) {
+            orders.add(order);
+        }
+        for (Order order : deliveries) {
+            orders.add(order);
+        }
+        return orders;
+    }
+
+    private static Set<Pickup> getPickups(Date startDate, Date endDate) {
+        String sqlString;
+        PreparedStatement preparedStatement;
+        ResultSet rs;
+        Set<Pickup> pickups = new HashSet<>();
+        sqlString = "SELECT orderID, order_date, order_time, order_amount, order_status, food_name, price, quantity, res_name, res_rating";
+        return pickups;
+    }
+
+    private static Set<Delivery> getDeliveries(Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        Delivery delivery;
+        Set<Delivery> deliveries = new HashSet<>();
+        if (MainUI.currentUser == null) return null;
+        sqlString = "SELECT o.*, delivery_fee, userName";
+        sqlString += "FROM order o, customer, delivery_delivers d, courier, user";
+        sqlString += "WHERE o.orderID = d.oderID AND order_date >=  ?";
+        sqlString += "AND order_date <= ? AND order_customerID = ?";
+        sqlString += "AND cor_userID = courierID AND cor_userID = userID";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setString(3, MainUI.currentUser.getUserID());
+        rs = pstmt.executeQuery();
+        con.commit();
+        while (rs.next()) {
+
+        }
+        return deliveries;
     }
 }
