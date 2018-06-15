@@ -152,8 +152,9 @@ public class CustomerW extends JFrame{
         public void actionPerformed(ActionEvent e) {
             String dateFrom = datef.getText();
             String dateTo = datet.getText();
-            String resName = res.getText();
-            buildHistoryOrder(current,dateFrom,dateTo,resName);
+            Integer resID = Integer.parseInt(res.getText());
+
+            buildHistoryOrder(current,dateFrom,dateTo,resID);
         }
     }
 
@@ -162,7 +163,7 @@ public class CustomerW extends JFrame{
         private void beforeBuidlingHistoryOrder(JPanel current){
             current.setLayout(null);
             current.setLayout(new BorderLayout());
-            current.add(new Label("            What past orders do you want to look at? Please provide the dates or name of the restaurant...\n"),BorderLayout.PAGE_START);
+            current.add(new Label("            What past orders do you want to look at? Please provide the dates or ID of the restaurant...\n"),BorderLayout.PAGE_START);
 
             datef = new JTextField("all",8);
             res = new JTextField("all",15);
@@ -351,7 +352,7 @@ public class CustomerW extends JFrame{
         }
 
         //build the panel for viewing history order
-        private void buildHistoryOrder(JPanel current,String dateF,String dateT, String resN){
+        private void buildHistoryOrder(JPanel current,String dateF,String dateT, Integer resID){
             removeComponents(current);
             current.invalidate();
             current.revalidate();
@@ -381,9 +382,9 @@ public class CustomerW extends JFrame{
                 current.add(o);
                 o.addActionListener(l);
             }else {
-                Set<Order> orders = null;
+                List<Order> orders = null;
                 try {
-                    orders = CustomerDBC.getOrders(0, new Date(from),new Date(to));
+                    orders = CustomerDBC.getOrders(resID, new Date(from),new Date(to));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -409,7 +410,11 @@ public class CustomerW extends JFrame{
                 String evt = e.getActionCommand();
                 switch (evt){
                     case "Search":
-                        buildNewOrder(food.getText(),type.getText(),rating.getText());
+                        try {
+                            buildNewOrder(food.getText(),type.getText(),rating.getText());
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
                         break;
                     case "re":
                         buildNewOrder();
@@ -463,7 +468,7 @@ public class CustomerW extends JFrame{
 
         }
 
-        private void buildNewOrder(String food, String resType, String rating){
+        private void buildNewOrder(String food, String resType, String rating) throws SQLException {
 
             List<String> foodList = Arrays.asList(food.split(","));
             String type = resType;
@@ -557,7 +562,7 @@ public class CustomerW extends JFrame{
             private Map<Food,Integer> foodQuantity;
             private JTextField subtotal;
             private Map<Food,JTextField> fields;
-            private Map<Food,Double> offers;
+            private Map<String,Food> offers;
             JPanel j;
             private Restaurant restaurant;
             public showRestaurant (Restaurant r){
@@ -582,17 +587,17 @@ public class CustomerW extends JFrame{
                 j.revalidate();
                 j.setLayout(null);
                 j.setLayout(new BoxLayout(j,BoxLayout.PAGE_AXIS));
-                for (Map.Entry<Food,Double> next: offers.entrySet()){
+                for (Map.Entry<String,Food> next: offers.entrySet()){
                     JPanel tmpFood= new JPanel(new FlowLayout());
-                    tmpFood.add(new Label(next.getKey().getName()+" "));
-                    tmpFood.add(new Label("Price: "+ next.getValue()));
+                    tmpFood.add(new Label(next.getKey()+" "));
+                    tmpFood.add(new Label("Price: "+ next.getValue().getPrice()));
                     tmpFood.add(new Label("Quantity: "));
                     JTextField quantity = new JTextField("0");
-                    quantity.setName(next.getKey().getName());
+                    quantity.setName(next.getKey());
                     tmpFood.add(quantity);
                     j.add(tmpFood);
                     fields.put(next.getKey(),quantity);
-                }
+                }//TODO: CHANGE QUANTITY
 
                 if (r.isDeliveryOption()){
                     JPanel de = new JPanel(new FlowLayout());

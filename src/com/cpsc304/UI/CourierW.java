@@ -283,15 +283,23 @@ public class CourierW extends JFrame{
             String fromDate = from.getText();
             String toDate = to.getText();
             if (fromDate.equals("all")&&toDate.equals("all")){
-                buildReport(null,null);
+                try {
+                    buildReport(null,null);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
             }else {
                 Long from = Long.parseLong(fromDate);
                 Long to = Long.parseLong(toDate);
-                buildReport(new Date(from), new Date(to));
+                try {
+                    buildReport(new Date(from), new Date(to));
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }
-    private void buildReport(Date from, Date to){
+    private void buildReport(Date from, Date to) throws SQLException {
         Set<Order> orders = CourierDBC.getOrders(from,to);
         removeComponents(current);
         current.invalidate();
