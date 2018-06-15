@@ -1,6 +1,8 @@
 package com.cpsc304.model;
 
 import java.sql.Time;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,10 +17,10 @@ public class Restaurant {
     private boolean deliveryOption;
     private String type;
     private Address address;
-    private Map<Food, Double> offers;
+    private Map<String, Food> offers;
     private Set<Courier> resCouriers;
 
-    public Restaurant(RestaurantManager manager, double rating, Time openTime, Time closeTime, String name, int id, boolean deliveryOption, String type, Address address, Map<Food, Double> offers, Set<Courier> resCouriers) {
+    public Restaurant(RestaurantManager manager, double rating, Time openTime, Time closeTime, String name, int id, boolean deliveryOption, String type, Address address, Map<String, Food> offers) {
         this.manager = manager;
         this.rating = rating;
         this.openTime = openTime;
@@ -29,7 +31,7 @@ public class Restaurant {
         this.type = type;
         this.address = address;
         this.offers = offers;
-        this.resCouriers = resCouriers;
+        resCouriers = new HashSet<>();
     }
 
     public RestaurantManager getManager() {
@@ -104,19 +106,30 @@ public class Restaurant {
         this.address = address;
     }
 
-    public Map<Food, Double> getOffers() {
+    public void addFood(Food food) {
+        offers.put(food.getName(), food);
+    }
+
+    public void deleteFood(Food food) {
+        offers.remove(food.getName());
+    }
+
+    public Map<String, Food> getOffers() {
         return offers;
     }
 
-    public void setOffers(Map<Food, Double> offers) {
-        this.offers = offers;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Restaurant)) return false;
+
+        Restaurant that = (Restaurant) o;
+
+        return id == that.id;
     }
 
-    public Set<Courier> getResCouriers() {
-        return resCouriers;
-    }
-
-    public void setResCouriers(Set<Courier> resCouriers) {
-        this.resCouriers = resCouriers;
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

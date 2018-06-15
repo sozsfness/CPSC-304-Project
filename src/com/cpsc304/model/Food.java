@@ -25,4 +25,22 @@ public class Food {
     public double getPrice() {
         return price;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Food)) return false;
+
+        Food food = (Food) o;
+
+        if (name != null ? !name.equals(food.name) : food.name != null) return false;
+        return restaurant != null ? restaurant.equals(food.restaurant) : food.restaurant == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (restaurant != null ? restaurant.hashCode() : 0);
+        return result;
+    }
 }

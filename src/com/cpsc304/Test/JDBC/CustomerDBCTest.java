@@ -23,7 +23,7 @@ public class CustomerDBCTest {
         date = new Date(100000);
         time = new Time(1000);
         readyTime = new Time(2000);
-        restaurant = new Restaurant(null, 5, null,null, null, 1, true, null, null, null , null);
+        restaurant = new Restaurant(null, 5, null,null, null, 1, true, null, null, null);
         customer = new Customer("854", "Harvey", "11111","77879991234", 10000, 5, 100, null, null);
         order = new Pickup(customer, 10000, date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, readyTime);
 
@@ -40,9 +40,12 @@ public class CustomerDBCTest {
     }
 
     public static void main (String[] args) {
-        runBefore();
-        testCommitOrder();
-        System.out.println("Done!");
-        DBConnection.close();
+        Food f1 = new Food("PICK", restaurant, 10);
+        Food f2 = new Food("PICK", restaurant, 10);
+        System.out.println(f1 == f2);
+//        runBefore();
+//        testCommitOrder();
+//        System.out.println("Done!");
+//        DBConnection.close();
     }
 }

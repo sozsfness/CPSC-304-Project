@@ -17,10 +17,6 @@ public abstract class UserDBC {
         return null;
     }
 
-    public static List<Order> getOrders(Restaurant restaurant, Date startDate, Date endDate) {
-        return null;
-    }
-
     public static Order getOrder(String orderID){
         return null;
     }

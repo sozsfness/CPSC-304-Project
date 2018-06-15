@@ -5,10 +5,7 @@ import com.cpsc304.model.Order;
 import com.cpsc304.model.OrderStatus;
 import com.cpsc304.model.Restaurant;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 public class RestaurantManagerDBC extends UserDBC{
@@ -27,12 +24,31 @@ public class RestaurantManagerDBC extends UserDBC{
         return null;
     }
 
-    public static void AddToMenu(Restaurant restaurant, Food food) {
-
+    public static void addToMenu(Food food) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        sqlString = "INSERT INTO offers ";
+        sqlString += "VALUES (?, ?, ?)";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, food.getName());
+        pstmt.setInt(2, food.getRestaurant().getId());
+        pstmt.setDouble(3, food.getPrice());
+        pstmt.executeUpdate();
+        con.commit();
+        food.getRestaurant().addFood(food);
     }
 
-    public static void deleteInMenu(Restaurant restaurant, Food food) {
-
+    public static void deleteInMenu(Restaurant restaurant, Food food) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        sqlString = "DELETE FROM offers ";
+        sqlString += "WHERE restaurantID = ? AND food_name = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setInt(1, food.getRestaurant().getId());
+        pstmt.setString(2, food.getName());
+        pstmt.executeUpdate();
+        con.commit();
+        food.getRestaurant().deleteFood(food);
     }
 
     //if the order status is not SUBMITTED currently, do nothing and return false

@@ -20,6 +20,7 @@ public class DBConnection {
             DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             con = DriverManager.getConnection(connectURL,username,password);
             con.commit();
+            con.setAutoCommit(false);
             System.out.println("\nConnected to Oracle!");
             return true;
         }
