@@ -11,7 +11,7 @@ public class MainUI {
 
     public static CourierW getCourierUI() {
         if (courierUI == null)
-            courierUI = new CourierW();
+            courierUI = new CourierW(loginUI);
         return courierUI;
     }
 
@@ -22,8 +22,8 @@ public class MainUI {
     }
 
     public static CustomerW getCustomerUI () {
-        //if (customerUI == null)
-        //    customerUI = new CustomerW();
+        if (customerUI == null)
+            customerUI = new CustomerW(loginUI);
         return customerUI;
     }
 
