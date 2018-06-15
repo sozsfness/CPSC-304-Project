@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.DateFormatSymbols;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -286,6 +287,13 @@ public class CourierW extends JFrame{
         Button submit = new Button("View Report");
         submit.addActionListener(new reportListener());
         current.add(submit);
+        current.add(new Label("Or view the monthly average income report with Max/Min average specified"));
+        Button max = new Button("View Max");
+        Button min = new Button("View Min");
+        max.addActionListener(new reportListener());
+        min.addActionListener(new reportListener());
+        current.add(max);
+        current.add(min);
     }
     private class reportListener implements ActionListener{
 
@@ -293,21 +301,76 @@ public class CourierW extends JFrame{
         public void actionPerformed(ActionEvent e) {
             String fromDate = from.getText();
             String toDate = to.getText();
-            if (fromDate.equals("all")&&toDate.equals("all")){
-                try {
-                    buildReport(null,null);
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-            }else {
-                Long from = Long.parseLong(fromDate);
-                Long to = Long.parseLong(toDate);
-                try {
-                    buildReport(new Date(from), new Date(to));
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
+            String evt = e.getActionCommand();
+
+            Long from = Long.parseLong(fromDate);
+            Long to = Long.parseLong(toDate);
+            switch (evt) {
+                case "View Report":
+
+                    if (fromDate.equals("all") && toDate.equals("all")) {
+                        try {
+                            buildReport(null, null);
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
+                    } else {
+
+                        try {
+                            buildReport(new Date(from), new Date(to));
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                    break;
+                case "View Max":
+                    buildReport(new Date(from),new Date(to),1);
+                    break;
+                case "View Min":
+                    buildReport(new Date(from),new Date(to),0);
+                    break;
+
+            }
+        }
+    }
+    private void buildReport(Date from, Date to, int max){
+        Map<Integer,Double> income = CourierDBC.getMonthlyIncomes(from,to);
+        int specify = 0;
+        String m;
+        if (max==1){
+            m = "MAX";
+            specify = CourierDBC.getMaxMonth(from,to);
+        }else{
+            m = "MIN";
+            specify = CourierDBC.getMinMonth(from,to);
+        }
+
+        removeComponents(current);
+        current.invalidate();
+        current.revalidate();
+        current.setLayout(null);
+        current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
+
+        String tmp = new String(new char[100]);
+        current.add(new Label(tmp.replace('\0','*')));
+        current.add(new Label("Monthly Income Report" + "("+m+")"));
+        current.add(new Label(tmp.replace('\0','*')));
+        DateFormatSymbols dfs = new DateFormatSymbols();
+        String [] months = dfs.getMonths();
+        if (income!=null) {
+            for (Map.Entry<Integer, Double> next : income.entrySet()) {
+                if (next.getKey() == specify) {
+                    if (max == 1) {
+                        current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + next.getValue() + " (Max)"));
+                    } else {
+                        current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + next.getValue() + " (Min)"));
+                    }
+                } else {
+                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + next.getValue()));
                 }
             }
+        }else{
+
         }
     }
     private void buildReport(Date from, Date to) throws SQLException {
