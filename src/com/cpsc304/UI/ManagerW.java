@@ -37,6 +37,7 @@ public class ManagerW extends JFrame {
 
     public ManagerW(Login l){
         this.l = l;
+
         restaurants = ((RestaurantManager)currentUser).getRestaurants();
         if (restaurants!=null) {
             for (Restaurant next : restaurants) {
@@ -203,7 +204,7 @@ public class ManagerW extends JFrame {
             temp.setName("0");
             p.add(temp);
             temp.addActionListener(b);
-            integerRestaurantMap.put(0,new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null,null));
+            integerRestaurantMap.put(0,new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null));
         }
 //        Button addNew = new Button("Add new restaurant");
 //        addNew.addActionListener(new btnListner());
@@ -226,7 +227,7 @@ public class ManagerW extends JFrame {
     private class Menu extends Frame{
         Map<String,Food> stringFoodHashMap = new HashMap<>();
         Map<String,JPanel> stringJPanelMap = new HashMap<>();
-        Map<Food,Double> foodDoubleMap;
+
         private Restaurant restaurant;
         private JPanel menu;
         private JPanel change;
@@ -260,19 +261,18 @@ public class ManagerW extends JFrame {
             menu.add(new Label("MENU"));
             add(menu);
             add(change);
-            foodDoubleMap = restaurant.getOffers();
+            stringFoodHashMap = restaurant.getOffers()==null?stringFoodHashMap:restaurant.getOffers();
             MenuBtnListener listener = new MenuBtnListener();
-            if (foodDoubleMap!=null) {
-                for (Map.Entry<Food, Double> next : foodDoubleMap.entrySet()) {
+            if (stringFoodHashMap!=null) {
+                for (Map.Entry<String, Food> next : stringFoodHashMap.entrySet()) {
                     JPanel temp = new JPanel(new FlowLayout());
-                    temp.add(new Label("Food name: "+next.getKey().getName()+" Price: $"+next.getValue()));
+                    temp.add(new Label("Food name: "+next.getKey()+" Price: $"+next.getValue().getPrice()));
                     menu.add(temp);
                     Button del = new Button("delete food");
-                    del.setActionCommand(next.getKey().getName());
-                    stringFoodHashMap.put(next.getKey().getName(),next.getKey());
+                    del.setActionCommand(next.getKey());
                     del.addActionListener(listener);
                     temp.add(del);
-                    stringJPanelMap.put(next.getKey().getName(),temp);
+                    stringJPanelMap.put(next.getKey(),temp);
                 }
             }
 
@@ -319,7 +319,11 @@ public class ManagerW extends JFrame {
                         menu.invalidate();
                         menu.revalidate();
                         Food toA = new Food(na.getText(),restaurant,Double.parseDouble(pr.getText()));
-                        RestaurantManagerDBC.AddToMenu(restaurant,toA);
+//                        try {
+//                            RestaurantManagerDBC.addToMenu(toA);
+//                        } catch (SQLException e1) {
+//                            e1.printStackTrace();
+//                        }
                         JPanel temp = new JPanel(new FlowLayout());
                         temp.add(new Label("Food name: "+na.getText()+" Price: $"+Double.parseDouble(pr.getText())));
                         menu.add(temp);
@@ -341,7 +345,11 @@ public class ManagerW extends JFrame {
 
                     }else {
                         Food todel = stringFoodHashMap.get(evt);
-                        RestaurantManagerDBC.deleteInMenu(restaurant, todel);
+                        try {
+                            RestaurantManagerDBC.deleteInMenu(restaurant, todel);
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
                         menu.invalidate();
                         menu.revalidate();
                         menu.remove(stringJPanelMap.get(evt));
@@ -450,7 +458,7 @@ public class ManagerW extends JFrame {
                 if (!evt.equals("0")) {
                     new resOrders(integerRestaurantMap.get(Integer.parseInt(evt)),new Date(fromDate),new Date(toDate));
                 }else{
-                    new resOrders(new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null,null),null,null);
+                    new resOrders(new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null),null,null);
                 }
             }
         }

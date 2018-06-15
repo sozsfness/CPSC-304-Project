@@ -104,7 +104,7 @@ public class Login extends JFrame  {
                 System.out.println("logging in...");
                 if (id.equals("id")&&password.equals("password")){
 //                    MainUI.currentUser = new Customer("1","test","1","123456",123,0,0,null,null);
-                    MainUI.currentUser = new Courier("1","test","1","123456",null,null);
+                    MainUI.currentUser = new RestaurantManager("1","test","1","123456",null);
                     isvalid = true;
 
                 }else {
@@ -121,17 +121,21 @@ public class Login extends JFrame  {
                             //TODO:HOW CONSTRUCTORS WORKS? CONSTRUCTOR CALLS METHOD IN JDBC TO RETRIEVE DATA FROM REMOTE DB
 //                            MainUI.currentUser = new Customer();
                             System.out.println("customer.");
-                            new CustomerW(t);
+                            MainUI.getCustomerUI();
                             t.setVisible(false);
                             break;
                         case "restaurant manager":
                             System.out.println("manager.");
-                            new ManagerW(t);
+                            //                            MainUI.currentUser = new Customer();
+
+                            MainUI.getManagerUI();
                             t.setVisible(false);
                             break;
                         case "courier":
                             System.out.println("courier.");
-                            new CourierW(t);
+                            //                            MainUI.currentUser = new Customer();
+
+                            MainUI.getCourierUI();
                             t.setVisible(false);
                             break;
                     }
