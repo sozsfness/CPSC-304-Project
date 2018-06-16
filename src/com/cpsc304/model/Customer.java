@@ -1,5 +1,8 @@
 package com.cpsc304.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Customer extends User{
@@ -8,15 +11,15 @@ public class Customer extends User{
     private int vipLevel;
     private int points;
     private Set<Address> addresses;
-    private Set<Order> orders;
+    private List<Order> orders;
 
-    public Customer(String userID, String name, String password, String phoneNum, double spending, int vipLevel, int points, Set<Address> addresses, Set<Order> orders) {
+    public Customer(String userID, String name, String password, String phoneNum, double spending, int vipLevel, int points) {
         super(userID, name, password, phoneNum);
         this.spending = spending;
         this.vipLevel = vipLevel;
         this.points = points;
-        this.addresses = addresses;
-        this.orders = orders;
+        this.addresses = new HashSet<>();
+        orders = new ArrayList<>();
     }
 
     public void setSpending(double spending) {
@@ -31,7 +34,7 @@ public class Customer extends User{
         this.addresses = addresses;
     }
 
-    public void setOrders(Set<Order> orders) {
+    public void setOrders(List<Order> orders) {
         this.orders = orders;
     }
 
@@ -51,11 +54,11 @@ public class Customer extends User{
         return addresses;
     }
 
-    public Set<Order> getOrders() {
+    public List<Order> getOrders() {
         return orders;
     }
 
-    // TBC
+    // TODO:
     public void addSpending(double money) {
         this.spending += money;
         addPoints(money / 100);

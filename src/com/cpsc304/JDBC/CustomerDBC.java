@@ -11,8 +11,25 @@ public class CustomerDBC extends UserDBC {
 
     private static Connection con = DBConnection.getCon();
 
-    public static Customer getCustomer(String custID) {
-        return null;
+    public static Customer getCustomer(String custID) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        User user = getUser(custID);
+        Customer customer = null;
+        ResultSet rs;
+        sqlString = "SELECT cus_spending, points, vip_level ";
+        sqlString += "FROM customer, points, vip_level ";
+        sqlString += "WHERE cus_userID = ? AND cus_spending = spending AND";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, custID);
+        rs = pstmt.executeQuery();
+        if (rs.next()) {
+            double spending = rs.getDouble(1);
+            int points = rs.getInt(2);
+            int vipLevel = rs.getInt(3);
+            customer = new Customer(custID, user.getName(), user.getPassword(), user.getPhoneNum(), spending, vipLevel, points);
+        }
+        return customer;
     }
 
     public static void commitOrder(Order order) throws SQLException {
@@ -69,15 +86,6 @@ public class CustomerDBC extends UserDBC {
         stmt.close();
     }
 
-    public static List<Restaurant> getRestaurants(List<String> foods) {
-        List<Restaurant> restaurants = new ArrayList<>();
-        String sqlString = "SELECT ";
-        for (String food : foods) {
-
-        }
-        return null;
-    }
-
     public static List<Restaurant> getBestRestaurants(String type,boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
@@ -119,10 +127,6 @@ public class CustomerDBC extends UserDBC {
         return restaurants;
     }
 
-    public static List<Restaurant> getClosestRestaurants(String type) {
-        return null;
-    }
-
     public static List<Restaurant> getRecommendedRestaurants() {
         return null;
     }
@@ -133,7 +137,7 @@ public class CustomerDBC extends UserDBC {
 
     public static List<Restaurant> getRankedRestaurants(List<String> foods, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         //note food may be a string containing multiple food names,separated with commas
-        return getRankedRestaurants(foods,brating, bhours, bdeliveryOption, btype, baddress);
+        return getRankedRestaurants(foods,0, brating, bhours, bdeliveryOption, btype, baddress);
     }
     public static List<Restaurant> getRankedRestaurants(List<String> foods,Integer minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         //note food may be a string containing multiple food names,separated with commas
@@ -144,8 +148,18 @@ public class CustomerDBC extends UserDBC {
         List<Restaurant> restaurants = new ArrayList<>();
         ResourceManager rm = ResourceManager.getInstance();
         con.setAutoCommit(false);
-        sqlString = "SELECT r.*";
-        sqlString += "FROM restaurant r, offers o";
+        sqlString = "SELECT resID, res_name";
+        if (brating)
+            sqlString += ", res_rating";
+        if (bhours)
+            sqlString += ", res_open_time, res_close_time";
+        if (btype)
+            sqlString += ", res_type";
+        if (bdeliveryOption)
+            sqlString += ", res_delivery_option";
+        if (baddress)
+            sqlString += ", res_postal_code, res_street, res_house#";
+        sqlString += " FROM restaurant r, offers o";
         sqlString += "WHERE o.restaurantID = r.resI";
         sqlString += " AND res_rating >= ?";
         for (String food: foods) {
@@ -159,21 +173,35 @@ public class CustomerDBC extends UserDBC {
         while (rs.next()) {
             int resID = rs.getInt(1);
             String resName = rs.getString(2);
-            Time openTime = Time.valueOf(rs.getString(3) + ":00");
-            Time closeTime = Time.valueOf(rs.getString(4) +":00");
-            Double rating = rs.getDouble(5);
-            String type = rs.getString(6);
-            boolean deliveryOption;
-            if (rs.getInt(7) != 0)
-                deliveryOption = true;
-            else
-                deliveryOption = false;
-            String managerID = rs.getString(8);
-            String postal = rs.getString(9);
-            String street = rs.getString(10);
-            int houseNum = rs.getInt(11);
-            Address address = new Address(houseNum, street, null, null, postal);
-            rest = new Restaurant(rm.getManager(managerID), rating, openTime, closeTime, resName, resID, deliveryOption,
+            Double rating = null;
+            Time openTime = null;
+            Time closeTime = null;
+            String type =null;
+            boolean deliveryOption = false;
+            if (brating)
+                rating= rs.getDouble("res_rating");
+            if (bhours) {
+                openTime = Time.valueOf(rs.getString("res_open_time") + ":00");
+                closeTime = Time.valueOf(rs.getString("res_close_time") +":00");
+            }
+            if (btype)
+                type = rs.getString(6);
+            if (bdeliveryOption)
+                if (rs.getInt(7) != 0)
+                    deliveryOption = true;
+                else
+                    deliveryOption = false;
+            String postal = null;
+            String street = null;
+            int houseNum = -1;
+            Address address = null;
+            if (baddress) {
+                postal = rs.getString("res_postal_code");
+                street = rs.getString("res_street");
+                houseNum = rs.getInt("res_house#");
+                address = getAddress(postal, street, houseNum);
+            }
+            rest = new Restaurant(null, rating, openTime, closeTime, resName, resID, deliveryOption,
                     type, address, null);
             restaurants.add(rest);
         }

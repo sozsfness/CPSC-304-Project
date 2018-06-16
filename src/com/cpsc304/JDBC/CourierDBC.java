@@ -3,6 +3,7 @@ package com.cpsc304.JDBC;
 import com.cpsc304.UI.MainUI;
 import com.cpsc304.model.*;
 import com.sun.org.apache.xpath.internal.operations.Or;
+import javafx.util.Pair;
 
 import java.sql.*;
 import java.sql.Date;
@@ -130,12 +131,114 @@ public class CourierDBC extends UserDBC {
         return null;
     }
 
-    public static int getMaxMonth(Date startDate, Date endDate) {
-        return 0;
+    public static List<Pair<Integer, Double>> getSums(Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        List<Pair<Integer, Double>> sums = new ArrayList<>();
+        Pair<Integer, Double> pair;
+        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Sum(delivery_fee) AS \"Sum Earning\" ";
+        sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
+        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "AND courierID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setString(3, MainUI.currentUser.getUserID());
+        rs = pstmt.executeQuery();
+        while (rs.next()) {
+            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            sums.add(pair);
+        }
+        return sums;
     }
 
-    public static int getMinMonth(Date startDate, Date endDate) {
-        return 0;
+    public static List<Pair<Integer, Double>> getAvgs(Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        List<Pair<Integer, Double>> avgs = new ArrayList<>();
+        Pair<Integer, Double> pair;
+        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Avg(delivery_fee) AS \"Avg Earning\" ";
+        sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
+        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "AND courierID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setString(3, MainUI.currentUser.getUserID());
+        rs = pstmt.executeQuery();
+        while (rs.next()) {
+            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            avgs.add(pair);
+        }
+        return avgs;
+    }
+
+    public static List<Pair<Integer, Double>> getMins(Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        List<Pair<Integer, Double>> mins = new ArrayList<>();
+        Pair<Integer, Double> pair;
+        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Sum(delivery_fee) AS \"Sum Earning\" ";
+        sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
+        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "AND courierID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setString(3, MainUI.currentUser.getUserID());
+        rs = pstmt.executeQuery();
+        while (rs.next()) {
+            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            mins.add(pair);
+        }
+        return mins;
+    }
+
+    public static  List<Pair<Integer, Double>> getMaxs(Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        List<Pair<Integer, Double>> maxs = new ArrayList<>();
+        Pair<Integer, Double> pair;
+        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Max(delivery_fee) AS \"Max Earning\" ";
+        sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
+        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "AND courierID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setString(3, MainUI.currentUser.getUserID());
+        rs = pstmt.executeQuery();
+        while (rs.next()) {
+            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            maxs.add(pair);
+        }
+        return maxs;
+    }
+
+    public static List<Pair<Integer, Double>> getCounts(Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        List<Pair<Integer, Double>> counts = new ArrayList<>();
+        Pair<Integer, Double> pair;
+        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Sum(delivery_fee) AS \"Sum Earning\" ";
+        sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
+        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "AND courierID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setString(3, MainUI.currentUser.getUserID());
+        rs = pstmt.executeQuery();
+        while (rs.next()) {
+            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            counts.add(pair);
+        }
+        return counts;
     }
 
     public static double getIncome(Date startDate, Date endDate){
