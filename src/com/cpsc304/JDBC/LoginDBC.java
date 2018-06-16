@@ -42,7 +42,7 @@ public class LoginDBC {
         sqlString = "SELECT COUNT(*) FROM users WHERE userID = '" + userID + "' ";
         sqlString += "AND userPass = '" + password + "'";
         stmt.close();
-        System.out.println(sqlString);
+
         stmt = con.createStatement();
         rs = stmt.executeQuery(sqlString);
         //con.commit();

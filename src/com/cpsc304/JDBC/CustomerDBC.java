@@ -86,6 +86,7 @@ public class CustomerDBC extends UserDBC {
         List<Restaurant> restaurants = new ArrayList<>();
         ResourceManager rm = ResourceManager.getInstance();
         con.setAutoCommit(false);
+        //TODO: exhausted result set???
         sqlString = "SELECT * ";
         sqlString += "FROM restaurant ";
         sqlString += "WHERE LOWER(res_type) = LOWER(?) ";
@@ -133,7 +134,7 @@ public class CustomerDBC extends UserDBC {
 
     public static List<Restaurant> getRankedRestaurants(List<String> foods, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         //note food may be a string containing multiple food names,separated with commas
-        return getRankedRestaurants(foods,brating, bhours, bdeliveryOption, btype, baddress);
+        return null;
     }
     public static List<Restaurant> getRankedRestaurants(List<String> foods,Integer minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         //note food may be a string containing multiple food names,separated with commas
