@@ -239,8 +239,8 @@ public class CustomerDBC extends UserDBC {
 
     public static List<Order> getOrders(int resID, Date startDate, Date endDate) throws SQLException {
         List<Order> orders = new ArrayList<>();
-        List<Pickup> pickups = getPickups(0, startDate, endDate);
-        List<Delivery> deliveries = getDeliveries(0, startDate, endDate);
+        List<Pickup> pickups = getPickups(resID, startDate, endDate);
+        List<Delivery> deliveries = getDeliveries(resID, startDate, endDate);
         con.setAutoCommit(false);
         for (Order order : pickups) {
             orders.add(order);
@@ -252,7 +252,7 @@ public class CustomerDBC extends UserDBC {
     }
 
     //resID == 0 means no rest restrictions
-    private static List<Pickup> getPickups(int resID, Date startDate, Date endDate) throws SQLException {
+    public static List<Pickup> getPickups(int resID, Date startDate, Date endDate) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
@@ -289,7 +289,7 @@ public class CustomerDBC extends UserDBC {
         return pickups;
     }
 
-    private static List<Delivery> getDeliveries(int resID, Date startDate, Date endDate) throws SQLException {
+    public static List<Delivery> getDeliveries(int resID, Date startDate, Date endDate) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;

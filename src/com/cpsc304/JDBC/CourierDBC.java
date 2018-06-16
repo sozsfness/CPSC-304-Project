@@ -13,8 +13,8 @@ public class CourierDBC extends UserDBC {
 
     private static Connection con = DBConnection.getCon();
 
-    public static Courier getCurier(String courierID) {
-        return null;
+    public static Courier getCurier(String courierID) throws SQLException {
+        return (Courier)getUser(courierID);
     }
 
     public static Time getScheduledTime(int orderID) throws SQLException {
@@ -240,6 +240,7 @@ public class CourierDBC extends UserDBC {
         }
         return counts;
     }
+
 
     public static double getIncome(Date startDate, Date endDate){
         return 0;

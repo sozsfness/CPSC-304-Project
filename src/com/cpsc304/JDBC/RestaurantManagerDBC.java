@@ -9,19 +9,20 @@ public class RestaurantManagerDBC extends UserDBC{
 
     private static Connection con = DBConnection.getCon();
 
-    public static RestaurantManager getManager(String managerID) {
-        return null;
+    public static RestaurantManager getManager(String managerID) throws SQLException {
+        return (RestaurantManager)getUser(managerID);
     }
 
+    //TODO: to be removed
     public static void addRestaurant(Restaurant restaurant) {
 
     }
 
-    public static void deleteRestaurant (Restaurant restaurant) {
+    public static void deleteRestaurant (Restaurant restaurant) throws SQLException {
 
     }
 
-    public static List<Food> getPopularDish(Restaurant restaurant) {
+    public static List<Food> getPopularDish(Restaurant restaurant) throws SQLException {
         return null;
     }
 
