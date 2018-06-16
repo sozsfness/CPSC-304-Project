@@ -54,5 +54,8 @@ public class LoginDBC {
         return true;
     }
 
+    public static void getUserInfo(String userID, String userType) {
+
+    }
 
 }
