@@ -241,6 +241,35 @@ public class CourierDBC extends UserDBC {
         return counts;
     }
 
+    // view for check nested aggregation
+    // type should be "Min""Max""Sum""Avg"
+    // return list of resName and earning
+    public static List<Pair<String, Double>> getEarning(String type, String courerID) {
+        List<Pair<String, Double>> earnings = new ArrayList<>();
+        return earnings;
+    }
+
+    // when type is "Count"
+    public static List<Pair<String, Integer>> getCount(String courerID) {
+        List<Pair<String, Integer>> counts = new ArrayList<>();
+        return counts;
+    }
+
+    // For nested aggregation
+    // type should be "Min""Max""Sum""Avg" rather than "Count"
+    public static double getEarning(String firstType, String secondType, String courerID) {
+        return 0;
+    }
+
+    // when the first type is any type rather than count, but the second type is "Count"
+    public static int getSecondCount(String firstType){
+        return 0;
+    }
+
+    // when the first type is "Count", but the second type is any type
+    public static int getFirstCount(String secondType){
+        return 0;
+    }
 
     public static double getIncome(Date startDate, Date endDate){
         return 0;
