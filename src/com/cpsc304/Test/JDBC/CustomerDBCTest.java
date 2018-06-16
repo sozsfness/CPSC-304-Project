@@ -2,6 +2,7 @@ package com.cpsc304.Test.JDBC;
 
 import com.cpsc304.JDBC.CustomerDBC;
 import com.cpsc304.JDBC.DBConnection;
+import com.cpsc304.JDBC.LoginDBC;
 import com.cpsc304.model.*;
 import org.junit.jupiter.api.*;
 
@@ -43,9 +44,15 @@ public class CustomerDBCTest {
         Food f1 = new Food("PICK", restaurant, 10);
         Food f2 = new Food("PICK", restaurant, 10);
         System.out.println(f1 == f2);
-//        runBefore();
-//        testCommitOrder();
-//        System.out.println("Done!");
-//        DBConnection.close();
+        runBefore();
+        //testCommitOrder();
+        DBConnection.connect();
+        try {
+            System.out.println(LoginDBC.verify("customer", "854", "aqb39q"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Done!");
+        DBConnection.close();
     }
 }
