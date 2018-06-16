@@ -15,7 +15,7 @@ import java.sql.SQLException;
 
 public class Login extends JFrame  {
     private JTextField userID;
-    private JTextField pw;
+    private JPasswordField pw;
     private boolean isvalid;
     private Choice typeChooser;
     Login t;
@@ -31,7 +31,7 @@ public class Login extends JFrame  {
         p1.add(id);
         userID = new JTextField("id",10);
         Label p = new Label("password:");
-        pw = new JTextField("password", 10);
+        pw = new JPasswordField("", 10);
         p1.add(userID);
         p2.add(p);
         p2.add(pw);
@@ -104,8 +104,10 @@ public class Login extends JFrame  {
                 String type=typeChooser.getSelectedItem();
                 System.out.println("logging in...");
                 if (id.equals("id")&&password.equals("password")){
-//                    MainUI.currentUser = new Customer("1","test","1","123456",123,0,0,null,null);
-                    MainUI.currentUser = new Courier("1","test","1","123456",null,null);
+                    MainUI.currentUser = new Customer("1","test","1","123456",123,0,0,null,null);
+//                    MainUI.currentUser = new Courier("1","test","1","123456",null,null);
+//                    MainUI.currentUser = new RestaurantManager("1","test","1","123456",null);
+
                     isvalid = true;
 
                 }else {

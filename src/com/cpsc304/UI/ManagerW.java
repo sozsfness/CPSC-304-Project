@@ -84,6 +84,8 @@ public class ManagerW extends JFrame {
         @Override
         public void windowClosing(WindowEvent e) {
             l.setVisible(true);
+            MainUI.managerLogOut();
+            dispose();
         }
 
         @Override
@@ -439,6 +441,13 @@ public class ManagerW extends JFrame {
             orderBtnListener o = new orderBtnListener();
             String evt = e.getActionCommand();
             if (evt.equals("searchOrder")){
+                try{
+                    Long.parseLong(from.getText());
+                    Long.parseLong(to.getText());
+                }catch (Exception ev){
+                    new ErrorMsg("Date format wrong! please put in the form of YYYYMMDD");
+                    return;
+                }
                 current.invalidate();
                 current.revalidate();
                 removeComponents(current);
@@ -446,12 +455,10 @@ public class ManagerW extends JFrame {
                 current.add(new Label(tmp.replace('\0','*')));
                 current.add(new Label("click on restaurant id to see related orders"));
                 if (!from.getText().equals("all")&&!to.getText().equals("all")) {
-                    try {
+
                         fromDate = Long.parseLong(from.getText());
                         toDate = Long.parseLong(to.getText());
-                    }catch (Exception ex){
-                        new ErrorMsg("Date format wrong! please put in the form of YYYYMMDD");
-                    }
+
                     for (Restaurant next : restaurants) {
                         Button temp = new Button(((Integer) next.getId()).toString());
                         temp.addActionListener(o);
@@ -618,11 +625,18 @@ public class ManagerW extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+
+            try {
+                Long.parseLong(from.getText());
+                Long.parseLong(to.getText());
+            }catch (Exception ex){
+                new ErrorMsg("Date format wrong! YYYYMMDD form required");
+                return;
+            }
             reportListener l = new reportListener();
             removeComponents(current);
             current.invalidate();
             current.revalidate();
-
             String tmp = new String(new char[80]);
             current.add(new Label(tmp.replace('\0','*')));
             String evt = e.getActionCommand();
@@ -670,7 +684,7 @@ public class ManagerW extends JFrame {
             }
         }
         private class PopularFood extends Frame{
-            JPanel current;
+            private  JPanel current;
             PopularFood(Restaurant r){
                 setLayout(new FlowLayout());
                 Container c = getContentPane();
@@ -728,6 +742,7 @@ public class ManagerW extends JFrame {
         private class Revenue extends Frame{
             JPanel current;
             Revenue(Restaurant r){
+
                 setLayout(new FlowLayout());
                 Container c = getContentPane();
                 c.setPreferredSize(new Dimension(500,500));
@@ -736,12 +751,10 @@ public class ManagerW extends JFrame {
                 current.setLayout(null);
                 current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
                 current.add(new Label("Revenue for restaurant "+r.getName()));
-                try {
+
                     fromDate = Long.parseLong(from.getText());
                     toDate = Long.parseLong(to.getText());
-                }catch (Exception ex){
-                    new ErrorMsg("Date format wrong! YYYYMMDD form required");
-                }
+
                 List<Order> orders = RestaurantManagerDBC.getOrders(r,new Date(fromDate),new Date(toDate));
                 for (Order next: orders){
                     current.add(new Label("Order id: "+next.getOrderID()+ " Amount: "+next.getAmount()+ " Ordered At: "+next.getDate()));
@@ -862,13 +875,21 @@ public class ManagerW extends JFrame {
                         String newName = na.getText();
                         String newNum = phone.getText();
                         String newPw = password.getText();
-                        currentUser.setName(newName);
-                        currentUser.setPassword(newPw);
-                        currentUser.setPhoneNum(newNum);
-                        UserDBC.updateUserInfo(currentUser);
-                        password.setEditable(false);
-                        na.setEditable(false);
-                        phone.setEditable(false);
+                        if (newPw.length()<6){
+                            new ErrorMsg("Password must be longer than 6 characters!");
+                        }else {
+                            if (newNum.length()!=10){
+                                new ErrorMsg("Phone number must be in Canadian format!");
+                            }else {
+                                currentUser.setName(newName);
+                                currentUser.setPassword(newPw);
+                                currentUser.setPhoneNum(newNum);
+                                UserDBC.updateUserInfo(currentUser);
+                                password.setEditable(false);
+                                na.setEditable(false);
+                                phone.setEditable(false);
+                            }
+                        }
                     }else {
                         password.setEditable(true);
                         na.setEditable(true);

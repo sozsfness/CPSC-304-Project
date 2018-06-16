@@ -78,7 +78,7 @@ public class CustomerDBC extends UserDBC {
         return null;
     }
 
-    public static List<Restaurant> getBestRestaurants(String type) throws SQLException {
+    public static List<Restaurant> getBestRestaurants(String type,boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
@@ -127,15 +127,15 @@ public class CustomerDBC extends UserDBC {
         return null;
     }
 
-    public static List<Restaurant> getRestaurantsOfRating(Integer rating) throws SQLException {
-        return getRankedRestaurants(null, rating);
+    public static List<Restaurant> getRestaurantsOfRating(Integer rating,boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
+        return getRankedRestaurants(null, rating,brating, bhours, bdeliveryOption, btype, baddress);
     }
 
-    public static List<Restaurant> getRankedRestaurants(List<String> foods) throws SQLException {
+    public static List<Restaurant> getRankedRestaurants(List<String> foods, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         //note food may be a string containing multiple food names,separated with commas
-        return getRankedRestaurants(foods, 0);
+        return getRankedRestaurants(foods,brating, bhours, bdeliveryOption, btype, baddress);
     }
-    public static List<Restaurant> getRankedRestaurants(List<String> foods,Integer minRating) throws SQLException {
+    public static List<Restaurant> getRankedRestaurants(List<String> foods,Integer minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         //note food may be a string containing multiple food names,separated with commas
         String sqlString;
         PreparedStatement pstmt;

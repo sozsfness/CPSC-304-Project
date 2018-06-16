@@ -43,4 +43,13 @@ public class MainUI {
             System.out.println("Connection failed");
         getLoginUI();
     }
+    public static void customerLogOut(){
+        customerUI=null;
+    }
+    public static void managerLogOut(){
+        managerUI=null;
+    }
+    public static void courierLogOut(){
+        courierUI=null;
+    }
 }

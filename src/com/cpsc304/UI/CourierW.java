@@ -68,6 +68,8 @@ public class CourierW extends JFrame{
         @Override
         public void windowClosing(WindowEvent e) {
             l.setVisible(true);
+            MainUI.courierLogOut();
+            dispose();
         }
 
         @Override
@@ -151,9 +153,15 @@ public class CourierW extends JFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             String evt = id.getText();
-            Integer id = Integer.parseInt(evt);
-            Delivery delivery = integerDeliveryMap.get(id);
-            new OrderDetail(delivery);
+            try{
+                Integer.parseInt(evt);
+                Integer id = Integer.parseInt(evt);
+                Delivery delivery = integerDeliveryMap.get(id);
+                new OrderDetail(delivery);
+            }catch (Exception ev){
+                new ErrorMsg("Please type in one integer only");
+            }
+
         }
     }
     private class OrderDetail extends JFrame{
@@ -212,16 +220,19 @@ public class CourierW extends JFrame{
                     if (delivery.getStatus().equals(OrderStatus.READY)){
                         s = OrderStatus.DELIVERING;
                         CustomerDBC.updateOrderStatus(delivery.getOrderID(),OrderStatus.DELIVERING);
+                        delivery.setStatus(s);
                     }else {
                         s = OrderStatus.DELIVERED;
                         CustomerDBC.updateOrderStatus(delivery.getOrderID(), OrderStatus.DELIVERED);
+                        delivery.setStatus(s);
                     }
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
-
-                current.add(new Label("Status: "+s));
+                status = new Label("Status: "+s);
+                current.add(status);
                 if (s.equals(OrderStatus.DELIVERING)){
+
                     current.add(change);
                 }
             }
@@ -294,6 +305,10 @@ public class CourierW extends JFrame{
         min.addActionListener(new reportListener());
         current.add(max);
         current.add(min);
+        current.add(new Label("Or view delivery fees over time per order per restaurant(grouped by restaurants) with statistics options "));
+        Button nested = new Button("View stats");
+        nested.addActionListener(new reportListener());
+        current.add(nested);
     }
     private class reportListener implements ActionListener{
 
@@ -302,6 +317,13 @@ public class CourierW extends JFrame{
             String fromDate = from.getText();
             String toDate = to.getText();
             String evt = e.getActionCommand();
+            try{
+                Long.parseLong(fromDate);
+                Long.parseLong(toDate);
+            }catch (Exception ev){
+                new ErrorMsg("Date format is incorrect. Please provide dates of format YYYYMMDD");
+                return;
+            }
 
             Long from = Long.parseLong(fromDate);
             Long to = Long.parseLong(toDate);
@@ -329,9 +351,25 @@ public class CourierW extends JFrame{
                 case "View Min":
                     buildReport(new Date(from),new Date(to),0);
                     break;
+                case "View stats":
+                    buildStats(new Date(from),new Date(to));
+                    break;
 
             }
         }
+    }
+    private void buildStats(Date from, Date to){
+        removeComponents(current);
+        current.invalidate();
+        current.revalidate();
+        current.setLayout(null);
+            current.setLayout(new FlowLayout());
+        String tmp = new String(new char[100]);
+        current.add(new Label(tmp.replace('\0','*')));
+        current.add(new Label("Statistics for delivery fees in the specified time period"));
+        current.add(new Label(tmp.replace('\0','*')));
+
+
     }
     private void buildReport(Date from, Date to, int max){
         Map<Integer,Double> income = CourierDBC.getMonthlyIncomes(from,to);
@@ -465,13 +503,21 @@ public class CourierW extends JFrame{
                         String newName = na.getText();
                         String newNum = phone.getText();
                         String newPw = password.getText();
-                        currentUser.setName(newName);
-                        currentUser.setPassword(newPw);
-                        currentUser.setPhoneNum(newNum);
-                        UserDBC.updateUserInfo(currentUser);
-                        password.setEditable(false);
-                        na.setEditable(false);
-                        phone.setEditable(false);
+                        if (newPw.length()<6){
+                            new ErrorMsg("Password must be longer than 6 characters!");
+                        }else {
+                            if (newNum.length()!=10){
+                                new ErrorMsg("Phone number must be in Canadian format!");
+                            }else {
+                                currentUser.setName(newName);
+                                currentUser.setPassword(newPw);
+                                currentUser.setPhoneNum(newNum);
+                                UserDBC.updateUserInfo(currentUser);
+                                password.setEditable(false);
+                                na.setEditable(false);
+                                phone.setEditable(false);
+                            }
+                        }
                     }else {
                         password.setEditable(true);
                         na.setEditable(true);

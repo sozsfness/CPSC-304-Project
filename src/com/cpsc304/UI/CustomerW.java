@@ -37,6 +37,12 @@ public class CustomerW extends JFrame{
     private List<Restaurant> restaurants=null;
     private JTextField reportFrom;
     private JTextField reportTo;
+    private Checkbox crating;
+    private Checkbox hours;
+    private Checkbox deliveryOption;
+    private Checkbox address;
+    private Checkbox ctype;
+
 
 
     CustomerW(Login l){
@@ -84,7 +90,11 @@ public class CustomerW extends JFrame{
 
         @Override
         public void windowClosing(WindowEvent e) {
+
             l.setVisible(true);
+
+            MainUI.customerLogOut();
+            dispose();
         }
 
         @Override
@@ -152,9 +162,26 @@ public class CustomerW extends JFrame{
         public void actionPerformed(ActionEvent e) {
             String dateFrom = datef.getText();
             String dateTo = datet.getText();
-            Integer resID = Integer.parseInt(res.getText());
+            Integer resID = 0;
+            boolean can = true;
+            try {
+                 Integer.parseInt(res.getText());
+            }catch (Exception ev){
+                new ErrorMsg("Please type in integer only for the restaurant id");
+                can = false;
+            }
+            try{
+                Long.parseLong(dateFrom);
+                Long.parseLong(dateTo);
+            }catch (Exception ev){
+                new ErrorMsg("Please provide dates of correct format(YYYYMMDD)");
+                can = false;
+            }
+            if (can) {
+                buildHistoryOrder(current, dateFrom, dateTo, resID);
+            }
 
-            buildHistoryOrder(current,dateFrom,dateTo,resID);
+
         }
     }
 
@@ -290,7 +317,11 @@ public class CustomerW extends JFrame{
                     p.invalidate();
                     p.revalidate();
                     status.setText(OrderStatus.CANCELLED.toString());
-//                   TODO:remove comment when dbc is implemented CustomerDBC.updateOrderStatus(order.getOrderID(),OrderStatus.CANCELLED);
+                    try {
+                        CustomerDBC.updateOrderStatus(order.getOrderID(),OrderStatus.CANCELLED);
+                    } catch (SQLException e1) {
+                        new ErrorMsg(e1.getMessage());
+                    }
                     order.setStatus(OrderStatus.CANCELLED);
                 }
             }
@@ -301,7 +332,11 @@ public class CustomerW extends JFrame{
                 public void actionPerformed(ActionEvent e) {
                     switch (order.getStatus()){
                         case DELIVERED:
-                            //TODO:remove comment when dbc is implemented CustomerDBC.updateOrderStatus(order.getOrderID(),OrderStatus.COMPLETE);
+                            try {
+                                CustomerDBC.updateOrderStatus(order.getOrderID(),OrderStatus.COMPLETE);
+                            } catch (SQLException e1) {
+                                new ErrorMsg(e1.getMessage());
+                            }
                             Container p = status.getParent();
                             p.invalidate();
                             p.revalidate();
@@ -385,9 +420,11 @@ public class CustomerW extends JFrame{
                 List<Order> orders = null;
                 try {
                     orders = CustomerDBC.getOrders(resID, new Date(from),new Date(to));
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                } catch (SQLException e1) {
+                    new ErrorMsg(e1.getMessage());
                 }
+
+
 
                 for (Order next : orders) {
                     Button o = new Button(Integer.toString(next.getOrderID()) + "(submitted on" + next.getDate() + ")");
@@ -408,12 +445,18 @@ public class CustomerW extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String evt = e.getActionCommand();
+                boolean isRateSelected = crating.getState();
+                boolean isAddSelected = address.getState();
+                boolean isHoursSelected = hours.getState();
+                boolean isTypeSelected = ctype.getState();
+                boolean isD = deliveryOption.getState();
+                //TODO: CHANGE BUILDNEWORDER METHOD
                 switch (evt){
                     case "Search":
                         try {
-                            buildNewOrder(food.getText(),type.getText(),rating.getText());
+                            buildNewOrder(food.getText(),type.getText(),rating.getText(),isRateSelected,isHoursSelected,isD,isTypeSelected,isAddSelected);
                         } catch (SQLException e1) {
-                            e1.printStackTrace();
+                            new ErrorMsg(e1.getMessage());
                         }
                         break;
                     case "re":
@@ -456,6 +499,20 @@ public class CustomerW extends JFrame{
             r.add(new Label("rating(1 to 5): "));
             rating = new JTextField("all");
             r.add(rating);
+            //checkbox
+            current.add(new Label("Please select extra info of restaurant you'd like to see in the restaurant list in search result"));
+            JPanel c = new JPanel(new GridLayout(1,5));
+            current.add(c);
+            crating = new Checkbox("rating",false);
+            c.add(crating);
+            hours = new Checkbox("hours",false);
+            c.add(hours);
+            deliveryOption = new Checkbox("deliveryOption",false);
+            c.add(deliveryOption);
+            ctype = new Checkbox("type",false);
+            c.add(ctype);
+            address = new Checkbox("address",false);
+            c.add(address);
             //button for submitting order search
             Button submitSearch = new Button("Search");
             submitSearch.addActionListener(new orderListener());
@@ -466,9 +523,10 @@ public class CustomerW extends JFrame{
             recommend.setActionCommand("re");
             current.add(recommend);
 
+
         }
 
-        private void buildNewOrder(String food, String resType, String rating) throws SQLException {
+        private void buildNewOrder(String food, String resType, String rating, boolean r, boolean h, boolean d, boolean t, boolean a) throws SQLException {
 
             List<String> foodList = Arrays.asList(food.split(","));
             String type = resType;
@@ -484,23 +542,54 @@ public class CustomerW extends JFrame{
             current.add(new Label("List of restaurants"));
             if (!foodList.get(0).equals("all")) {
                 if (rate.equals("all")){
-                    restaurants = CustomerDBC.getRankedRestaurants(foodList);
+                    restaurants = CustomerDBC.getRankedRestaurants(foodList,r,h,d,t,a);
                 }else {
-                    restaurants = CustomerDBC.getRankedRestaurants(foodList,Integer.parseInt(rating));
+                    restaurants = CustomerDBC.getRankedRestaurants(foodList,Integer.parseInt(rating),r,h,d,t,a);
                 }
             }else{
                 if (!type.equals("all")) {
-                    restaurants = CustomerDBC.getBestRestaurants(type);
+                    restaurants = CustomerDBC.getBestRestaurants(type,r,h,d,t,a);
                 }else{
                     if (!rate.equals("all")) {
-                        restaurants = CustomerDBC.getRestaurantsOfRating(Integer.parseInt(rate));
+                        restaurants = CustomerDBC.getRestaurantsOfRating(Integer.parseInt(rate),r,h,d,t,a);
                     }
                 }
             }
             if (restaurants!=null){
                 for (Restaurant next: restaurants){
+                    String info = "(";
+                    if (r){
+                        info+="Rating: ";
+                        info+=next.getRating();
+                        info+=" ";
+                    }
+                    if (h){
+                        info+="Hours: ";
+                        info+=next.getOpenTime();
+                        info+=" to ";
+                        info+=next.getCloseTime();
+                        info+=" ";
+                    }
+                    if (d){
+                        info+="Delivery Option: ";
+                        info+=next.isDeliveryOption();
+                        info+=" ";
+                    }
+                    if (t){
+                        info+="Type: ";
+                        info+=next.getType();
+                        info+=" ";
+                    }
+                    if (a){
+                        info+="Address: ";
+                        String temp = "";
+                        temp = next.getAddress().getHouseNum() + " " + next.getAddress().getStreet() + ", " + next.getAddress().getCity() + " " + next.getAddress().getProvince() + ", " + next.getAddress().getPostalCode();
+                        info+=temp;
+                        info+=" ";
+                    }
+                    info+=")";
                     JPanel m = new JPanel(new FlowLayout());
-                    m.add(new Label("Restaurant name: "+next.getName()+"ID: "));
+                    m.add(new Label("Restaurant name: "+next.getName()+"ID: "+info));
                     Button resB = new Button(((Integer)next.getId()).toString());
                     resB.addActionListener(new resSelectListener());
                     m.add(resB);
@@ -575,7 +664,6 @@ public class CustomerW extends JFrame{
                 String tmp = new String(new char[100]);
                 add(new Label(tmp.replace('\0','*')));
                 add(new Label("Restaurant: " +r.getName() ));
-                add(new Label(" Location: "+r.getAddress()));
                 add(new Label(" Hours: "+r.getOpenTime()+ " to "+r.getCloseTime()));
                 add(new Label(" Rating: "+r.getRating()));
                 add(new Label(tmp.replace('\0','*')));
@@ -674,7 +762,7 @@ public class CustomerW extends JFrame{
                         try {
                             CustomerDBC.commitOrder(currentOrder);
                         } catch (SQLException e1) {
-                            e1.printStackTrace();
+                            new ErrorMsg(e1.getMessage());
                         }
                         dispose();
                     }
@@ -706,13 +794,21 @@ public class CustomerW extends JFrame{
                             String newName = na.getText();
                             String newNum = phone.getText();
                             String newPw = password.getText();
-                            currentUser.setName(newName);
-                            currentUser.setPassword(newPw);
-                            currentUser.setPhoneNum(newNum);
-                            UserDBC.updateUserInfo(currentUser);
-                            password.setEditable(false);
-                            na.setEditable(false);
-                            phone.setEditable(false);
+                            if (newPw.length()<6){
+                                new ErrorMsg("Password must be longer than 6 characters!");
+                            }else {
+                                if (newNum.length()!=10){
+                                    new ErrorMsg("Phone number must be in Canadian format!");
+                                }else {
+                                    currentUser.setName(newName);
+                                    currentUser.setPassword(newPw);
+                                    currentUser.setPhoneNum(newNum);
+                                    UserDBC.updateUserInfo(currentUser);
+                                    password.setEditable(false);
+                                    na.setEditable(false);
+                                    phone.setEditable(false);
+                                }
+                            }
                         }else {
                             password.setEditable(true);
                             na.setEditable(true);
@@ -809,9 +905,14 @@ public class CustomerW extends JFrame{
                 if (fromDate.equals("all")&&toDate.equals("all")){
                     buildReport(null,null);
                 }else {
-                    Long from = Long.parseLong(fromDate);
-                    Long to = Long.parseLong(toDate);
-                    buildReport(new Date(from), new Date(to));
+                    try {
+                        Long from = Long.parseLong(fromDate);
+                        Long to = Long.parseLong(toDate);
+                        buildReport(new Date(from), new Date(to));
+                    }catch (Exception ev){
+                        new ErrorMsg("Wrong date format. Only supports form of YYYYMMDD");
+                    }
+
                 }
             }
         }
