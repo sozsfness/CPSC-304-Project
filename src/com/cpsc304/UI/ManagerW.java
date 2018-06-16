@@ -881,13 +881,18 @@ public class ManagerW extends JFrame {
                             if (newNum.length()!=10){
                                 new ErrorMsg("Phone number must be in Canadian format!");
                             }else {
-                                currentUser.setName(newName);
-                                currentUser.setPassword(newPw);
-                                currentUser.setPhoneNum(newNum);
-                                UserDBC.updateUserInfo(currentUser);
-                                password.setEditable(false);
-                                na.setEditable(false);
-                                phone.setEditable(false);
+                                try{
+                                    Integer.parseInt(newNum);
+                                    currentUser.setName(newName);
+                                    currentUser.setPassword(newPw);
+                                    currentUser.setPhoneNum(newNum);
+                                    UserDBC.updateUserInfo(currentUser);
+                                    password.setEditable(false);
+                                    na.setEditable(false);
+                                    phone.setEditable(false);
+                                }catch (Exception ev){
+                                    new ErrorMsg("Phone number contains letters? Incorrect");
+                                }
                             }
                         }
                     }else {
