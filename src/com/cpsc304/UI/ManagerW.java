@@ -319,13 +319,17 @@ public class ManagerW extends JFrame {
                         menu.invalidate();
                         menu.revalidate();
                         Food toA = new Food(na.getText(),restaurant,Double.parseDouble(pr.getText()));
-//                        try {
-//                            RestaurantManagerDBC.addToMenu(toA);
-//                        } catch (SQLException e1) {
-//                            e1.printStackTrace();
-//                        }
+                        try {
+                            RestaurantManagerDBC.addToMenu(toA);
+                        } catch (SQLException e1) {
+                            new ErrorMsg(e1.getMessage());
+                        }
                         JPanel temp = new JPanel(new FlowLayout());
-                        temp.add(new Label("Food name: "+na.getText()+" Price: $"+Double.parseDouble(pr.getText())));
+                        try {
+                            temp.add(new Label("Food name: " + na.getText() + " Price: $" + Double.parseDouble(pr.getText())));
+                        }catch (Exception ex){
+                            new ErrorMsg(ex.getMessage());
+                        }
                         menu.add(temp);
                         Button del = new Button("delete food");
                         del.setActionCommand(na.getText());
@@ -348,7 +352,7 @@ public class ManagerW extends JFrame {
                         try {
                             RestaurantManagerDBC.deleteInMenu(restaurant, todel);
                         } catch (SQLException e1) {
-                            e1.printStackTrace();
+                            new ErrorMsg(e1.getMessage());
                         }
                         menu.invalidate();
                         menu.revalidate();
@@ -442,8 +446,12 @@ public class ManagerW extends JFrame {
                 current.add(new Label(tmp.replace('\0','*')));
                 current.add(new Label("click on restaurant id to see related orders"));
                 if (!from.getText().equals("all")&&!to.getText().equals("all")) {
-                     fromDate = Long.parseLong(from.getText());
-                     toDate = Long.parseLong(to.getText());
+                    try {
+                        fromDate = Long.parseLong(from.getText());
+                        toDate = Long.parseLong(to.getText());
+                    }catch (Exception ex){
+                        new ErrorMsg("Date format wrong! please put in the form of YYYYMMDD");
+                    }
                     for (Restaurant next : restaurants) {
                         Button temp = new Button(((Integer) next.getId()).toString());
                         temp.addActionListener(o);
@@ -728,8 +736,12 @@ public class ManagerW extends JFrame {
                 current.setLayout(null);
                 current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
                 current.add(new Label("Revenue for restaurant "+r.getName()));
-                fromDate = Long.parseLong(from.getText());
-                toDate = Long.parseLong(to.getText());
+                try {
+                    fromDate = Long.parseLong(from.getText());
+                    toDate = Long.parseLong(to.getText());
+                }catch (Exception ex){
+                    new ErrorMsg("Date format wrong! YYYYMMDD form required");
+                }
                 List<Order> orders = RestaurantManagerDBC.getOrders(r,new Date(fromDate),new Date(toDate));
                 for (Order next: orders){
                     current.add(new Label("Order id: "+next.getOrderID()+ " Amount: "+next.getAmount()+ " Ordered At: "+next.getDate()));

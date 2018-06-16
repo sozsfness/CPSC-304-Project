@@ -1,4 +1,5 @@
 package com.cpsc304.UI;
+import com.cpsc304.JDBC.CustomerDBC;
 import com.cpsc304.JDBC.LoginDBC;
 import com.cpsc304.model.Courier;
 import com.cpsc304.model.Customer;
@@ -111,7 +112,7 @@ public class Login extends JFrame  {
                     try {
                         isvalid = LoginDBC.verify(type, id, password);
                     } catch (SQLException e) {
-                        e.printStackTrace();
+                        new ErrorMsg(e.getMessage());
                     }
                 }
                 //submit the userid and pw to remote server
@@ -119,7 +120,7 @@ public class Login extends JFrame  {
                     switch (type){
                         case "customer":
                             //TODO:HOW CONSTRUCTORS WORKS? CONSTRUCTOR CALLS METHOD IN JDBC TO RETRIEVE DATA FROM REMOTE DB
-//                            MainUI.currentUser = new Customer();
+//                            CustomerDBC.;
                             System.out.println("customer.");
                             MainUI.getCustomerUI();
                             t.setVisible(false);
@@ -141,6 +142,8 @@ public class Login extends JFrame  {
                     }
 
 
+                }else{
+                    new ErrorMsg("Combination of user id and password invalid! Try again.");
                 }
             }
         }
