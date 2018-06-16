@@ -508,7 +508,8 @@ public class CourierW extends JFrame{
                         }else {
                             if (newNum.length()!=10){
                                 new ErrorMsg("Phone number must be in Canadian format!");
-                            }else {
+                            }try{
+                                Integer.parseInt(newNum);
                                 currentUser.setName(newName);
                                 currentUser.setPassword(newPw);
                                 currentUser.setPhoneNum(newNum);
@@ -516,6 +517,8 @@ public class CourierW extends JFrame{
                                 password.setEditable(false);
                                 na.setEditable(false);
                                 phone.setEditable(false);
+                            }catch (Exception ev){
+                                new ErrorMsg("Phone number contains letters? Incorrect");
                             }
                         }
                     }else {

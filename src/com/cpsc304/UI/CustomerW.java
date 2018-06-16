@@ -3,6 +3,7 @@ package com.cpsc304.UI;
 import com.cpsc304.JDBC.CustomerDBC;
 import com.cpsc304.JDBC.UserDBC;
 import com.cpsc304.model.*;
+import com.sun.org.apache.regexp.internal.RE;
 
 import javax.swing.*;
 import java.awt.*;
@@ -460,7 +461,7 @@ public class CustomerW extends JFrame{
                         }
                         break;
                     case "re":
-                        buildNewOrder();
+                        buildNewOrder(isRateSelected,isHoursSelected,isD,isTypeSelected,isAddSelected);
                         break;
 
                 }
@@ -540,6 +541,9 @@ public class CustomerW extends JFrame{
             current.add(new Label(tmp.replace('\0','*')));
 
             current.add(new Label("List of restaurants"));
+
+            current.add(new Label("Click on restaurant id to open restaurant menu"));
+            current.add(new Label(tmp.replace('\0','*')));
             if (!foodList.get(0).equals("all")) {
                 if (rate.equals("all")){
                     restaurants = CustomerDBC.getRankedRestaurants(foodList,r,h,d,t,a);
@@ -583,25 +587,68 @@ public class CustomerW extends JFrame{
                     if (a){
                         info+="Address: ";
                         String temp = "";
+
                         temp = next.getAddress().getHouseNum() + " " + next.getAddress().getStreet() + ", " + next.getAddress().getCity() + " " + next.getAddress().getProvince() + ", " + next.getAddress().getPostalCode();
                         info+=temp;
                         info+=" ";
                     }
                     info+=")";
                     JPanel m = new JPanel(new FlowLayout());
-                    m.add(new Label("Restaurant name: "+next.getName()+"ID: "+info));
+                    m.add(new Label("Restaurant name: "+next.getName()+" ID: "));
                     Button resB = new Button(((Integer)next.getId()).toString());
                     resB.addActionListener(new resSelectListener());
                     m.add(resB);
+                    m.add(new Label(info));
                     current.add(m);
                 }
             }else{
+                //TODO: DELETE THIS
+                restaurants = new LinkedList<>();
+                restaurants.add(new Restaurant(null,0,null,null,null,0,false,null,null,null));
+                Restaurant r0 = restaurants.get(0);
+                JPanel m = new JPanel(new FlowLayout());
 
-                    current.add(new Label("restaurants not found."));
+                String info = "(";
+                if (r){
+                    info+="Rating: ";
+                    info+=r0.getRating();
+                    info+=" ";
+                }
+                if (h){
+                    info+="Hours: ";
+                    info+=r0.getOpenTime();
+                    info+=" to ";
+                    info+=r0.getCloseTime();
+                    info+=" ";
+                }
+                if (d){
+                    info+="Delivery Option: ";
+                    info+=r0.isDeliveryOption();
+                    info+=" ";
+                }
+                if (t){
+                    info+="Type: ";
+                    info+=r0.getType();
+                    info+=" ";
+                }
+                if (a){
+                    info+="Address: ";
+                    String temp = "";
+                    temp = r0.getAddress().getHouseNum() + " " + r0.getAddress().getStreet() + ", " + r0.getAddress().getCity() + " " + r0.getAddress().getProvince() + ", " + r0.getAddress().getPostalCode();
+                    info+=temp;
+                    info+=" ";
+                }
+                info+=")";
+                m.add(new Label("Restaurant name: " + r0.getName() + " ID: "));
+                Button resB = new Button(((Integer) r0.getId()).toString());
+                resB.addActionListener(new resSelectListener());
+                m.add(resB);
+                m.add(new Label(info));
+                current.add(m);
 
             }
         }
-    private void buildNewOrder(){
+    private void buildNewOrder(boolean r, boolean h, boolean d, boolean t, boolean a){
 
         restaurants=CustomerDBC.getRecommendedRestaurants();
         removeComponents(current);
@@ -612,24 +659,69 @@ public class CustomerW extends JFrame{
         String tmp = new String(new char[80]);
         current.add(new Label(tmp.replace('\0','*')));
 
+
         current.add(new Label("Recommendation of restaurants"));
+        current.add(new Label("Click on restaurant id to open restaurant menu"));
+        current.add(new Label(tmp.replace('\0','*')));
 
         if (restaurants!=null){
             if (restaurants.size()==0){
                 current.add(new Label("restaurants not found."));
             }else {
                 for (Restaurant next : restaurants) {
+                    String info = "(";
+                    if (r){
+                        info+="Rating: ";
+                        info+=next.getRating();
+                        info+=" ";
+                    }
+                    if (h){
+                        info+="Hours: ";
+                        info+=next.getOpenTime();
+                        info+=" to ";
+                        info+=next.getCloseTime();
+                        info+=" ";
+                    }
+                    if (d){
+                        info+="Delivery Option: ";
+                        info+=next.isDeliveryOption();
+                        info+=" ";
+                    }
+                    if (t){
+                        info+="Type: ";
+                        info+=next.getType();
+                        info+=" ";
+                    }
+                    if (a){
+                        info+="Address: ";
+                        String temp = "";
+
+                        temp = next.getAddress().getHouseNum() + " " + next.getAddress().getStreet() + ", " + next.getAddress().getCity() + " " + next.getAddress().getProvince() + ", " + next.getAddress().getPostalCode();
+                        info+=temp;
+                        info+=" ";
+                    }
+                    info+=")";
                     JPanel m = new JPanel(new FlowLayout());
-                    m.add(new Label("Restaurant name: " + next.getName() + "ID: "));
-                    Button resB = new Button(((Integer) next.getId()).toString());
+                    m.add(new Label("Restaurant name: "+next.getName()+" ID: "));
+                    Button resB = new Button(((Integer)next.getId()).toString());
                     resB.addActionListener(new resSelectListener());
                     m.add(resB);
+                    m.add(new Label(info));
                     current.add(m);
                 }
             }
 
         }else{
-            current.add(new Label("restaurants not found."));
+            //TODO:DELETE THIS
+            restaurants = new LinkedList<>();
+            restaurants.add(new Restaurant(null,0,null,null,null,0,false,null,null,null));
+            Restaurant r0 = restaurants.get(0);
+            JPanel m = new JPanel(new FlowLayout());
+            m.add(new Label("Restaurant name: " + r0.getName() + " ID: "));
+            Button resB = new Button(((Integer) r0.getId()).toString());
+            resB.addActionListener(new resSelectListener());
+            m.add(resB);
+            current.add(m);
         }
     }
 
@@ -675,16 +767,18 @@ public class CustomerW extends JFrame{
                 j.revalidate();
                 j.setLayout(null);
                 j.setLayout(new BoxLayout(j,BoxLayout.PAGE_AXIS));
-                for (Map.Entry<String,Food> next: offers.entrySet()){
-                    JPanel tmpFood= new JPanel(new FlowLayout());
-                    tmpFood.add(new Label(next.getKey()+" "));
-                    tmpFood.add(new Label("Price: "+ next.getValue().getPrice()));
-                    tmpFood.add(new Label("Quantity: "));
-                    JTextField quantity = new JTextField("0");
-                    quantity.setName(next.getKey());
-                    tmpFood.add(quantity);
-                    j.add(tmpFood);
-                    fields.put(next.getValue(),quantity);
+                if (offers!=null) {
+                    for (Map.Entry<String, Food> next : offers.entrySet()) {
+                        JPanel tmpFood = new JPanel(new FlowLayout());
+                        tmpFood.add(new Label(next.getKey() + " "));
+                        tmpFood.add(new Label("Price: " + next.getValue().getPrice()));
+                        tmpFood.add(new Label("Quantity: "));
+                        JTextField quantity = new JTextField("0");
+                        quantity.setName(next.getKey());
+                        tmpFood.add(quantity);
+                        j.add(tmpFood);
+                        fields.put(next.getValue(), quantity);
+                    }
                 }
 
                 if (r.isDeliveryOption()){
@@ -800,13 +894,19 @@ public class CustomerW extends JFrame{
                                 if (newNum.length()!=10){
                                     new ErrorMsg("Phone number must be in Canadian format!");
                                 }else {
-                                    currentUser.setName(newName);
-                                    currentUser.setPassword(newPw);
-                                    currentUser.setPhoneNum(newNum);
-                                    UserDBC.updateUserInfo(currentUser);
-                                    password.setEditable(false);
-                                    na.setEditable(false);
-                                    phone.setEditable(false);
+                                    try{
+                                        Integer.parseInt(newNum);
+                                        currentUser.setName(newName);
+                                        currentUser.setPassword(newPw);
+                                        currentUser.setPhoneNum(newNum);
+                                        UserDBC.updateUserInfo(currentUser);
+                                        password.setEditable(false);
+                                        na.setEditable(false);
+                                        phone.setEditable(false);
+                                    }catch (Exception ev){
+                                        new ErrorMsg("Phone number contains letters? Incorrect");
+                                    }
+
                                 }
                             }
                         }else {
