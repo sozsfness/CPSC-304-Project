@@ -152,7 +152,6 @@ public class CustomerDBC extends UserDBC {
         ResultSet rs;
         Restaurant rest;
         List<Restaurant> restaurants = new ArrayList<>();
-        ResourceManager rm = ResourceManager.getInstance();
         con.setAutoCommit(false);
         sqlString = "SELECT resID, res_name";
         if (brating)
@@ -216,8 +215,8 @@ public class CustomerDBC extends UserDBC {
 
     public static List<Order> getOrders(Date startDate, Date endDate) throws SQLException {
         List<Order> orders = new ArrayList<>();
-        List<Pickup> pickups = getPickups(0, startDate, endDate);
-        List<Delivery> deliveries = getDeliveries(0, startDate, endDate);
+        List<Order> pickups = getPickups(0, startDate, endDate);
+        List<Order> deliveries = getDeliveries(0, startDate, endDate);
         con.setAutoCommit(false);
         for (Order order : pickups) {
             orders.add(order);
@@ -230,8 +229,8 @@ public class CustomerDBC extends UserDBC {
 
     public static List<Order> getOrders(int resID, Date startDate, Date endDate) throws SQLException {
             List<Order> orders = new ArrayList<>();
-            List<Pickup> pickups = getPickups(resID, startDate, endDate);
-            List<Delivery> deliveries = getDeliveries(resID, startDate, endDate);
+            List<Order> pickups = getPickups(resID, startDate, endDate);
+            List<Order> deliveries = getDeliveries(resID, startDate, endDate);
             con.setAutoCommit(false);
             for (Order order : pickups) {
                 orders.add(order);
@@ -243,13 +242,13 @@ public class CustomerDBC extends UserDBC {
         }
 
         //resID == 0 means no rest restrictions
-        public static List<Pickup> getPickups(int resID, Date startDate, Date endDate) throws SQLException {
+        public static List<Order> getPickups(int resID, Date startDate, Date endDate) throws SQLException {
             String sqlString;
             PreparedStatement pstmt;
             ResultSet rs;
             Pickup pickup;
             ResourceManager rm = ResourceManager.getInstance();
-            List<Pickup> pickups = new ArrayList<>();
+            List<Order> pickups = new ArrayList<>();
             if (MainUI.currentUser == null) return null;
             sqlString = "SELECT o.*, estimated_ready_time";
             sqlString += "FROM order o, pick_up p";
@@ -280,13 +279,13 @@ public class CustomerDBC extends UserDBC {
             return pickups;
         }
 
-        public static List<Delivery> getDeliveries(int resID, Date startDate, Date endDate) throws SQLException {
+        public static List<Order> getDeliveries(int resID, Date startDate, Date endDate) throws SQLException {
             String sqlString;
             PreparedStatement pstmt;
             ResultSet rs;
             Delivery delivery;
             ResourceManager rm = ResourceManager.getInstance();
-            List<Delivery> deliveries = new ArrayList<>();
+            List<Order> deliveries = new ArrayList<>();
             if (MainUI.currentUser == null) return null;
             sqlString = "SELECT o.*, delivery_fee, courierID, postal_code, street, house#";
             sqlString += "FROM order o, customer, delivery_delivers d, courier, user";

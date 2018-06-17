@@ -43,13 +43,13 @@ public abstract class UserDBC {
         sqlString = "SELECT userPass, phone# AS BIGINT, userName FROM users where userID = '"+userID+"'";
         rs = stmt.executeQuery(sqlString);
         rs.next();
-        System.out.println(sqlString);
-        System.out.println(rs.getRow());
+//        System.out.println(sqlString);
+//        System.out.println(rs.getRow());
         User user = null;
 
             String password = rs.getString(1);
             String phoneNum = ((BigDecimal)(rs.getBigDecimal(2))).toString();
-            System.out.println(phoneNum);//successful
+            //System.out.println(phoneNum);//successful
             String userName = rs.getString(3);
             user = new User(userID, userName, password, phoneNum) {
             };

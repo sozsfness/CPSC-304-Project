@@ -1,16 +1,17 @@
 package com.cpsc304.model;
 
+import com.cpsc304.JDBC.LoginDBC;
+import com.cpsc304.UI.Login;
+
+import java.sql.SQLException;
 import java.util.Map;
 
 public class ResourceManager {
 
     // all data are update-to-date
-    private static Map<Integer, Pickup> pickupMap;
-    private static Map<Integer, Delivery> deliveryMap;
-    private static Map<String, Customer> customerMap;
     private static Map<String, Courier> courierMap;
     private static Map<String, RestaurantManager> managerMap;
-    private static Map<String, Restaurant> restaurantMap;
+    private static Map<Integer, Restaurant> restaurantMap;
     private static ResourceManager ourInstance = new ResourceManager();
 
     public static ResourceManager getInstance() {
@@ -19,19 +20,14 @@ public class ResourceManager {
 
     //TODO:
     private ResourceManager() {
-
-    }
-
-    public Pickup getPickup(int ID) {
-        return pickupMap.get(ID);
-    }
-
-    public Delivery delivery(int ID) {
-        return deliveryMap.get(ID);
-    }
-
-    public Customer getCustomer(String ID) {
-        return customerMap.get(ID);
+        try {
+            courierMap = LoginDBC.getCouriers();
+            managerMap = LoginDBC.getManagers();
+            restaurantMap = LoginDBC.getRestaurants();
+        } catch (SQLException e) {
+            System.out.println("Initialization fails");
+            e.printStackTrace();
+        }
     }
 
     public Courier getCourier(String ID) {
