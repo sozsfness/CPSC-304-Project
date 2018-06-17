@@ -17,15 +17,16 @@ public class CustomerDBC extends UserDBC {
         User user = getUser(custID);
         System.out.println("user constructed");
         Customer customer = null;
+        con.setAutoCommit(false);
         //Statement stmt = con.createStatement();
         ResultSet rs;
         sqlString = "SELECT cus_spending, points, vip_level ";
         sqlString += "FROM customer, points, vip_level ";
         sqlString += "WHERE cus_userID = '"+custID+"' AND cus_spending = spending";
         pstmt = con.prepareStatement(sqlString);
-        pstmt.setString(1, custID);
 
         rs = pstmt.executeQuery();
+        con.commit();
         //rs = stmt.executeQuery(sqlString);
         System.out.println(rs.getRow());
         rs.next();

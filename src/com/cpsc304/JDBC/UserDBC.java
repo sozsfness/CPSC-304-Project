@@ -30,6 +30,7 @@ public abstract class UserDBC {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
+        con.setAutoCommit(false);
         sqlString = "SELECT userPass, phone# AS BIGINT, userName ";
         sqlString += "FROM users WHERE userID = ?";
         pstmt = con.prepareStatement(sqlString);
@@ -40,9 +41,8 @@ public abstract class UserDBC {
 //        sqlString = "SELECT userPass, phone# AS BIGINT, userName FROM users where userID = '"+userID+"'";
 //        rs = stmt.executeQuery(sqlString);
         con.commit();
-        System.out.println(sqlString);
         if (rs.next()) {
-
+            System.out.println("user found");
             String password = rs.getString(1);
             String phoneNum = ((BigDecimal) (rs.getBigDecimal(2))).toString();
             //System.out.println(phoneNum);//successful
