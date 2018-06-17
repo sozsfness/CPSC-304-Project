@@ -17,10 +17,10 @@ public class LoginDBC {
     //verify user's password
     public static boolean verify(String type, String userID, String password) throws SQLException {
         String sqlString;
-        PreparedStatement pstmt;
+        Statement stmt = con.createStatement();
         ResultSet rs;
-        con.setAutoCommit(false);
-        sqlString = "SELECT COUNT(*) FROM ";
+        con.setAutoCommit(true);
+        sqlString = "SELECT * FROM ";
         switch (type) {
             case "customer":
                 sqlString += "customer WHERE cus_";
@@ -35,31 +35,28 @@ public class LoginDBC {
                 System.out.println("type error");
                 return false;
         }
-        sqlString += "userID = ?";
-        pstmt = con.prepareStatement(sqlString);
-        pstmt.setString(1, userID);
-        rs = pstmt.executeQuery();
-        con.commit();
-        //System.out.println(sqlString);
-        if (rs.next())
-            System.out.println(rs.getInt(1));
+        sqlString += "userID = '" + userID + "'";
+        rs = stmt.executeQuery(sqlString);
+        System.out.println(sqlString);
+        rs.next();
+        System.out.println(rs.getRow());
         if (rs.getRow() != 1) {
             System.out.println("User in current type doesn't exist.");
             return false;
         }
-        sqlString = "SELECT count(*) FROM users WHERE userID = '" + userID + "' ";
+        sqlString = "SELECT * FROM users WHERE userID = '" + userID + "' ";
         sqlString += "AND userPass = '" + password + "'";
-        pstmt.close();
+        stmt.close();
 
-        pstmt = con.prepareStatement(sqlString);
-        rs = pstmt.executeQuery();
-        con.commit();
-        if (rs.next())
-            System.out.println(rs.getInt(1));
+        stmt = con.createStatement();
+        rs = stmt.executeQuery(sqlString);
+        //con.commit();
+        rs.next();
         if (rs.getRow() == 0) {
             System.out.println("Password Error");
             return false;
         }
+        System.out.println(true);
         return true;
     }
 
