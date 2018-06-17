@@ -941,7 +941,7 @@ public class CustomerW extends JFrame{
                                     new ErrorMsg("Phone number must be in Canadian format!");
                                 }else {
                                     try{
-                                        Integer.parseInt(newNum);
+                                        Long.parseLong(newNum);
 
                                     }catch (Exception ev){
                                         new ErrorMsg("Phone number contains letters? Incorrect");
@@ -1070,7 +1070,12 @@ public class CustomerW extends JFrame{
         }
 
         private void buildReport(Date from, Date to){
-            List<Order> orders = CustomerDBC.getOrdersInTimePeriod(from,to);
+            List<Order> orders = null;
+            try {
+                orders = CustomerDBC.getOrders(from,to);
+            } catch (SQLException e) {
+                new ErrorMsg(e.getMessage());
+            }
             removeComponents(current);
             current.invalidate();
             current.revalidate();
@@ -1087,8 +1092,11 @@ public class CustomerW extends JFrame{
                 current.add(new Label("No orders found. Try again?"));
                 return;
             }
-            current.add(new Label("Total spending in selected time period: "+CustomerDBC.getSpending(from,to)));
-            current.add(new Label("Change in vip points: "+CustomerDBC.getChangedPoints(from,to)));
+            try {
+                current.add(new Label("Total spending in selected time period: "+CustomerDBC.getSpending(from,to)));
+            } catch (SQLException e) {
+                new ErrorMsg(e.getMessage());
+            }
 
         }
 }

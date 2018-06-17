@@ -425,13 +425,13 @@ public class CourierW extends JFrame{
         }else{
             if (a1.getSelectedItem().equals("Count")){
                 try {
-                    current.add(new Label("Result: "+CourierDBC.getFirstCount(a2.getSelectedItem())));
+                    current.add(new Label("Result: "+CourierDBC.getFirstCount(a2.getSelectedItem(),currentUser.getUserID())));
                 } catch (SQLException e) {
                     new ErrorMsg(e.getMessage());
                 }
             }else{
                 try {
-                    current.add(new Label("Result: "+CourierDBC.getSecondCount(a1.getSelectedItem())));
+                    current.add(new Label("Result: "+CourierDBC.getSecondCount(a1.getSelectedItem(),currentUser.getUserID())));
                 } catch (SQLException e) {
                     new ErrorMsg(e.getMessage());
                 }
