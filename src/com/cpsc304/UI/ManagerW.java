@@ -30,7 +30,7 @@ public class ManagerW extends JFrame {
     private JTextField from;
     private JTextField to;
 
-    private Map<Integer,Restaurant> integerRestaurantMap = new HashMap<>();
+    private Map<Integer,Restaurant> integerRestaurantMap;
     private Set<Restaurant> restaurants;
     Long fromDate;
     Long toDate;
@@ -130,8 +130,14 @@ public class ManagerW extends JFrame {
                     beforeBuildingReport(current);
                     break;
                 case "delete":
-                    Restaurant toDelete = integerRestaurantMap.get(Integer.parseInt(((Button)e.getSource()).getName()));
-                    RestaurantManagerDBC.deleteRestaurant(toDelete);
+
+                    try {
+                        RestaurantManagerDBC.deleteRestaurant(Integer.parseInt(e.getActionCommand()));
+                    } catch (SQLException e1) {
+                        new ErrorMsg(e1.getMessage());
+                        break;
+                    }
+
                     removeComponents(current);
                     current.invalidate();
                     current.revalidate();
@@ -175,6 +181,7 @@ public class ManagerW extends JFrame {
         current.revalidate();
         current.setLayout(null);
         current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
+        integerRestaurantMap = new HashMap<>();
         String tmp = new String(new char[80]);
         current.add(new Label(tmp.replace('\0','*')));
         current.add(new Label("Restaurants"));
@@ -191,7 +198,8 @@ public class ManagerW extends JFrame {
                 p.add(id);
                 id.addActionListener(m);
                 Button temp = new Button("delete");
-                temp.setName(((Integer) next.getId()).toString());
+//                temp.setName(((Integer) next.getId()).toString());
+                temp.setActionCommand(((Integer) next.getId()).toString());
                 p.add(temp);
                 temp.addActionListener(b);
             }
@@ -203,7 +211,7 @@ public class ManagerW extends JFrame {
             p.add(id);
             id.addActionListener(m);
             Button temp = new Button("delete");
-            temp.setName("0");
+            temp.setActionCommand("0");
             p.add(temp);
             temp.addActionListener(b);
             integerRestaurantMap.put(0,new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null));
@@ -694,7 +702,12 @@ public class ManagerW extends JFrame {
                 current.setLayout(null);
                 current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
                 current.add(new Label("Popular dishes for restaurant "+r.getName()));
-                List<Food> foods = RestaurantManagerDBC.getPopularDish(r);
+                List<Food> foods = null;
+                try {
+                    foods = RestaurantManagerDBC.getPopularDish(r);
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                }
                 for (Food next: foods){
                     current.add(new Label("Food name: "+next.getName()+ "Price: "+next.getPrice()));
                 }

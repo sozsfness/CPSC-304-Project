@@ -43,6 +43,7 @@ public class CustomerW extends JFrame{
     private Checkbox deliveryOption;
     private Checkbox address;
     private Checkbox ctype;
+    private Map<Integer,Order> integerOrderMap = new HashMap<>();
 
 
 
@@ -228,7 +229,7 @@ public class CustomerW extends JFrame{
                 new OrderDetails(new Delivery((Customer) currentUser,1,null,null,0,OrderStatus.SUBMITTED,null,null,0,null,null,null) {
                 });
             }else{
-                order = UserDBC.getOrder(orderID);
+                order = integerOrderMap.get(Integer.parseInt(orderID));
                 new OrderDetails(order);
             }
         }
@@ -431,6 +432,7 @@ public class CustomerW extends JFrame{
                     Button o = new Button(Integer.toString(next.getOrderID()) + "(submitted on" + next.getDate() + ")");
                     current.add(o);
                     o.addActionListener(l);
+                    integerOrderMap.put(next.getOrderID(),next);
                 }
                 Button o = new Button("test");
                 current.add(o);
@@ -896,16 +898,22 @@ public class CustomerW extends JFrame{
                                 }else {
                                     try{
                                         Integer.parseInt(newNum);
-                                        currentUser.setName(newName);
-                                        currentUser.setPassword(newPw);
-                                        currentUser.setPhoneNum(newNum);
-                                        UserDBC.updateUserInfo(currentUser);
-                                        password.setEditable(false);
-                                        na.setEditable(false);
-                                        phone.setEditable(false);
+
                                     }catch (Exception ev){
                                         new ErrorMsg("Phone number contains letters? Incorrect");
+                                        break;
                                     }
+                                    currentUser.setName(newName);
+                                    currentUser.setPassword(newPw);
+                                    currentUser.setPhoneNum(newNum);
+                                    try {
+                                        UserDBC.updateUserInfo(currentUser);
+                                    } catch (SQLException e1) {
+                                        new ErrorMsg(e1.getMessage());
+                                    }
+                                    password.setEditable(false);
+                                    na.setEditable(false);
+                                    phone.setEditable(false);
 
                                 }
                             }

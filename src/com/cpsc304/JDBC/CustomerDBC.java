@@ -15,20 +15,26 @@ public class CustomerDBC extends UserDBC {
         String sqlString;
         PreparedStatement pstmt;
         User user = getUser(custID);
+        System.out.println("user constructed");
         Customer customer = null;
+        Statement stmt = con.createStatement();
         ResultSet rs;
         sqlString = "SELECT cus_spending, points, vip_level ";
         sqlString += "FROM customer, points, vip_level ";
-        sqlString += "WHERE cus_userID = ? AND cus_spending = spending AND";
-        pstmt = con.prepareStatement(sqlString);
-        pstmt.setString(1, custID);
-        rs = pstmt.executeQuery();
-        if (rs.next()) {
+        sqlString += "WHERE cus_userID = '"+custID+"' AND cus_spending = spending";
+//        pstmt = con.prepareStatement(sqlString);
+//        pstmt.setString(1, custID);
+
+//        rs = pstmt.executeQuery();
+        rs = stmt.executeQuery(sqlString);
+        System.out.println(rs.getRow());
+        rs.next();
             double spending = rs.getDouble(1);
             int points = rs.getInt(2);
             int vipLevel = rs.getInt(3);
             customer = new Customer(custID, user.getName(), user.getPassword(), user.getPhoneNum(), spending, vipLevel, points);
-        }
+            System.out.println(customer.getUserID());
+
         return customer;
     }
 

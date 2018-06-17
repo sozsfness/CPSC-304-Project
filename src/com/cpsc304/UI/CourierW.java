@@ -5,6 +5,7 @@ import com.cpsc304.JDBC.CustomerDBC;
 import com.cpsc304.JDBC.RestaurantManagerDBC;
 import com.cpsc304.JDBC.UserDBC;
 import com.cpsc304.model.*;
+import javafx.util.Pair;
 
 import static com.cpsc304.UI.MainUI.currentUser;
 import javax.swing.*;
@@ -16,10 +17,8 @@ import java.awt.event.WindowListener;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DateFormatSymbols;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class CourierW extends JFrame{
     private Login l;
@@ -128,7 +127,7 @@ public class CourierW extends JFrame{
         current.add(new Label("Orders to deliver"));
         current.add(new Label(tmp.replace('\0','*')));
 //        current.add(new Label("Click on order id to see details/change status"));
-        Set<Delivery> deliveries = ((Courier)currentUser).getDeliveries();
+        List<Delivery> deliveries = ((Courier)currentUser).getDeliveries();
         OrderBtnListener l = new OrderBtnListener();
         if (deliveries!=null) {
             for (Delivery next : deliveries) {
@@ -373,14 +372,23 @@ public class CourierW extends JFrame{
     }
     private void buildReport(Date from, Date to, int max){
         Map<Integer,Double> income = CourierDBC.getMonthlyIncomes(from,to);
-        int specify = 0;
+        List<Pair<Integer, Double>> specify = new ArrayList<>();
         String m;
         if (max==1){
             m = "MAX";
-            specify = CourierDBC.getMaxMonth(from,to);
+            try {
+                specify = CourierDBC.getMaxs(from,to);
+            } catch (SQLException e) {
+                new ErrorMsg(e.getMessage());
+            }
         }else{
             m = "MIN";
-            specify = CourierDBC.getMinMonth(from,to);
+            try {
+                specify = CourierDBC.getMins(from,to);
+            } catch (SQLException e) {
+                new ErrorMsg(e.getMessage());
+                return;
+            }
         }
 
         removeComponents(current);
@@ -396,19 +404,15 @@ public class CourierW extends JFrame{
         DateFormatSymbols dfs = new DateFormatSymbols();
         String [] months = dfs.getMonths();
         if (income!=null) {
-            for (Map.Entry<Integer, Double> next : income.entrySet()) {
-                if (next.getKey() == specify) {
-                    if (max == 1) {
-                        current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + next.getValue() + " (Max)"));
-                    } else {
-                        current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + next.getValue() + " (Min)"));
-                    }
+            for (Pair<Integer,Double> next: specify) {
+                if (max == 1) {
+                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + income.get(next.getKey()) + " Max: "+ next.getValue()));
                 } else {
-                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + next.getValue()));
+                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + income.get(next.getKey()) + " Min: "+ next.getValue()));
                 }
             }
         }else{
-
+                current.add(new Label("record not found. Change time period?"));
         }
     }
     private void buildReport(Date from, Date to) throws SQLException {
