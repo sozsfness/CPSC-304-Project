@@ -97,9 +97,10 @@ public class CourierDBC extends UserDBC {
         con.setAutoCommit(false);
         if (MainUI.currentUser == null) return null;
         sqlString = "SELECT o.*, order_restaurantID, delivery_fee, d.house#, d.street, province, city, d.postal_code ";
-        sqlString += "FROM orders o, delivery_delivers d , address_detail ";
+        sqlString += "FROM orders o, delivery_delivers d , address_detail a ";
         sqlString += "WHERE d.orderID = o.orderID AND o.order_date >= ? ";
         sqlString += "AND order_date <= ? AND d.courierID = ? ";
+        sqlString += "AND d.postal_code = a.postal_code";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
         pstmt.setDate(2, endDate);
