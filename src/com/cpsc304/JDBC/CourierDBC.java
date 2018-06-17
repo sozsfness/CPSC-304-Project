@@ -286,7 +286,8 @@ public class CourierDBC extends UserDBC {
         sqlString += "SELECT resID, res_name, " + type +"(delivery_fee) ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers, restaurant ";
         sqlString += "WHERE order_restaurantID = resID AND order_status = 'Complete' ";
-        sqlString += "AND courierID = ?";
+        sqlString += "AND courierID = ?" ;
+        sqlString += "GROUP BY resID, res_name";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, courerID);
         pstmt.executeUpdate();
@@ -299,6 +300,7 @@ public class CourierDBC extends UserDBC {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
+        creatView(firstType, courerID);
         sqlString = "SELECT " + secondType +"(earning) from " + firstType + "Earning";
         pstmt = con.prepareStatement(sqlString);
         rs = pstmt.executeQuery();
@@ -308,10 +310,11 @@ public class CourierDBC extends UserDBC {
     }
 
     // when the first type is any type rather than count, but the second type is "Count"
-    public static int getSecondCount(String firstType) throws SQLException{
+    public static int getSecondCount(String firstType, String courerID) throws SQLException{
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
+        creatView(firstType, courerID);
         sqlString = "SELECT Count(earning) from " + firstType + "Earning";
         pstmt = con.prepareStatement(sqlString);
         rs = pstmt.executeQuery();
@@ -321,10 +324,11 @@ public class CourierDBC extends UserDBC {
     }
 
     // when the first type is "Count", but the second type is any type
-    public static int getFirstCount(String secondType) throws SQLException{
+    public static int getFirstCount(String secondType, String courerID) throws SQLException{
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
+        creatView("Count", courerID);
         sqlString = "SELECT " + secondType + "(earning) from CountEarning";
         pstmt = con.prepareStatement(sqlString);
         rs = pstmt.executeQuery();
@@ -333,7 +337,22 @@ public class CourierDBC extends UserDBC {
         return 0;
     }
 
-    public static double getIncome(Date startDate, Date endDate){
-        return 0;
+    public static double getIncome(Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT Sum(delivery_fee) ";
+        sqlString += "FROM orders o, delivery_delivers d ";
+        sqlString += "WHERE o.orderID = d.orderID AND order_status = 'Complete' ";
+        sqlString += "AND (order_date BETWEEN ? AND ?) AND courierID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setString(3, MainUI.currentUser.getUserID());
+        rs = pstmt.executeQuery();
+        if (rs.next())
+            return rs.getInt(1);
+        else
+            return 0;
     }
 }

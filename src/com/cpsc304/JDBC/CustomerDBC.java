@@ -214,21 +214,6 @@ public class CustomerDBC extends UserDBC {
         return null;
     }
 
-    public static double getSpending(Date startDate, Date endDate){
-        return 0;
-    }
-
-    public static int getChangedPoints(Date startDate, Date endDate) {
-        return 0;
-    }
-
-    public static List<Order> getOrdersInTimePeriod(Date startDate, Date endDate) {
-        return null;
-    }
-
-    public static List<Order> getOrders() {
-        return null;
-    }
     public static List<Order> getOrders(Date startDate, Date endDate) throws SQLException {
         List<Order> orders = new ArrayList<>();
         List<Pickup> pickups = getPickups(0, startDate, endDate);
@@ -244,98 +229,98 @@ public class CustomerDBC extends UserDBC {
     }
 
     public static List<Order> getOrders(int resID, Date startDate, Date endDate) throws SQLException {
-        List<Order> orders = new ArrayList<>();
-        List<Pickup> pickups = getPickups(resID, startDate, endDate);
-        List<Delivery> deliveries = getDeliveries(resID, startDate, endDate);
-        con.setAutoCommit(false);
-        for (Order order : pickups) {
-            orders.add(order);
+            List<Order> orders = new ArrayList<>();
+            List<Pickup> pickups = getPickups(resID, startDate, endDate);
+            List<Delivery> deliveries = getDeliveries(resID, startDate, endDate);
+            con.setAutoCommit(false);
+            for (Order order : pickups) {
+                orders.add(order);
+            }
+            for (Order order : deliveries) {
+                orders.add(order);
+            }
+            return orders;
         }
-        for (Order order : deliveries) {
-            orders.add(order);
-        }
-        return orders;
-    }
 
-    //resID == 0 means no rest restrictions
-    public static List<Pickup> getPickups(int resID, Date startDate, Date endDate) throws SQLException {
-        String sqlString;
-        PreparedStatement pstmt;
-        ResultSet rs;
-        Pickup pickup;
-        ResourceManager rm = ResourceManager.getInstance();
-        List<Pickup> pickups = new ArrayList<>();
-        if (MainUI.currentUser == null) return null;
-        sqlString = "SELECT o.*, estimated_ready_time";
-        sqlString += "FROM order o, pick_up p";
-        sqlString += "WHERE p.orderID = o.orderID AND order_date >= ? ";
-        sqlString += "AND order_date <= ? AND order_customerID = ?";
-        if (resID != 0)
-            sqlString += " AND order_restaurantID = " + resID;
-        pstmt = con.prepareStatement(sqlString);
-        pstmt.setDate(1, startDate);
-        pstmt.setDate(2, endDate);
-        pstmt.setString(3, MainUI.currentUser.getUserID());
-        rs = pstmt.executeQuery();
-        con.commit();
-        while (rs.next()) {
-            int orderID = rs.getInt(1);
-            Date date = rs.getDate(2);
-            Time time = Time.valueOf(rs.getString(3) + ":00");
-            Double amount = rs.getDouble(4);
-            OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5));
-            String custID = rs.getString(6);
-            Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
-            Time readyTime = Time.valueOf(rs.getString(8) + ":00");
-            pickup = new Pickup((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
-                    getFoods(orderID), readyTime);
-            pickups.add(pickup);
+        //resID == 0 means no rest restrictions
+        public static List<Pickup> getPickups(int resID, Date startDate, Date endDate) throws SQLException {
+            String sqlString;
+            PreparedStatement pstmt;
+            ResultSet rs;
+            Pickup pickup;
+            ResourceManager rm = ResourceManager.getInstance();
+            List<Pickup> pickups = new ArrayList<>();
+            if (MainUI.currentUser == null) return null;
+            sqlString = "SELECT o.*, estimated_ready_time";
+            sqlString += "FROM order o, pick_up p";
+            sqlString += "WHERE p.orderID = o.orderID AND order_date >= ? ";
+            sqlString += "AND order_date <= ? AND order_customerID = ?";
+            if (resID != 0)
+                sqlString += " AND order_restaurantID = " + resID;
+            pstmt = con.prepareStatement(sqlString);
+            pstmt.setDate(1, startDate);
+            pstmt.setDate(2, endDate);
+            pstmt.setString(3, MainUI.currentUser.getUserID());
+            rs = pstmt.executeQuery();
+            con.commit();
+            while (rs.next()) {
+                int orderID = rs.getInt(1);
+                Date date = rs.getDate(2);
+                Time time = Time.valueOf(rs.getString(3) + ":00");
+                Double amount = rs.getDouble(4);
+                OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5));
+                String custID = rs.getString(6);
+                Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
+                Time readyTime = Time.valueOf(rs.getString(8) + ":00");
+                pickup = new Pickup((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
+                        getFoods(orderID), readyTime);
+                pickups.add(pickup);
+            }
+            pstmt.close();
+            return pickups;
         }
-        pstmt.close();
-        return pickups;
-    }
 
-    public static List<Delivery> getDeliveries(int resID, Date startDate, Date endDate) throws SQLException {
-        String sqlString;
-        PreparedStatement pstmt;
-        ResultSet rs;
-        Delivery delivery;
-        ResourceManager rm = ResourceManager.getInstance();
-        List<Delivery> deliveries = new ArrayList<>();
-        if (MainUI.currentUser == null) return null;
-        sqlString = "SELECT o.*, delivery_fee, courierID, postal_code, street, house#";
-        sqlString += "FROM order o, customer, delivery_delivers d, courier, user";
-        sqlString += "WHERE o.orderID = d.oderID AND order_date >= ? ";
-        sqlString += "AND order_date <= ? AND order_customerID = ? ";
-        sqlString += "AND cor_userID = courierID AND cor_userID = userID";
-        if (resID != 0)
-            sqlString += " AND order_restaurantID = " + resID;
-        pstmt = con.prepareStatement(sqlString);
-        pstmt.setDate(1, startDate);
-        pstmt.setDate(2, endDate);
-        pstmt.setString(3, MainUI.currentUser.getUserID());
-        rs = pstmt.executeQuery();
-        con.commit();
-        while (rs.next()) {
-            int orderID = rs.getInt(1);
-            Date date = rs.getDate(2);
-            Time time = Time.valueOf(rs.getString(3) + ":00");
-            Double amount = rs.getDouble(4);
-            OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5));
-            String custID = rs.getString(6);
-            Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
-            double deliverFee = rs.getDouble(8);
-            Courier courier = rm.getCourier(rs.getString(9));
-            String postal = rs.getString(10);
-            String street = rs.getString(11);
-            int houseNum = rs.getInt(12);
-            delivery = new Delivery((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
-                    getFoods(orderID), deliverFee, getArrivalTime(orderID), courier, getAddress(postal, street, houseNum));
-            deliveries.add(delivery);
+        public static List<Delivery> getDeliveries(int resID, Date startDate, Date endDate) throws SQLException {
+            String sqlString;
+            PreparedStatement pstmt;
+            ResultSet rs;
+            Delivery delivery;
+            ResourceManager rm = ResourceManager.getInstance();
+            List<Delivery> deliveries = new ArrayList<>();
+            if (MainUI.currentUser == null) return null;
+            sqlString = "SELECT o.*, delivery_fee, courierID, postal_code, street, house#";
+            sqlString += "FROM order o, customer, delivery_delivers d, courier, user";
+            sqlString += "WHERE o.orderID = d.oderID AND order_date >= ? ";
+            sqlString += "AND order_date <= ? AND order_customerID = ? ";
+            sqlString += "AND cor_userID = courierID AND cor_userID = userID";
+            if (resID != 0)
+                sqlString += " AND order_restaurantID = " + resID;
+            pstmt = con.prepareStatement(sqlString);
+            pstmt.setDate(1, startDate);
+            pstmt.setDate(2, endDate);
+            pstmt.setString(3, MainUI.currentUser.getUserID());
+            rs = pstmt.executeQuery();
+            con.commit();
+            while (rs.next()) {
+                int orderID = rs.getInt(1);
+                Date date = rs.getDate(2);
+                Time time = Time.valueOf(rs.getString(3) + ":00");
+                Double amount = rs.getDouble(4);
+                OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5));
+                String custID = rs.getString(6);
+                Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
+                double deliverFee = rs.getDouble(8);
+                Courier courier = rm.getCourier(rs.getString(9));
+                String postal = rs.getString(10);
+                String street = rs.getString(11);
+                int houseNum = rs.getInt(12);
+                delivery = new Delivery((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
+                        getFoods(orderID), deliverFee, getArrivalTime(orderID), courier, getAddress(postal, street, houseNum));
+                deliveries.add(delivery);
+            }
+            pstmt.close();
+            return deliveries;
         }
-        pstmt.close();
-        return deliveries;
-    }
 
     private static Time getArrivalTime(int orderID) throws SQLException {
         Time arivalTime;
