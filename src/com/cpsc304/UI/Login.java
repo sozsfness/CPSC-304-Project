@@ -106,8 +106,8 @@ public class Login extends JFrame  {
                 String type=typeChooser.getSelectedItem();
                 System.out.println("logging in...");
                 if (id.equals("id")&&password.equals("password")){
-                    MainUI.currentUser = new Customer("1","test","1","123456",123,0,0);
-//                    MainUI.currentUser = new Courier("1","test","1","123456",null,null);
+//                    MainUI.currentUser = new Customer("1","test","1","123456",123,0,0);
+                    MainUI.currentUser = new Courier("1","test","1","123456",null);
 //                    MainUI.currentUser = new RestaurantManager("1","test","1","123456",null);
 
                     isvalid = true;
@@ -147,13 +147,12 @@ public class Login extends JFrame  {
                             break;
                         case "courier":
                             System.out.println("courier.");
-                            //                            MainUI.currentUser = new Customer();
-                            try {
-                                MainUI.currentUser = CourierDBC.getCurier(id);
-                            } catch (SQLException e) {
-                                new ErrorMsg(e.getMessage());
-                                break;
-                            }
+//                            try {
+//                                MainUI.currentUser = CourierDBC.getCurier(id);
+//                            } catch (SQLException e) {
+//                                new ErrorMsg(e.getMessage());
+//                                break;
+//                            }TODO:UNCOMMENT THIS
                             MainUI.getCourierUI();
                             t.setVisible(false);
                             break;

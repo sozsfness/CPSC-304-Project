@@ -44,6 +44,8 @@ public class CustomerW extends JFrame{
     private Checkbox address;
     private Checkbox ctype;
     private Map<Integer,Order> integerOrderMap = new HashMap<>();
+    private Checkbox cdel;
+    private Checkbox cpic;
 
 
 
@@ -166,17 +168,26 @@ public class CustomerW extends JFrame{
             String dateTo = datet.getText();
             Integer resID = 0;
             boolean can = true;
-            try {
-                 Integer.parseInt(res.getText());
-            }catch (Exception ev){
-                new ErrorMsg("Please type in integer only for the restaurant id");
-                can = false;
+            if (!cdel.getState()&&!cpic.getState()){
+                new ErrorMsg("You have to choose at lease one type of orders!");
+                return;
+            }
+            if (!res.getText().equals("all")) {
+
+                try {
+                    Integer.parseInt(res.getText());
+                } catch (Exception ev) {
+                    new ErrorMsg("Please type in integer only for the restaurant id");
+                    can = false;
+                }
+            }else{
+                resID = 0;
             }
             try{
-                Long.parseLong(dateFrom);
-                Long.parseLong(dateTo);
+                Date.valueOf(dateFrom);
+                Date.valueOf(dateTo);
             }catch (Exception ev){
-                new ErrorMsg("Please provide dates of correct format(YYYYMMDD)");
+                new ErrorMsg("Please provide dates of correct format(YYYY-MM-DD)");
                 can = false;
             }
             if (can) {
@@ -191,26 +202,35 @@ public class CustomerW extends JFrame{
 
         private void beforeBuidlingHistoryOrder(JPanel current){
             current.setLayout(null);
-            current.setLayout(new BorderLayout());
-            current.add(new Label("            What past orders do you want to look at? Please provide the dates or ID of the restaurant...\n"),BorderLayout.PAGE_START);
+            current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
 
-            datef = new JTextField("all",8);
+            String tmp = new String(new char[80]);
+            current.add(new Label(tmp.replace('\0','*')));
+            current.add(new Label("What past orders(pickups,deliveries) do you want to look at?\n"));
+            current.add(new Label(" Please provide the dates or ID of the restaurant, and select types"));
+            datef = new JTextField("",8);
             res = new JTextField("all",15);
             JPanel p1 = new JPanel(new FlowLayout());
             p1.add(new Label("date:"));
             p1.add(datef);
-            datet = new JTextField("all",8);
+            datet = new JTextField("",8);
             p1.add(new Label("to"));
             p1.add(datet);
 
-            current.add(p1,BorderLayout.LINE_START);
+            current.add(p1);
             JPanel p2 = new JPanel(new FlowLayout());
             p2.add(new Label("restaurant:"));
             p2.add(res);
-            current.add(p2,BorderLayout.CENTER);
+            current.add(p2);
+            JPanel p3 = new JPanel(new FlowLayout());
+            current.add(p3);
+            cdel = new Checkbox("Deliveries",false);
+            p3.add(cdel);
+            cpic = new Checkbox("Pick-ups",false);
+            p3.add(cpic);
             Button b = new Button("submit");
             b.addActionListener(new historySubmitListener());
-            current.add(b,BorderLayout.LINE_END);
+            current.add(b);
 
 
         }
@@ -252,6 +272,9 @@ public class CustomerW extends JFrame{
                 }
                 if (order  instanceof Delivery){
                     isDelivery = true;
+                }
+                if (order instanceof  Pickup){
+
                 }
                 toAdd.invalidate();
                 toAdd.revalidate();
@@ -390,6 +413,20 @@ public class CustomerW extends JFrame{
 
         //build the panel for viewing history order
         private void buildHistoryOrder(JPanel current,String dateF,String dateT, Integer resID){
+            boolean pic = cpic.getState();
+            boolean del = cdel.getState();
+
+            String types = "Type(s): ";
+            if (pic&&del){
+                types += "pick-ups and deliveries";
+            }else {
+                if (pic) {
+                    types += "pick-ups ";
+                }else{
+                    types+="deliveries";
+                }
+            }
+
             removeComponents(current);
             current.invalidate();
             current.revalidate();
@@ -397,21 +434,18 @@ public class CustomerW extends JFrame{
             current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
             String tmp = new String(new char[80]);
             current.add(new Label(tmp.replace('\0','*')));
-            Label title = new Label("\t\t\t\t\t\t\tHistory Orders\t\t\t\t\t\t\t");
+
+            Label title = new Label("History Orders "+types);
             current.add(title);
-            current.add(new Label("\t\t\t\t\t\t\tPlease click on order id to see details\t\t\t\t\t\t\t"));
+            current.add(new Label("Please click on order id to see details\t\t\t\t\t\t\t"));
             //panel for dynamic list of orders
             JPanel orderNumbers = new JPanel(new FlowLayout(FlowLayout.CENTER));
             current.add(orderNumbers);
             orderNumbers.add(new Label("order#"));
 
-            Long from = null;
-            Long to = null;
+            Date from = Date.valueOf(dateF);
+            Date to = Date.valueOf(dateT);
 
-            if (dateF.equals("all")&&dateT.equals("all")){}else {
-                from = Long.parseLong(dateF);
-                to = Long.parseLong(dateT);
-            }
 
             historyOrderListener l = new historyOrderListener();
             if (Integer.parseInt(currentUser.getUserID())==1){
@@ -421,12 +455,25 @@ public class CustomerW extends JFrame{
             }else {
                 List<Order> orders = null;
                 try {
-                    orders = CustomerDBC.getOrders(resID, new Date(from),new Date(to));
+
+                    if (pic&&del) {
+                        orders = CustomerDBC.getOrders(resID, from,to);
+                    }else{
+                        if (pic){
+                            orders = CustomerDBC.getPickups(resID,from,to);
+                        }else{
+                            orders = CustomerDBC.getDeliveries(resID,from,to);
+                        }
+
+                    }
                 } catch (SQLException e1) {
                     new ErrorMsg(e1.getMessage());
                 }
 
-
+                if (order==null) {
+                    current.add(new Label("No such order is found. Try again with different time period or type"));
+                    return;
+                }
 
                 for (Order next : orders) {
                     Button o = new Button(Integer.toString(next.getOrderID()) + "(submitted on" + next.getDate() + ")");
@@ -434,9 +481,7 @@ public class CustomerW extends JFrame{
                     o.addActionListener(l);
                     integerOrderMap.put(next.getOrderID(),next);
                 }
-                Button o = new Button("test");
-                current.add(o);
-                o.addActionListener(l);
+
             }
             pack();
 
@@ -453,7 +498,6 @@ public class CustomerW extends JFrame{
                 boolean isHoursSelected = hours.getState();
                 boolean isTypeSelected = ctype.getState();
                 boolean isD = deliveryOption.getState();
-                //TODO: CHANGE BUILDNEWORDER METHOD
                 switch (evt){
                     case "Search":
                         try {
@@ -990,8 +1034,8 @@ public class CustomerW extends JFrame{
             current.add(new Label(tmp.replace('\0','*')));
             current.add(new Label("Report generator"));
             current.add(new Label("Please provide the time period for your report"));
-            reportFrom = new JTextField("all",8);
-            reportTo = new JTextField("all",8);
+            reportFrom = new JTextField("",8);
+            reportTo = new JTextField("",8);
             JPanel fromto = new JPanel(new FlowLayout());
             fromto.add(new Label("From "));
             fromto.add(reportFrom);
@@ -1014,11 +1058,11 @@ public class CustomerW extends JFrame{
                     buildReport(null,null);
                 }else {
                     try {
-                        Long from = Long.parseLong(fromDate);
-                        Long to = Long.parseLong(toDate);
-                        buildReport(new Date(from), new Date(to));
+                        Date from = Date.valueOf(fromDate);
+                        Date to = Date.valueOf(toDate);
+                        buildReport(from,to);
                     }catch (Exception ev){
-                        new ErrorMsg("Wrong date format. Only supports form of YYYYMMDD");
+                        new ErrorMsg("Wrong date format. Only supports form of YYYY-MM-DD");
                     }
 
                 }
@@ -1039,6 +1083,9 @@ public class CustomerW extends JFrame{
                 for (Order next : orders) {
                     current.add(new Label("OrderID: " + next.getOrderID() + " ordered at restaurant " + next.getRestOrderedAt().getName() + " total amount: " + next.getAmount()));
                 }
+            }else{
+                current.add(new Label("No orders found. Try again?"));
+                return;
             }
             current.add(new Label("Total spending in selected time period: "+CustomerDBC.getSpending(from,to)));
             current.add(new Label("Change in vip points: "+CustomerDBC.getChangedPoints(from,to)));

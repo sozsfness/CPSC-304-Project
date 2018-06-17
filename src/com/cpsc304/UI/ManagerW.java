@@ -32,8 +32,8 @@ public class ManagerW extends JFrame {
 
     private Map<Integer,Restaurant> integerRestaurantMap;
     private Set<Restaurant> restaurants;
-    Long fromDate;
-    Long toDate;
+    Date fromDate;
+    Date toDate;
 
     public ManagerW(Login l){
         this.l = l;
@@ -450,8 +450,8 @@ public class ManagerW extends JFrame {
             String evt = e.getActionCommand();
             if (evt.equals("searchOrder")){
                 try{
-                    Long.parseLong(from.getText());
-                    Long.parseLong(to.getText());
+                    Date.valueOf(from.getText());
+                    Date.valueOf(to.getText());
                 }catch (Exception ev){
                     new ErrorMsg("Date format wrong! please put in the form of YYYYMMDD");
                     return;
@@ -464,8 +464,8 @@ public class ManagerW extends JFrame {
                 current.add(new Label("click on restaurant id to see related orders"));
                 if (!from.getText().equals("all")&&!to.getText().equals("all")) {
 
-                        fromDate = Long.parseLong(from.getText());
-                        toDate = Long.parseLong(to.getText());
+                        fromDate = Date.valueOf(from.getText());
+                        toDate = Date.valueOf(to.getText());
 
                     for (Restaurant next : restaurants) {
                         Button temp = new Button(((Integer) next.getId()).toString());
@@ -479,7 +479,7 @@ public class ManagerW extends JFrame {
                 }
             }else{
                 if (!evt.equals("0")) {
-                    new resOrders(integerRestaurantMap.get(Integer.parseInt(evt)),new Date(fromDate),new Date(toDate));
+                    new resOrders(integerRestaurantMap.get(Integer.parseInt(evt)),fromDate,toDate);
                 }else{
                     new resOrders(new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null),null,null);
                 }
@@ -635,8 +635,8 @@ public class ManagerW extends JFrame {
         public void actionPerformed(ActionEvent e) {
 
             try {
-                Long.parseLong(from.getText());
-                Long.parseLong(to.getText());
+                Date.valueOf(from.getText());
+                Date.valueOf(to.getText());
             }catch (Exception ex){
                 new ErrorMsg("Date format wrong! YYYYMMDD form required");
                 return;
@@ -765,15 +765,15 @@ public class ManagerW extends JFrame {
                 current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
                 current.add(new Label("Revenue for restaurant "+r.getName()));
 
-                    fromDate = Long.parseLong(from.getText());
-                    toDate = Long.parseLong(to.getText());
+                    fromDate = Date.valueOf(from.getText());
+                    toDate = Date.valueOf(to.getText());
 
-                List<Order> orders = RestaurantManagerDBC.getOrders(r,new Date(fromDate),new Date(toDate));
+                List<Order> orders = RestaurantManagerDBC.getOrders(r,fromDate,toDate);
                 for (Order next: orders){
                     current.add(new Label("Order id: "+next.getOrderID()+ " Amount: "+next.getAmount()+ " Ordered At: "+next.getDate()));
                 }
                 add(current);
-                current.add(new Label("Total earning: "+ RestaurantManagerDBC.getRevenue(r,new Date(fromDate),new Date(toDate))));
+                current.add(new Label("Total earning: "+ RestaurantManagerDBC.getRevenue(r,fromDate,toDate)));
                 setVisible(true);
 
                 addWindowListener(new windowListener());
@@ -896,16 +896,23 @@ public class ManagerW extends JFrame {
                             }else {
                                 try{
                                     Integer.parseInt(newNum);
-                                    currentUser.setName(newName);
-                                    currentUser.setPassword(newPw);
-                                    currentUser.setPhoneNum(newNum);
-                                    UserDBC.updateUserInfo(currentUser);
-                                    password.setEditable(false);
-                                    na.setEditable(false);
-                                    phone.setEditable(false);
+
                                 }catch (Exception ev){
                                     new ErrorMsg("Phone number contains letters? Incorrect");
+                                    break;
                                 }
+                                currentUser.setName(newName);
+                                currentUser.setPassword(newPw);
+                                currentUser.setPhoneNum(newNum);
+                                try {
+                                    UserDBC.updateUserInfo(currentUser);
+                                } catch (SQLException e1) {
+                                    new ErrorMsg(e1.getMessage());
+                                }
+                                password.setEditable(false);
+                                na.setEditable(false);
+                                phone.setEditable(false);
+
                             }
                         }
                     }else {
