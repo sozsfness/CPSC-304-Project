@@ -19,7 +19,7 @@ public class LoginDBC {
         String sqlString;
         Statement stmt = con.createStatement();
         ResultSet rs;
-        con.setAutoCommit(true);
+        con.setAutoCommit(false);
         sqlString = "SELECT * FROM ";
         switch (type) {
             case "customer":
@@ -38,8 +38,8 @@ public class LoginDBC {
         sqlString += "userID = '" + userID + "'";
         rs = stmt.executeQuery(sqlString);
         System.out.println(sqlString);
+
         rs.next();
-        System.out.println(rs.getRow());
         if (rs.getRow() != 1) {
             System.out.println("User in current type doesn't exist.");
             return false;
@@ -50,7 +50,7 @@ public class LoginDBC {
 
         stmt = con.createStatement();
         rs = stmt.executeQuery(sqlString);
-        //con.commit();
+        con.commit();
         rs.next();
         if (rs.getRow() == 0) {
             System.out.println("Password Error");
@@ -138,4 +138,5 @@ public class LoginDBC {
         }
         return managerMap;
     }
+
 }

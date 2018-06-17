@@ -48,7 +48,7 @@ public class CustomerDBCTest {
         //testCommitOrder();
         DBConnection.connect();
         try {
-            System.out.println(LoginDBC.verify("customer", "854", "aqb39q"));
+            System.out.println(LoginDBC.verify("customer", "b9q3u", "Wyw3026"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
