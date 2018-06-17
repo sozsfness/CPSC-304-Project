@@ -28,10 +28,24 @@ public class RestaurantManagerDBC extends UserDBC{
     //return the name of the most popular dish
     public static String getPopularDish(int restID, Date startDate, Date endDate) throws SQLException {
         String sqlString;
-        Statement stmt = con.createStatement();
+        PreparedStatement pstmt;
         ResultSet rs;
-        sqlString = "SELECT ";
-        return "";
+        sqlString = "SELECT food_name ";
+        sqlString += "FROM (SELECT food_name, COUNT(food_name) AS \"Quantity Sold\" ";
+        sqlString += "FROM added_in NATURAL INNER JOIN orders ";
+        sqlString += "WHERE order_restaurantID = ? AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "AND EXISTS (SELECT food_name FROM offers  WHERE restaurantID = order_restaurantID) ";
+        sqlString += "GROUP BY food_name ";
+        sqlString += "ORDER BY COUNT(food_name) DESC) ";
+        sqlString += "WHERE ROWNUM=1";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setInt(1, restID);
+        pstmt.setDate(2, startDate);
+        pstmt.setDate(3, endDate);
+        rs = pstmt.executeQuery();
+        if (rs.next())
+            return rs.getString(1);
+        return null;
     }
 
     public static void addToMenu(Food food) throws SQLException {
@@ -74,11 +88,26 @@ public class RestaurantManagerDBC extends UserDBC{
         return true;
     }
 
-    public static List<Order> getOrders(Restaurant restaurant, Date startDate, Date endDate){
-        return null;
+    public static List<Order> getOrders(Restaurant restaurant, Date startDate, Date endDate) throws SQLException {
+        return CustomerDBC.getOrders(restaurant.getId(), startDate, endDate);
     }
 
-    public static double getRevenue(Restaurant restaurant, Date startDate, Date endDate){
-        return 0;
+    public static double getRevenue(Restaurant restaurant, Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT Sum(order_amount) ";
+        sqlString += "FROM orders ";
+        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "AND order_restaurantID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setInt(3, restaurant.getId());
+        rs = pstmt.executeQuery();
+        if (rs.next())
+            return rs.getInt(1);
+        else
+            return 0;
     }
 }
