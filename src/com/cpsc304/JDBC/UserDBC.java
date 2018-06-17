@@ -26,26 +26,27 @@ public abstract class UserDBC {
     }
 
     public static User getUser(String userID) throws SQLException {
-//        User user = null;
-//        String sqlString;
-//        PreparedStatement pstmt;
-//        ResultSet rs;
-//        sqlString = "SELECT userPass, phone#, userName";
-//        sqlString += "FROM users WHERE userID = ?";
-//        pstmt = con.prepareStatement(sqlString);
-//        pstmt.setString(1, userID);
-//        rs = pstmt.executeQuery();
-
+        User user = null;
         String sqlString;
-        Statement stmt = con.createStatement();
+        PreparedStatement pstmt;
         ResultSet rs;
-        con.setAutoCommit(true);
-        sqlString = "SELECT userPass, phone# AS BIGINT, userName FROM users where userID = '"+userID+"'";
-        rs = stmt.executeQuery(sqlString);
+        con.setAutoCommit(false);
+        sqlString = "SELECT userPass, phone#, userName ";
+        sqlString += "FROM users WHERE userID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, userID);
+        rs = pstmt.executeQuery();
+        con.commit();
+//        String sqlString;
+//        Statement stmt = con.createStatement();
+//        ResultSet rs;
+//        con.setAutoCommit(true);
+//        sqlString = "SELECT userPass, phone# AS BIGINT, userName FROM users where userID = '"+userID+"'";
+//        rs = stmt.executeQuery(sqlString);
         rs.next();
 //        System.out.println(sqlString);
 //        System.out.println(rs.getRow());
-        User user = null;
+//        User user = null;
 
             String password = rs.getString(1);
             String phoneNum = ((BigDecimal)(rs.getBigDecimal(2))).toString();

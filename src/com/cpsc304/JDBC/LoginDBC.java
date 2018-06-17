@@ -44,7 +44,7 @@ public class LoginDBC {
             System.out.println("User in current type doesn't exist.");
             return false;
         }
-        sqlString = "SELECT COUNT(*) FROM users WHERE userID = '" + userID + "' ";
+        sqlString = "SELECT * FROM users WHERE userID = '" + userID + "' ";
         sqlString += "AND userPass = '" + password + "'";
         stmt.close();
 
