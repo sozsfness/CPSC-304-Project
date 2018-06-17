@@ -20,7 +20,7 @@ public class LoginDBC {
         Statement stmt = con.createStatement();
         ResultSet rs;
         con.setAutoCommit(true);
-        sqlString = "SELECT * FROM ";
+        sqlString = "SELECT COUNT(*) FROM ";
         switch (type) {
             case "customer":
                 sqlString += "customer WHERE cus_";
@@ -29,7 +29,7 @@ public class LoginDBC {
                 sqlString += "restaurant_managers WHERE res_";
                 break;
             case "courier":
-                sqlString += "courier WHERE ";
+                sqlString += "courier WHERE cor_";
                 break;
             default:
                 System.out.println("type error");
@@ -39,8 +39,8 @@ public class LoginDBC {
         rs = stmt.executeQuery(sqlString);
         System.out.println(sqlString);
         rs.next();
-        System.out.println(rs.getRow());
-        if (rs.getRow() != 1) {
+        //System.out.println(rs.getRow());
+        if (rs.getInt(1) != 1) {
             System.out.println("User in current type doesn't exist.");
             return false;
         }
@@ -123,8 +123,8 @@ public class LoginDBC {
         Statement stmt = con.createStatement();
         ResultSet rs;
         RestaurantManager manager;
-        sqlString = "SELECT users.* FROM users, restaurant_managers r";
-        sqlString += "WHERE users.userID = r.res_userID";
+        sqlString = "SELECT u.* FROM users u, restaurant_managers r ";
+        sqlString += "WHERE u.userID = r.res_userID";
         rs = stmt.executeQuery(sqlString);
         con.commit();
         while (rs.next()) {
@@ -137,5 +137,25 @@ public class LoginDBC {
             managerMap.put(userID, manager);
         }
         return managerMap;
+    }
+
+    public static void testCount() throws SQLException {
+        String sqlString;
+        ResultSet rs;
+        con.setAutoCommit(true);
+        con.commit();
+        Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        sqlString = "SELECT * FROM users";
+        rs = stmt.executeQuery(sqlString);
+        con.commit();
+//        rs.next();
+//        System.out.println("Count: " + rs.getInt(1));
+//        rs.last();
+//        System.out.println("ROW: " + rs.getRow());
+//        rs.beforeFirst();
+        int count = 0;
+        while (rs.next())
+            ++ count;
+        System.out.println("count: " + count);
     }
 }

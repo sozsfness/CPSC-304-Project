@@ -14,7 +14,9 @@ public class CourierDBC extends UserDBC {
     private static Connection con = DBConnection.getCon();
 
     public static Courier getCurier(String courierID) throws SQLException {
-        return (Courier)getUser(courierID);
+        User user = getUser(courierID);
+        Courier courier = new Courier(user.getUserID(), user.getName(), user.getPassword(), user.getPhoneNum(), null);
+        return courier;
     }
 
     public static Time getScheduledTime(int orderID) throws SQLException {
@@ -94,11 +96,10 @@ public class CourierDBC extends UserDBC {
         List<Order> deliveries = new ArrayList<>();
         con.setAutoCommit(false);
         if (MainUI.currentUser == null) return null;
-        sqlString = "SELECT o.*, resID, delivery_fee, d.house#, d.street, province, city, d.postal_code ";
-        sqlString += "FROM orders o, restaurant r, courier c, delivery_delivers d ";
+        sqlString = "SELECT o.*, order_restaurantID, delivery_fee, d.house#, d.street, province, city, d.postal_code ";
+        sqlString += "FROM orders o, delivery_delivers d , address_detail ";
         sqlString += "WHERE d.orderID = o.orderID AND o.order_date >= ? ";
-        sqlString += "AND order_date <= ? AND d.courierID =c.cor_userID ";
-        sqlString += " AND d.courierID = ? AND o.order_restaurantID = r.resID";
+        sqlString += "AND order_date <= ? AND d.courierID = ? ";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
         pstmt.setDate(2, endDate);
@@ -110,7 +111,7 @@ public class CourierDBC extends UserDBC {
             Date date = rs.getDate(2);
             Time time = Time.valueOf(rs.getString(3) + ":00");
             Double amount = rs.getDouble(4);
-            OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5));
+            OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5).toUpperCase());
             String custID = rs.getString(6);
             Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
             double deliverFee = rs.getDouble(8);
@@ -120,7 +121,7 @@ public class CourierDBC extends UserDBC {
             String city = rs.getString(12);
             String postal = rs.getString(13);
             address = new Address(houseNum, street, province, city, postal);
-            delivery = new Delivery((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
+            delivery = new Delivery(null, orderID, date, time, amount, orderStatus, restaurant,
                     null, deliverFee, null, (Courier) MainUI.currentUser, address);
             deliveries.add(delivery);
         }

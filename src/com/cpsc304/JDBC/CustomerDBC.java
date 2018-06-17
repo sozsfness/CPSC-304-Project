@@ -21,7 +21,7 @@ public class CustomerDBC extends UserDBC {
         ResultSet rs;
         sqlString = "SELECT cus_spending, points, vip_level ";
         sqlString += "FROM customer, points, vip_level ";
-        sqlString += "WHERE cus_userID = '"+custID+"' AND cus_spending = spending";
+        sqlString += "WHERE cus_userID = ? AND cus_spending = spending";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, custID);
 
@@ -250,12 +250,13 @@ public class CustomerDBC extends UserDBC {
             ResourceManager rm = ResourceManager.getInstance();
             List<Order> pickups = new ArrayList<>();
             if (MainUI.currentUser == null) return null;
-            sqlString = "SELECT o.*, estimated_ready_time";
-            sqlString += "FROM order o, pick_up p";
+            sqlString = "SELECT o.*, estimated_ready_time ";
+            sqlString += "FROM orders o, pick_up p ";
             sqlString += "WHERE p.orderID = o.orderID AND order_date >= ? ";
             sqlString += "AND order_date <= ? AND order_customerID = ?";
             if (resID != 0)
                 sqlString += " AND order_restaurantID = " + resID;
+            System.out.println(sqlString);
             pstmt = con.prepareStatement(sqlString);
             pstmt.setDate(1, startDate);
             pstmt.setDate(2, endDate);
@@ -267,7 +268,7 @@ public class CustomerDBC extends UserDBC {
                 Date date = rs.getDate(2);
                 Time time = Time.valueOf(rs.getString(3) + ":00");
                 Double amount = rs.getDouble(4);
-                OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5));
+                OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5).toUpperCase());
                 String custID = rs.getString(6);
                 Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
                 Time readyTime = Time.valueOf(rs.getString(8) + ":00");
@@ -287,11 +288,10 @@ public class CustomerDBC extends UserDBC {
             ResourceManager rm = ResourceManager.getInstance();
             List<Order> deliveries = new ArrayList<>();
             if (MainUI.currentUser == null) return null;
-            sqlString = "SELECT o.*, delivery_fee, courierID, postal_code, street, house#";
-            sqlString += "FROM order o, customer, delivery_delivers d, courier, user";
-            sqlString += "WHERE o.orderID = d.oderID AND order_date >= ? ";
+            sqlString = "SELECT o.*, delivery_fee, courierID, postal_code, street, house# ";
+            sqlString += "FROM orders o, delivery_delivers d ";
+            sqlString += "WHERE o.orderID = d.orderID AND order_date >= ? ";
             sqlString += "AND order_date <= ? AND order_customerID = ? ";
-            sqlString += "AND cor_userID = courierID AND cor_userID = userID";
             if (resID != 0)
                 sqlString += " AND order_restaurantID = " + resID;
             pstmt = con.prepareStatement(sqlString);
@@ -305,7 +305,7 @@ public class CustomerDBC extends UserDBC {
                 Date date = rs.getDate(2);
                 Time time = Time.valueOf(rs.getString(3) + ":00");
                 Double amount = rs.getDouble(4);
-                OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5));
+                OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5).toUpperCase());
                 String custID = rs.getString(6);
                 Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
                 double deliverFee = rs.getDouble(8);
@@ -326,7 +326,7 @@ public class CustomerDBC extends UserDBC {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
-        sqlString = "SELECT estimated_arrival_time";
+        sqlString = "SELECT estimated_arrival_time ";
         sqlString += "FROM delivery_delivers ";
         sqlString += "WHERE orderID= ?";
         pstmt = con.prepareStatement(sqlString);
@@ -367,13 +367,11 @@ public class CustomerDBC extends UserDBC {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
-        sqlString = "SELECT province, city";
-        sqlString += "FROM addresses, address_detail ";
-        sqlString += "WHERE house# = ? AND street = ? AND postal_code = ?";
+        sqlString = "SELECT province, city ";
+        sqlString += "FROM address_detail ";
+        sqlString += "WHERE postal_code = ?";
         pstmt = con.prepareStatement(sqlString);
-        pstmt.setInt(1, houseNum);
-        pstmt.setString(2, street);
-        pstmt.setString(3, postal);
+        pstmt.setString(1, postal);
         rs = pstmt.executeQuery();
         con.commit();
         if (rs.next()) {

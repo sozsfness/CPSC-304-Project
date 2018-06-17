@@ -6,6 +6,7 @@ import com.cpsc304.model.Restaurant;
 import com.cpsc304.model.User;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.*;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +23,7 @@ public abstract class UserDBC {
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, user.getName());
         pstmt.setString(2, user.getPassword());
-        pstmt.setInt(3, Integer.parseInt(user.getPhoneNum()));
+        pstmt.setLong(3, Long.parseLong(user.getPhoneNum()));
     }
 
     public static User getUser(String userID) throws SQLException {
