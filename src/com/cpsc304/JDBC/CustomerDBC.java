@@ -152,7 +152,6 @@ public class CustomerDBC extends UserDBC {
         ResultSet rs;
         Restaurant rest;
         List<Restaurant> restaurants = new ArrayList<>();
-        ResourceManager rm = ResourceManager.getInstance();
         con.setAutoCommit(false);
         sqlString = "SELECT resID, res_name";
         if (brating)
