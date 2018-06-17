@@ -453,6 +453,7 @@ public class CourierW extends JFrame{
     private void buildReport(Date from, Date to, String type){
         Map<Integer,Double> income = CourierDBC.getMonthlyIncomes(from,to);
         List<Pair<Integer, Double>> specify = new ArrayList<>();
+        List<Pair<Integer,Integer>> sp = null;
         switch (type){
             case "Max":
                 try {
@@ -487,7 +488,7 @@ public class CourierW extends JFrame{
                 break;
             case "Count":
                 try {
-                    specify = CourierDBC.getCounts(from,to);
+                    sp = CourierDBC.getCounts(from,to);
                 } catch (SQLException e) {
                     new ErrorMsg(e.getMessage());
                     return;
@@ -509,10 +510,18 @@ public class CourierW extends JFrame{
         DateFormatSymbols dfs = new DateFormatSymbols();
         String [] months = dfs.getMonths();
         if (income!=null) {
-            for (Pair<Integer,Double> next: specify) {
+            if (sp==null) {
+                for (Pair<Integer, Double> next : specify) {
 
-                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Data: " + income.get(next.getKey()) + type+ ": "+ next.getValue()));
+                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Data: " + income.get(next.getKey()) + type + ": " + next.getValue()));
 
+                }
+            }else{
+                for (Pair<Integer, Integer> next : sp) {
+
+                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Data: " + income.get(next.getKey()) + type + ": " + next.getValue()));
+
+                }
             }
         }else{
                 current.add(new Label("record not found. Change time period?"));
