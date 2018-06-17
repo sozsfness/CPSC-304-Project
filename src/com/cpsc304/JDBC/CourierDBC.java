@@ -26,8 +26,8 @@ public class CourierDBC extends UserDBC {
         ResultSet rs;
         con.setAutoCommit(false);
         sqlString = "SELECT estimated_arrival_time";
-        sqlString += "FROM delivery_delivers ";
-        sqlString += "WHERE orderID= ?";
+        sqlString += " FROM delivery_delivers ";
+        sqlString += " WHERE orderID= ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setInt(1, orderID);
         rs = pstmt.executeQuery();
@@ -69,7 +69,7 @@ public class CourierDBC extends UserDBC {
         return address;
     }
 
-    //TODO:compare with docs sql code
+    //TODO:add condition
     //if the status of the order is not READY or DELIVERING currently, return false
     public static boolean updateOrder(Order order) throws SQLException {
         if (order.getStatus() != OrderStatus.READY && order.getStatus() != OrderStatus.DELIVERING)
@@ -78,7 +78,7 @@ public class CourierDBC extends UserDBC {
         con.setAutoCommit(false);
         Statement stmt = con.createStatement();
         if (order.getStatus() == OrderStatus.READY)
-            sqlString = "UPDATE orders SET order_status = DELIVERING";
+            sqlString = "UPDATE orders SET order_status = DELIVERING WHERE ...";
         else
             sqlString = "UPDATE orders SET order_status = DELIVERED";
         stmt.executeUpdate(sqlString);
@@ -288,7 +288,7 @@ public class CourierDBC extends UserDBC {
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers, restaurant ";
         sqlString += "WHERE order_restaurantID = resID AND order_status = 'Complete' ";
         sqlString += "AND courierID = ?" ;
-        sqlString += "GROUP BY resID, res_name";
+        sqlString += " GROUP BY resID, res_name";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, courerID);
         pstmt.executeUpdate();

@@ -16,6 +16,7 @@ public class RestaurantManagerDBC extends UserDBC{
     //TODO:show results of cascade
     public static void deleteRestaurant (int restID) throws SQLException {
         String sqlString;
+        con.setAutoCommit(false);
         PreparedStatement pstmt;
         sqlString = "DELETE FROM Restaurant ";
         sqlString += "WHERE restaurantID = ?";
@@ -30,6 +31,7 @@ public class RestaurantManagerDBC extends UserDBC{
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
+        con.setAutoCommit(false);
         sqlString = "SELECT food_name ";
         sqlString += "FROM (SELECT food_name, COUNT(food_name) AS \"Quantity Sold\" ";
         sqlString += "FROM added_in NATURAL INNER JOIN orders ";
@@ -43,6 +45,7 @@ public class RestaurantManagerDBC extends UserDBC{
         pstmt.setDate(2, startDate);
         pstmt.setDate(3, endDate);
         rs = pstmt.executeQuery();
+        con.commit();
         if (rs.next())
             return rs.getString(1);
         return null;
@@ -51,6 +54,7 @@ public class RestaurantManagerDBC extends UserDBC{
     public static void addToMenu(Food food) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
+        con.setAutoCommit(false);
         sqlString = "INSERT INTO offers ";
         sqlString += "VALUES (?, ?, ?)";
         pstmt = con.prepareStatement(sqlString);
@@ -66,6 +70,7 @@ public class RestaurantManagerDBC extends UserDBC{
         String sqlString;
         PreparedStatement pstmt;
         sqlString = "DELETE FROM offers ";
+        con.setAutoCommit(false);
         sqlString += "WHERE restaurantID = ? AND LOWER(food_name) = LOWER(?)";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setInt(1, food.getRestaurant().getId());
@@ -96,6 +101,7 @@ public class RestaurantManagerDBC extends UserDBC{
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
+        con.setAutoCommit(false);
         sqlString = "SELECT Sum(order_amount) ";
         sqlString += "FROM orders ";
         sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
@@ -105,6 +111,7 @@ public class RestaurantManagerDBC extends UserDBC{
         pstmt.setDate(2, endDate);
         pstmt.setInt(3, restaurant.getId());
         rs = pstmt.executeQuery();
+        con.commit();
         if (rs.next())
             return rs.getInt(1);
         else

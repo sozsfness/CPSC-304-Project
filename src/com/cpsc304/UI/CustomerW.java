@@ -1,6 +1,7 @@
 package com.cpsc304.UI;
 
 import com.cpsc304.JDBC.CustomerDBC;
+import com.cpsc304.JDBC.RestaurantDBC;
 import com.cpsc304.JDBC.UserDBC;
 import com.cpsc304.model.*;
 import javax.swing.*;
@@ -446,11 +447,7 @@ public class CustomerW extends JFrame{
 
 
             historyOrderListener l = new historyOrderListener();
-            if (Integer.parseInt(currentUser.getUserID())==1){
-                Button o = new Button("test");
-                current.add(o);
-                o.addActionListener(l);
-            }else {
+
                 List<Order> orders = null;
                 try {
 
@@ -480,7 +477,7 @@ public class CustomerW extends JFrame{
                     integerOrderMap.put(next.getOrderID(),next);
                 }
 
-            }
+
             pack();
 
         }
@@ -788,6 +785,7 @@ public class CustomerW extends JFrame{
             private JTextField subtotal;
             private Map<Food,JTextField> fields;
             private Map<String,Food> offers;
+            private List<Food> menu;
             JPanel j;
             private Restaurant restaurant;
             public showRestaurant (Restaurant r){
@@ -797,7 +795,11 @@ public class CustomerW extends JFrame{
                 setVisible(true);
                 fields = new HashMap<>();
 
-                offers = r.getOffers();
+                try {
+                    menu = RestaurantDBC.getMenu(r.getId());
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                }
 
                 j = new JPanel(new FlowLayout());
                 j.invalidate();
@@ -810,17 +812,18 @@ public class CustomerW extends JFrame{
                 j.add(new Label(" Hours: "+r.getOpenTime()+ " to "+r.getCloseTime()));
                 j.add(new Label(" Rating: "+r.getRating()));
                 j.add(new Label(tmp.replace('\0','*')));
-                if (offers!=null) {
-                    for (Map.Entry<String, Food> next : offers.entrySet()) {
+                if (menu!=null) {
+                    for (Food next : menu) {
                         JPanel tmpFood = new JPanel(new FlowLayout());
-                        tmpFood.add(new Label(next.getKey() + " "));
-                        tmpFood.add(new Label("Price: " + next.getValue().getPrice()));
+                        tmpFood.add(new Label(next.getName() + " "));
+                        tmpFood.add(new Label("Price: " + next.getPrice()));
                         tmpFood.add(new Label("Quantity: "));
                         JTextField quantity = new JTextField("0");
-                        quantity.setName(next.getKey());
+                        quantity.setName(next.getName());
                         tmpFood.add(quantity);
                         j.add(tmpFood);
-                        fields.put(next.getValue(), quantity);
+                        fields.put(next, quantity);
+                        offers.put(next.getName(),next);
                     }
                 }
 
