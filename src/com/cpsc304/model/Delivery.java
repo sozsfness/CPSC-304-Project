@@ -17,6 +17,7 @@ public class Delivery extends Order {
         this.arrivalTime = arrivalTime;
         this.courier = courier;
         this.dest = dest;
+
     }
 
     public double getDeliveryFee() {

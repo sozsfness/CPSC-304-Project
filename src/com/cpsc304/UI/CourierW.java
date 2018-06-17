@@ -30,6 +30,10 @@ public class CourierW extends JFrame{
     private JTextField to;
     private JTextField id;
     private Map<Integer,Delivery> integerDeliveryMap = new HashMap<>();
+    private Choice typeChooser;
+    private Choice a1;
+    private Choice a2;
+    private boolean isInS;
 
     public CourierW(Login l){
         this.l = l;
@@ -297,13 +301,24 @@ public class CourierW extends JFrame{
         Button submit = new Button("View Report");
         submit.addActionListener(new reportListener());
         current.add(submit);
-        current.add(new Label("Or view the monthly average income report with Max/Min average specified"));
-        Button max = new Button("View Max");
-        Button min = new Button("View Min");
-        max.addActionListener(new reportListener());
-        min.addActionListener(new reportListener());
-        current.add(max);
-        current.add(min);
+        current.add(new Label(tmp.replace('\0','*')));
+        current.add(new Label("Or view the monthly income report with Max/Min/Sum/Count/Average shown"));
+        current.add(new Label("Max-view the maximal delivery fee in each month"));
+        current.add(new Label("Min-similar to Max-minimal"));
+        current.add(new Label("Sum-view total earning in each month"));
+        current.add(new Label("Count-view number of deliveries in each month"));
+        current.add(new Label("Average-average delivery fee in each month"));
+        typeChooser = new Choice();
+        typeChooser.add("Max");
+        typeChooser.add("Min");
+        typeChooser.add("Sum");
+        typeChooser.add("Avg");
+        typeChooser.add("Count");
+        current.add(typeChooser);
+        Button sb = new Button("View monthly income report");
+        sb.addActionListener(new reportListener());
+        current.add(sb);
+        current.add(new Label(tmp.replace('\0','*')));
         current.add(new Label("Or view delivery fees over time per order per restaurant(grouped by restaurants) with statistics options "));
         Button nested = new Button("View stats");
         nested.addActionListener(new reportListener());
@@ -317,15 +332,15 @@ public class CourierW extends JFrame{
             String toDate = to.getText();
             String evt = e.getActionCommand();
             try{
-                Long.parseLong(fromDate);
-                Long.parseLong(toDate);
+                Date.valueOf(fromDate);
+                Date.valueOf(toDate);
             }catch (Exception ev){
-                new ErrorMsg("Date format is incorrect. Please provide dates of format YYYYMMDD");
+                new ErrorMsg("Date format is incorrect. Please provide dates of format YYYY-MM-DD");
                 return;
             }
 
-            Long from = Long.parseLong(fromDate);
-            Long to = Long.parseLong(toDate);
+            Date from = Date.valueOf(fromDate);
+            Date to = Date.valueOf(toDate);
             switch (evt) {
                 case "View Report":
 
@@ -338,58 +353,138 @@ public class CourierW extends JFrame{
                     } else {
 
                         try {
-                            buildReport(new Date(from), new Date(to));
+                            buildReport(from, to);
                         } catch (SQLException e1) {
                             e1.printStackTrace();
                         }
                     }
                     break;
-                case "View Max":
-                    buildReport(new Date(from),new Date(to),1);
-                    break;
-                case "View Min":
-                    buildReport(new Date(from),new Date(to),0);
+                case "View monthly income report":
+                    buildReport(from, to,typeChooser.getSelectedItem());
                     break;
                 case "View stats":
-                    buildStats(new Date(from),new Date(to));
+                    if (!isInS) {
+                        statsOptions();
+                    }
                     break;
+                case "stats":
+                    isInS = false;
+                    buildStats(from, to);
 
             }
         }
     }
+    private void statsOptions(){
+        isInS= true;
+        current.invalidate();
+        current.revalidate();
+        current.add(new Label("Please select options of step 1 and 2 for statistics."));
+        current.add(new Label("i.e. sum+sum calculates sum of all monthly incomes for each restaurant, then the sum of the calculated results"));
+        a1 = new Choice();
+        a2 = new Choice();
+        JPanel temp = new JPanel(new FlowLayout());
+        current.add(temp);
+        temp.add(a1);
+        temp.add(a2);
+        a1.add("Max");
+        a1.add("Min");
+        a1.add("Sum");
+        a1.add("Avg");
+        a1.add("Count");
+        a2.add("Max");
+        a2.add("Min");
+        a2.add("Sum");
+        a2.add("Avg");
+        a2.add("Count");
+        Button s = new Button("Submit");
+        s.setActionCommand("stats");
+        s.addActionListener(new reportListener());
+        current.add(s);
+
+    }
     private void buildStats(Date from, Date to){
+
         removeComponents(current);
         current.invalidate();
         current.revalidate();
         current.setLayout(null);
-            current.setLayout(new FlowLayout());
+            current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
         String tmp = new String(new char[100]);
         current.add(new Label(tmp.replace('\0','*')));
         current.add(new Label("Statistics for delivery fees in the specified time period"));
+        current.add(new Label("From "+from+ " To "+to));
         current.add(new Label(tmp.replace('\0','*')));
-
-
-    }
-    private void buildReport(Date from, Date to, int max){
-        Map<Integer,Double> income = CourierDBC.getMonthlyIncomes(from,to);
-        List<Pair<Integer, Double>> specify = new ArrayList<>();
-        String m;
-        if (max==1){
-            m = "MAX";
+        current.add(new Label("Selected options: "+a1.getSelectedItem()+" with "+a2.getSelectedItem()));
+        if (!a1.getSelectedItem().equals("Count")&&!a2.getSelectedItem().equals("Count")){
             try {
-                specify = CourierDBC.getMaxs(from,to);
-            } catch (SQLException e) {
-                new ErrorMsg(e.getMessage());
-            }
-        }else{
-            m = "MIN";
-            try {
-                specify = CourierDBC.getMins(from,to);
+                current.add(new Label("Result: "+CourierDBC.getEarning(a1.getSelectedItem(),a2.getSelectedItem(),currentUser.getUserID())));
             } catch (SQLException e) {
                 new ErrorMsg(e.getMessage());
                 return;
             }
+        }else{
+            if (a1.getSelectedItem().equals("Count")){
+                try {
+                    current.add(new Label("Result: "+CourierDBC.getFirstCount(a2.getSelectedItem())));
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                }
+            }else{
+                try {
+                    current.add(new Label("Result: "+CourierDBC.getSecondCount(a1.getSelectedItem())));
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                }
+            }
         }
+
+
+    }
+    private void buildReport(Date from, Date to, String type){
+        Map<Integer,Double> income = CourierDBC.getMonthlyIncomes(from,to);
+        List<Pair<Integer, Double>> specify = new ArrayList<>();
+        switch (type){
+            case "Max":
+                try {
+                    specify = CourierDBC.getMaxs(from,to);
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                }
+                break;
+            case "Min":
+                try {
+                    specify = CourierDBC.getMins(from,to);
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                    return;
+                }
+                break;
+            case "Sum":
+                try {
+                    specify = CourierDBC.getSums(from,to);
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                    return;
+                }
+                break;
+            case "Avg":
+                try {
+                    specify = CourierDBC.getAvgs(from,to);
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                    return;
+                }
+                break;
+            case "Count":
+                try {
+                    specify = CourierDBC.getCounts(from,to);
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                    return;
+                }
+                break;
+        }
+
 
         removeComponents(current);
         current.invalidate();
@@ -399,17 +494,15 @@ public class CourierW extends JFrame{
 
         String tmp = new String(new char[100]);
         current.add(new Label(tmp.replace('\0','*')));
-        current.add(new Label("Monthly Income Report" + "("+m+")"));
+        current.add(new Label("Monthly Income Report" + "("+type+")"));
         current.add(new Label(tmp.replace('\0','*')));
         DateFormatSymbols dfs = new DateFormatSymbols();
         String [] months = dfs.getMonths();
         if (income!=null) {
             for (Pair<Integer,Double> next: specify) {
-                if (max == 1) {
-                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + income.get(next.getKey()) + " Max: "+ next.getValue()));
-                } else {
-                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Income: " + income.get(next.getKey()) + " Min: "+ next.getValue()));
-                }
+
+                    current.add(new Label("Month: " + months[next.getKey() - 1] + " Data: " + income.get(next.getKey()) + type+ ": "+ next.getValue()));
+
             }
         }else{
                 current.add(new Label("record not found. Change time period?"));
@@ -510,20 +603,26 @@ public class CourierW extends JFrame{
                         if (newPw.length()<6){
                             new ErrorMsg("Password must be longer than 6 characters!");
                         }else {
-                            if (newNum.length()!=10){
-                                new ErrorMsg("Phone number must be in Canadian format!");
-                            }try{
+                            try{
                                 Integer.parseInt(newNum);
-                                currentUser.setName(newName);
-                                currentUser.setPassword(newPw);
-                                currentUser.setPhoneNum(newNum);
-                                UserDBC.updateUserInfo(currentUser);
-                                password.setEditable(false);
-                                na.setEditable(false);
-                                phone.setEditable(false);
+
                             }catch (Exception ev){
                                 new ErrorMsg("Phone number contains letters? Incorrect");
+                                break;
                             }
+                            currentUser.setName(newName);
+                            currentUser.setPassword(newPw);
+                            currentUser.setPhoneNum(newNum);
+                            try {
+                                UserDBC.updateUserInfo(currentUser);
+                            } catch (SQLException e1) {
+                                new ErrorMsg(e1.getMessage());
+                            }
+                            password.setEditable(false);
+                            na.setEditable(false);
+                            phone.setEditable(false);
+
+
                         }
                     }else {
                         password.setEditable(true);
