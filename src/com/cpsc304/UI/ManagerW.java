@@ -504,7 +504,11 @@ public class ManagerW extends JFrame {
             setTitle("Orders in restaurant "+restaurant.getId());
             current.setLayout(null);
             current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
-            orders = RestaurantManagerDBC.getOrders(restaurant,from,to);
+            try {
+                orders = RestaurantManagerDBC.getOrders(restaurant,from,to);
+            } catch (SQLException e) {
+                new ErrorMsg(e.getMessage());
+            }
             resOrderBtnListener listener = new resOrderBtnListener();
             if (orders!=null){
                 for (Order next: orders){
@@ -770,12 +774,21 @@ public class ManagerW extends JFrame {
                     fromDate = Date.valueOf(from.getText());
                     toDate = Date.valueOf(to.getText());
 
-                List<Order> orders = RestaurantManagerDBC.getOrders(r,fromDate,toDate);
+                List<Order> orders = null;
+                try {
+                    orders = RestaurantManagerDBC.getOrders(r,fromDate,toDate);
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                }
                 for (Order next: orders){
                     current.add(new Label("Order id: "+next.getOrderID()+ " Amount: "+next.getAmount()+ " Ordered At: "+next.getDate()));
                 }
                 add(current);
-                current.add(new Label("Total earning: "+ RestaurantManagerDBC.getRevenue(r,fromDate,toDate)));
+                try {
+                    current.add(new Label("Total earning: "+ RestaurantManagerDBC.getRevenue(r,fromDate,toDate)));
+                } catch (SQLException e) {
+                    new ErrorMsg(e.getMessage());
+                }
                 setVisible(true);
 
                 addWindowListener(new windowListener());
