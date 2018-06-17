@@ -20,7 +20,7 @@ public class LoginDBC {
         Statement stmt = con.createStatement();
         ResultSet rs;
         con.setAutoCommit(true);
-        sqlString = "SELECT COUNT(*) FROM ";
+        sqlString = "SELECT * FROM ";
         switch (type) {
             case "customer":
                 sqlString += "customer WHERE cus_";
@@ -37,6 +37,7 @@ public class LoginDBC {
         }
         sqlString += "userID = '" + userID + "'";
         rs = stmt.executeQuery(sqlString);
+        System.out.println(sqlString);
         rs.next();
         System.out.println(rs.getRow());
         if (rs.getRow() != 1) {
