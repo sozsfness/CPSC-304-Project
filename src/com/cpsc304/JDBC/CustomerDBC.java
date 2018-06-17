@@ -17,16 +17,16 @@ public class CustomerDBC extends UserDBC {
         User user = getUser(custID);
         System.out.println("user constructed");
         Customer customer = null;
-        Statement stmt = con.createStatement();
+        //Statement stmt = con.createStatement();
         ResultSet rs;
         sqlString = "SELECT cus_spending, points, vip_level ";
         sqlString += "FROM customer, points, vip_level ";
         sqlString += "WHERE cus_userID = '"+custID+"' AND cus_spending = spending";
-//        pstmt = con.prepareStatement(sqlString);
-//        pstmt.setString(1, custID);
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, custID);
 
-//        rs = pstmt.executeQuery();
-        rs = stmt.executeQuery(sqlString);
+        rs = pstmt.executeQuery();
+        //rs = stmt.executeQuery(sqlString);
         System.out.println(rs.getRow());
         rs.next();
             double spending = rs.getDouble(1);
