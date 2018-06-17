@@ -531,7 +531,7 @@ public class CourierW extends JFrame{
         current.add(new Label(tmp.replace('\0','*')));
         if (orders!=null) {
             for (Order next : orders) {
-                current.add(new Label("OrderID: " + next.getOrderID() + " DELIVERED for restaurant " + next.getRestOrderedAt().getName() + " earning: " +((Delivery)next).getDeliveryFee()));
+                current.add(new Label("OrderID: " + next.getOrderID() + " DELIVERED for restaurant " + next.getRestOrderedAt().getName() +" On "+next.getDate() + " earning: " +((Delivery)next).getDeliveryFee()));
             }
         }
         current.add(new Label("Total income in selected time period: "+CourierDBC.getIncome(from,to)));

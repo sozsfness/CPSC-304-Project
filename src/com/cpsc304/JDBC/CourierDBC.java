@@ -117,6 +117,7 @@ public class CourierDBC extends UserDBC {
             String custID = rs.getString(6);
             Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
             double deliverFee = rs.getDouble(8);
+            System.out.println(deliverFee);
             int houseNum = rs.getInt(9);
             String street = rs.getString(10);
             String province = rs.getString(11);
@@ -344,10 +345,10 @@ public class CourierDBC extends UserDBC {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
-        sqlString = "SELECT Sum(delivery_fee) ";
+        sqlString = "SELECT SUM(delivery_fee) ";
         sqlString += "FROM orders o, delivery_delivers d ";
         sqlString += "WHERE o.orderID = d.orderID AND order_status = 'COMPLETE' ";
-        sqlString += "AND (order_date BETWEEN ? AND ?) AND courierID = ?";
+        sqlString += "AND (order_date BETWEEN ? AND ?) AND d.courierID = ?";
 
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);

@@ -245,7 +245,7 @@ public class CustomerW extends JFrame{
         //showing details of selected order
         private void showDetailsOfOrder(String orderID){
 
-                order = integerOrderMap.get(Integer.parseInt(orderID));
+                order = integerOrderMap.get(Long.parseLong(orderID));
                 new OrderDetails(order);
 
         }
@@ -462,13 +462,14 @@ public class CustomerW extends JFrame{
                     new ErrorMsg(e1.getMessage());
                 }
 
-                if (order==null) {
+                if (orders==null) {
                     current.add(new Label("No such order is found. Try again with different time period or type"));
                     return;
                 }
 
                 for (Order next : orders) {
                     Button o = new Button(Long.toString(next.getOrderID()) + "( on" + next.getDate() + ")");
+                    o.setActionCommand(Long.toString(next.getOrderID()));
                     current.add(o);
                     o.addActionListener(l);
                     integerOrderMap.put(next.getOrderID(),next);

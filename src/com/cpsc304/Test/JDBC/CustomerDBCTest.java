@@ -68,7 +68,7 @@ public class CustomerDBCTest {
         try {
             List<Order> orders = CourierDBC.getOrders(Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
             for (Order order: orders) {
-                System.out.println(order.getOrderID() + " " + order.getStatus() + " " + order.getAmount());
+                System.out.println(order.getOrderID() + " " + order.getStatus() + " " + order.getAmount() + ((Delivery)order).getDeliveryFee());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class CustomerDBCTest {
     static void testIncome(){
         MainUI.currentUser = courier;
         try{
-            Double in = CourierDBC.getIncome(Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
+            Double in = CourierDBC.getIncome(Date.valueOf("2001-01-01"),Date.valueOf("2020-12-12"));
             System.out.println(in);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -106,9 +106,9 @@ public class CustomerDBCTest {
         //testCommitOrder();
         //testVerify();
         //testLogin();
-//        testGetOrder();
-        testGetPickup();
-        testIncome();
+        testGetOrder();
+//        testGetPickup();
+//        testIncome();
         System.out.println("Done!");
         DBConnection.close();
     }
