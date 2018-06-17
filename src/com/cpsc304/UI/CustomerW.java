@@ -3,8 +3,6 @@ package com.cpsc304.UI;
 import com.cpsc304.JDBC.CustomerDBC;
 import com.cpsc304.JDBC.UserDBC;
 import com.cpsc304.model.*;
-import com.sun.org.apache.regexp.internal.RE;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -786,7 +784,7 @@ public class CustomerW extends JFrame{
         }
 
         private class showRestaurant extends Frame{
-            private Map<Food,Integer> foodQuantity;
+            private boolean isSubmitShown = false;
             private JTextField subtotal;
             private Map<Food,JTextField> fields;
             private Map<String,Food> offers;
@@ -799,13 +797,6 @@ public class CustomerW extends JFrame{
                 setVisible(true);
                 fields = new HashMap<>();
 
-                String tmp = new String(new char[100]);
-                add(new Label(tmp.replace('\0','*')));
-                add(new Label("Restaurant: " +r.getName() ));
-                add(new Label(" Hours: "+r.getOpenTime()+ " to "+r.getCloseTime()));
-                add(new Label(" Rating: "+r.getRating()));
-                add(new Label(tmp.replace('\0','*')));
-
                 offers = r.getOffers();
 
                 j = new JPanel(new FlowLayout());
@@ -813,6 +804,12 @@ public class CustomerW extends JFrame{
                 j.revalidate();
                 j.setLayout(null);
                 j.setLayout(new BoxLayout(j,BoxLayout.PAGE_AXIS));
+                String tmp = new String(new char[100]);
+                j.add(new Label(tmp.replace('\0','*')));
+                j.add(new Label("Restaurant: " +r.getName() ));
+                j.add(new Label(" Hours: "+r.getOpenTime()+ " to "+r.getCloseTime()));
+                j.add(new Label(" Rating: "+r.getRating()));
+                j.add(new Label(tmp.replace('\0','*')));
                 if (offers!=null) {
                     for (Map.Entry<String, Food> next : offers.entrySet()) {
                         JPanel tmpFood = new JPanel(new FlowLayout());
@@ -893,10 +890,12 @@ public class CustomerW extends JFrame{
                         j.revalidate();
                         subtotal.setText(total.toString());
                         subtotal.setVisible(true);
-
-                        Button submit = new Button("Submit");
-                        submit.addActionListener(new submitListener());
-                        add(submit);
+                        if (!isSubmitShown) {
+                            isSubmitShown = true;
+                            Button submit = new Button("Submit");
+                            submit.addActionListener(new submitListener());
+                            add(submit);
+                        }
                     }else{
                         currentOrder = new Order((Customer) currentUser,total,restaurant,quantity);
                         try {

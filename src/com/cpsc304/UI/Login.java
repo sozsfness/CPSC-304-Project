@@ -3,9 +3,7 @@ import com.cpsc304.JDBC.CourierDBC;
 import com.cpsc304.JDBC.CustomerDBC;
 import com.cpsc304.JDBC.LoginDBC;
 import com.cpsc304.JDBC.RestaurantManagerDBC;
-import com.cpsc304.model.Courier;
-import com.cpsc304.model.Customer;
-import com.cpsc304.model.RestaurantManager;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +29,7 @@ public class Login extends JFrame  {
         JPanel p3 = new JPanel(new FlowLayout());
         Label id = new Label("userID:");
         p1.add(id);
-        userID = new JTextField("id",10);
+        userID = new JTextField("",10);
         Label p = new Label("password:");
         pw = new JPasswordField("", 10);
         p1.add(userID);
@@ -107,7 +105,7 @@ public class Login extends JFrame  {
                 System.out.println("logging in...");
                 if (id.equals("id")&&password.equals("password")){
 //                    MainUI.currentUser = new Customer("1","test","1","123456",123,0,0);
-                    MainUI.currentUser = new Courier("1","test","1","123456",null);
+//                    MainUI.currentUser = new Courier("1","test","1","123456",null);
 //                    MainUI.currentUser = new RestaurantManager("1","test","1","123456",null);
 
                     isvalid = true;
@@ -147,12 +145,12 @@ public class Login extends JFrame  {
                             break;
                         case "courier":
                             System.out.println("courier.");
-//                            try {
-//                                MainUI.currentUser = CourierDBC.getCurier(id);
-//                            } catch (SQLException e) {
-//                                new ErrorMsg(e.getMessage());
-//                                break;
-//                            }TODO:UNCOMMENT THIS
+                            try {
+                                MainUI.currentUser = CourierDBC.getCurier(id);
+                            } catch (SQLException e) {
+                                new ErrorMsg(e.getMessage());
+                                break;
+                            }
                             MainUI.getCourierUI();
                             t.setVisible(false);
                             break;

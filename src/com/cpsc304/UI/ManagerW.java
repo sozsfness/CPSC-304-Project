@@ -4,7 +4,6 @@ import com.cpsc304.JDBC.CustomerDBC;
 import com.cpsc304.JDBC.RestaurantManagerDBC;
 import com.cpsc304.JDBC.UserDBC;
 import com.cpsc304.model.*;
-import com.sun.org.apache.xpath.internal.operations.Or;
 
 import javax.swing.*;
 import java.awt.*;
