@@ -1,7 +1,9 @@
 package com.cpsc304.JDBC;
 
 import com.cpsc304.UI.MainUI;
+import com.cpsc304.UI.UpgradeWindow;
 import com.cpsc304.model.*;
+import sun.applet.Main;
 
 import java.sql.*;
 import java.sql.Date;
@@ -21,7 +23,7 @@ public class CustomerDBC extends UserDBC {
         ResultSet rs;
         sqlString = "SELECT cus_spending, points, vip_level ";
         sqlString += "FROM customer, points, vip_level ";
-        sqlString += "WHERE cus_userID = ? AND cus_spending = spending";
+        sqlString += "WHERE cus_userID = ? AND cus_spending = spending AND points = vip_points";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, custID);
 
@@ -93,6 +95,34 @@ public class CustomerDBC extends UserDBC {
         stmt.executeUpdate(sqlString);
         con.commit();
         stmt.close();
+        if (orderStatus == OrderStatus.COMPLETE)
+            checkVipLevel();
+    }
+
+    private static void checkVipLevel() throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        Customer customer = (Customer)MainUI.currentUser;
+        sqlString = "SELECT cus_spending, points, vip_level ";
+        sqlString += "FROM customer, points, vip_level ";
+        sqlString += "WHERE cus_userID = ? AND cus_spending = spending AND points = vip_points";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, MainUI.currentUser.getUserID());
+        rs = pstmt.executeQuery();
+        con.commit();
+        if (rs.next()) {
+            double spending = rs.getDouble(1);
+            int points = rs.getInt(2);
+            int vip = rs.getInt(3);
+            if (vip != customer.getVipLevel()){
+                new UpgradeWindow(customer.getVipLevel(), vip);
+            }
+            customer.setSpending(spending);
+            customer.setVipLevel(vip);
+            customer.setPoints(points);
+        }
+
     }
 
     public static List<Restaurant> getBestRestaurants(String type,boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
@@ -245,7 +275,7 @@ public class CustomerDBC extends UserDBC {
         //note food may be a string containing multiple food names,separated with commas
         return getRankedRestaurants(foods,0, brating, bhours, bdeliveryOption, btype, baddress);
     }
-    public static List<Restaurant> getRankedRestaurants(List<String> foods,Integer minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
+    public static List<Restaurant> getRankedRestaurants(List<String> foods,double minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         //note food may be a string containing multiple food names,separated with commas
         String sqlString;
         PreparedStatement pstmt;

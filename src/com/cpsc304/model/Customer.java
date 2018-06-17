@@ -58,19 +58,7 @@ public class Customer extends User{
         return orders;
     }
 
-    // TODO:
-    public void addSpending(double money) {
-        this.spending += money;
-        addPoints(money / 100);
-    }
-
-    private void addPoints(double points) {
-        this.points += points;
-        checkVipLevel();
-    }
-
-    // TBC
-    private void checkVipLevel() {
-
+    public void setPoints(int points) {
+        this.points = points;
     }
 }
