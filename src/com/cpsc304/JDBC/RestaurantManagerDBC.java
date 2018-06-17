@@ -10,7 +10,8 @@ public class RestaurantManagerDBC extends UserDBC{
     private static Connection con = DBConnection.getCon();
 
     public static RestaurantManager getManager(String managerID) throws SQLException {
-        return (RestaurantManager)getUser(managerID);
+        User user = getUser(managerID);
+        return new RestaurantManager(user.getUserID(),user.getName(),user.getPassword(),user.getPhoneNum(),null);
     }
 
     //TODO:show results of cascade

@@ -23,6 +23,7 @@ public class CustomerDBCTest {
     private static Order order;
     private static Courier courier;
     private static Pickup pickup;
+    private static RestaurantManager restaurantManager;
 
     static void runBefore() {
         date = new Date(100000);
@@ -32,6 +33,7 @@ public class CustomerDBCTest {
         customer = new Customer("b9q3u", "Samson Mason", "Wyw3026","4964411825", 10000, 5, 100);
         order = new Pickup(customer, new Long(10000), date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, READYTime);
         courier = new Courier("j2g5z", "ppp","Mtb0525", "1113", null);
+        restaurantManager = new RestaurantManager("h5c2k",".","Uft5964","1111",null);
         DBConnection.connect();
     }
 
@@ -61,6 +63,9 @@ public class CustomerDBCTest {
             e.printStackTrace();
             System.out.println("sql Exception");
         }
+    }
+    static void testManager(){
+        MainUI.currentUser = restaurantManager;
     }
 
     static void testGetOrder(){

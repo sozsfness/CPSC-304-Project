@@ -276,7 +276,6 @@ public class CustomerDBC extends UserDBC {
         return getRankedRestaurants(foods,0, brating, bhours, bdeliveryOption, btype, baddress);
     }
     public static List<Restaurant> getRankedRestaurants(List<String> foods,double minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
-        //note food may be a string containing multiple food names,separated with commas
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
