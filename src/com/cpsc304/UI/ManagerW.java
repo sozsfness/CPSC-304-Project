@@ -701,16 +701,18 @@ public class ManagerW extends JFrame {
                 current = new JPanel(new FlowLayout());
                 current.setLayout(null);
                 current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
-                current.add(new Label("Popular dishes for restaurant "+r.getName()));
-                List<Food> foods = null;
+                String tmp = new String(new char[80]);
+                current.add(new Label(tmp.replace('\0','*')));
+                current.add(new Label("Most popular dish for restaurant "+r.getName()));
+                current.add(new Label(tmp.replace('\0','*')));
+                String food = "";
+
                 try {
-                    foods = RestaurantManagerDBC.getPopularDish(r);
+                    food = RestaurantManagerDBC.getPopularDish(r.getId(),Date.valueOf(from.getText()),Date.valueOf(to.getText()));
                 } catch (SQLException e) {
                     new ErrorMsg(e.getMessage());
                 }
-                for (Food next: foods){
-                    current.add(new Label("Food name: "+next.getName()+ "Price: "+next.getPrice()));
-                }
+                current.add(new Label("The most popular dish: "+food));
                 add(current);
                 setVisible(true);
                 addWindowListener(new windowListener());

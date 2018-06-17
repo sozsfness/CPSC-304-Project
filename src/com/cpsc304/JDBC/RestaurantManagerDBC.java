@@ -31,6 +31,7 @@ public class RestaurantManagerDBC extends UserDBC{
         Statement stmt = con.createStatement();
         ResultSet rs;
         sqlString = "SELECT ";
+        return "";
     }
 
     public static void addToMenu(Food food) throws SQLException {

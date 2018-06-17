@@ -941,7 +941,7 @@ public class CustomerW extends JFrame{
                                     new ErrorMsg("Phone number must be in Canadian format!");
                                 }else {
                                     try{
-                                        Integer.parseInt(newNum);
+                                        Long.parseLong(newNum);
 
                                     }catch (Exception ev){
                                         new ErrorMsg("Phone number contains letters? Incorrect");
