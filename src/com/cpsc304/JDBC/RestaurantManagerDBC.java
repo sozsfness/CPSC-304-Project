@@ -25,8 +25,12 @@ public class RestaurantManagerDBC extends UserDBC{
         con.commit();
     }
 
-    public static List<Food> getPopularDish(Restaurant restaurant) throws SQLException {
-        return null;
+    //return the name of the most popular dish
+    public static String getPopularDish(int restID, Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        Statement stmt = con.createStatement();
+        ResultSet rs;
+        sqlString = "SELECT ";
     }
 
     public static void addToMenu(Food food) throws SQLException {
@@ -67,10 +71,6 @@ public class RestaurantManagerDBC extends UserDBC{
         stmt.executeUpdate(sqlString);
         con.commit();
         return true;
-    }
-
-    public static int getOrderNum(Date startDate, Date endDate){
-        return 0;
     }
 
     public static List<Order> getOrders(Restaurant restaurant, Date startDate, Date endDate){
