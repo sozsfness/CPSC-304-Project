@@ -135,6 +135,47 @@ public class CustomerDBC extends UserDBC {
         pstmt.close();
         return restaurants;
     }
+    public static List<Restaurant> getBestRestaurants(String type,Integer minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        Restaurant rest;
+        List<Restaurant> restaurants = new ArrayList<>();
+        ResourceManager rm = ResourceManager.getInstance();
+        con.setAutoCommit(false);
+        sqlString = "SELECT * ";
+        sqlString += "FROM restaurant ";
+        sqlString += "WHERE LOWER(res_type) = LOWER(?) AND res_rating >= ? ";
+        sqlString += "ORDER BY res_rating DESC";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, type);
+        pstmt.setInt(2,minRating);
+        rs = pstmt.executeQuery();
+        con.commit();
+        while (rs.next()){
+            int resID = rs.getInt(1);
+            String resName = rs.getString(2);
+            Time openTime = Time.valueOf(rs.getString(3) + ":00");
+            Time closeTime = Time.valueOf(rs.getString(4) +":00");
+            Double rating = rs.getDouble(5);
+            String t = rs.getString(6);
+            boolean deliveryOption;
+            if (rs.getInt(7) != 0)
+                deliveryOption = true;
+            else
+                deliveryOption = false;
+            String managerID = rs.getString(8);
+            String postal = rs.getString(9);
+            String street = rs.getString(10);
+            int houseNum = rs.getInt(11);
+            Address address = new Address(houseNum, street, null, null, postal);
+            rest = new Restaurant(rm.getManager(managerID), rating, openTime, closeTime, resName, resID, deliveryOption,
+                    type, address, null);
+            restaurants.add(rest);
+        }
+        pstmt.close();
+        return restaurants;
+    }
 
     public static List<Restaurant> getRecommendedRestaurants() throws SQLException{
         List<Restaurant> restaurants = new ArrayList<>();
@@ -224,12 +265,12 @@ public class CustomerDBC extends UserDBC {
         if (baddress)
             sqlString += ", res_postal_code, res_street, res_house#";
         sqlString += " FROM restaurant r, offers o";
-        sqlString += "WHERE o.restaurantID = r.resI";
+        sqlString += " WHERE o.restaurantID = r.resI";
         sqlString += " AND res_rating >= ?";
         for (String food: foods) {
             sqlString += " AND LOWER(o.food_name) = LOWER(" + food + ")";
         }
-        sqlString += "ORDER BY res_rating DESC";
+        sqlString += " ORDER BY res_rating DESC";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDouble(1, minRating);
         rs = pstmt.executeQuery();
@@ -446,8 +487,9 @@ public class CustomerDBC extends UserDBC {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
+        con.setAutoCommit(false);
         sqlString = "SELECT Sum(order_amount) ";
-        sqlString += "FROM orders o";
+        sqlString += "FROM orders o ";
         sqlString += "WHERE order_status = 'COMPLETE' ";
         sqlString += "AND (order_date BETWEEN ? AND ?) AND order_customerID = ?";
         pstmt = con.prepareStatement(sqlString);
@@ -455,6 +497,7 @@ public class CustomerDBC extends UserDBC {
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
+        con.commit();
         if (rs.next())
             return rs.getInt(1);
         else

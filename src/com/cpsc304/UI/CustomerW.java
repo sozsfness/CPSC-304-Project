@@ -286,7 +286,7 @@ public class CustomerW extends JFrame{
                 toAdd.add(new Label("Order Details"));
                 toAdd.add(new Label("Order id: "+order.getOrderID()));
                 toAdd.add(new Label("Date and Time : "+order.getDate()+" "+order.getTime()));
-                toAdd.add(new Label("Ordered at: " + order.getRestOrderedAt()));
+                toAdd.add(new Label("Ordered at: " + order.getRestOrderedAt().getName()));
                 toAdd.add(new Label("Amount spent: "+order.getAmount()));
                 //panel for food and quantities
                 JPanel foodq = new JPanel(new FlowLayout());
@@ -303,7 +303,7 @@ public class CustomerW extends JFrame{
                 }
                 if (isDelivery){
                     toAdd.add(new Label("Delivery fee: "+((Delivery)order).getDeliveryFee()));
-                    toAdd.add(new Label("DELIVERED by: "+((Delivery)order).getCourier()));
+                    toAdd.add(new Label("DELIVERED by: "+((Delivery)order).getCourier().getName()));
                     if (!canChange){
                         toAdd.add(new Label("Arrival Time: "+((Delivery)order).getArrivalTime()));
                     }
@@ -363,6 +363,18 @@ public class CustomerW extends JFrame{
                             p.revalidate();
                             status.setText(OrderStatus.COMPLETE.toString());
                             order.setStatus(OrderStatus.COMPLETE);
+                        case READY:
+                            try {
+                                CustomerDBC.updateOrderStatus(order.getOrderID(),OrderStatus.COMPLETE);
+                            } catch (SQLException e1) {
+                                new ErrorMsg(e1.getMessage());
+                            }
+                            Container c = status.getParent();
+                            c.invalidate();
+                            c.revalidate();
+                            status.setText(OrderStatus.COMPLETE.toString());
+                            order.setStatus(OrderStatus.COMPLETE);
+                            break;
                     }
                 }
             }
@@ -591,7 +603,11 @@ public class CustomerW extends JFrame{
                 }
             }else{
                 if (!type.equals("all")) {
-                    restaurants = CustomerDBC.getBestRestaurants(type,r,h,d,t,a);
+                    if (rate.equals("all")) {
+                        restaurants = CustomerDBC.getBestRestaurants(type, r, h, d, t, a);
+                    }else{
+                        restaurants = CustomerDBC.getBestRestaurants(type,Integer.parseInt(rate),  r, h, d, t, a);
+                    }
                 }else{
                     if (!rate.equals("all")) {
                         restaurants = CustomerDBC.getRestaurantsOfRating(Integer.parseInt(rate),r,h,d,t,a);
@@ -641,49 +657,7 @@ public class CustomerW extends JFrame{
                     current.add(m);
                 }
             }else{
-                //TODO: DELETE THIS
-                restaurants = new LinkedList<>();
-                restaurants.add(new Restaurant(null,0,null,null,null,0,false,null,null,null));
-                Restaurant r0 = restaurants.get(0);
-                JPanel m = new JPanel(new FlowLayout());
 
-                String info = "(";
-                if (r){
-                    info+="Rating: ";
-                    info+=r0.getRating();
-                    info+=" ";
-                }
-                if (h){
-                    info+="Hours: ";
-                    info+=r0.getOpenTime();
-                    info+=" to ";
-                    info+=r0.getCloseTime();
-                    info+=" ";
-                }
-                if (d){
-                    info+="Delivery Option: ";
-                    info+=r0.isDeliveryOption();
-                    info+=" ";
-                }
-                if (t){
-                    info+="Type: ";
-                    info+=r0.getType();
-                    info+=" ";
-                }
-                if (a){
-                    info+="Address: ";
-                    String temp = "";
-                    temp = r0.getAddress().getHouseNum() + " " + r0.getAddress().getStreet() + ", " + r0.getAddress().getCity() + " " + r0.getAddress().getProvince() + ", " + r0.getAddress().getPostalCode();
-                    info+=temp;
-                    info+=" ";
-                }
-                info+=")";
-                m.add(new Label("Restaurant name: " + r0.getName() + " ID: "));
-                Button resB = new Button(((Integer) r0.getId()).toString());
-                resB.addActionListener(new resSelectListener());
-                m.add(resB);
-                m.add(new Label(info));
-                current.add(m);
 
             }
         }
@@ -755,16 +729,7 @@ public class CustomerW extends JFrame{
             }
 
         }else{
-            //TODO:DELETE THIS
-            restaurants = new LinkedList<>();
-            restaurants.add(new Restaurant(null,0,null,null,null,0,false,null,null,null));
-            Restaurant r0 = restaurants.get(0);
-            JPanel m = new JPanel(new FlowLayout());
-            m.add(new Label("Restaurant name: " + r0.getName() + " ID: "));
-            Button resB = new Button(((Integer) r0.getId()).toString());
-            resB.addActionListener(new resSelectListener());
-            m.add(resB);
-            current.add(m);
+            current.add(new Label("No recommendations. Sorry."));
         }
     }
 
@@ -786,7 +751,7 @@ public class CustomerW extends JFrame{
             private boolean isSubmitShown = false;
             private JTextField subtotal;
             private Map<Food,JTextField> fields;
-            private Map<String,Food> offers;
+            private Map<String,Food> offers = new HashMap<>();
             private List<Food> menu;
             JPanel j;
             private Restaurant restaurant;
@@ -881,7 +846,7 @@ public class CustomerW extends JFrame{
             }
             private class submitListener implements ActionListener{
                 Double total;
-                Map<Food,Integer> quantity;
+                Map<Food,Integer> quantity = new HashMap<>();
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String evt = e.getActionCommand();

@@ -96,6 +96,14 @@ public class CustomerDBCTest {
         }
 
     }
+    static void testGetSpd(){
+        MainUI.currentUser = customer;
+        try {
+            System.out.println(CustomerDBC.getSpending(Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12")));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main (String[] args) {
         Food f1 = new Food("PICK", restaurant, 10);
@@ -106,9 +114,10 @@ public class CustomerDBCTest {
         //testCommitOrder();
         //testVerify();
         //testLogin();
-        testGetOrder();
+//        testGetOrder();
 //        testGetPickup();
 //        testIncome();
+        testGetSpd();
         System.out.println("Done!");
         DBConnection.close();
     }
