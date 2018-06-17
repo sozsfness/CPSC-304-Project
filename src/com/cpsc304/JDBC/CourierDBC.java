@@ -97,7 +97,7 @@ public class CourierDBC extends UserDBC {
         List<Order> deliveries = new ArrayList<>();
         con.setAutoCommit(false);
         if (MainUI.currentUser == null) return null;
-        sqlString = "SELECT o.*, order_restaurantID, delivery_fee, d.house#, d.street, province, city, d.postal_code ";
+        sqlString = "SELECT o.*, delivery_fee, d.house#, d.street, province, city, d.postal_code ";
         sqlString += "FROM orders o, delivery_delivers d , address_detail a ";
         sqlString += "WHERE d.orderID = o.orderID AND o.order_date >= ? ";
         sqlString += "AND order_date <= ? AND d.courierID = ? ";
@@ -144,16 +144,63 @@ public class CourierDBC extends UserDBC {
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
         sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
+        sqlString += "GROUP BY to_char(order_date, 'Month')";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
         while (rs.next()) {
-            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
             sums.add(pair);
         }
         return sums;
+    }
+
+    private static Integer getMonth(String string){
+        int month;
+        switch (string) {
+            case "January":
+                month = 1;
+                break;
+            case "Feburary":
+                month = 2;
+                break;
+            case "March":
+                month = 3;
+                break;
+            case "April":
+                month = 4;
+                break;
+            case "May":
+                month = 5;
+                break;
+            case "June":
+                month = 6;
+                break;
+            case "July":
+                month = 7;
+                break;
+            case "August":
+                month = 8;
+                break;
+            case "September":
+                month = 9;
+                break;
+            case "October":
+                month = 10;
+                break;
+            case "November":
+                month = 11;
+                break;
+            case "December":
+                month = 12;
+                break;
+            default:
+                month = 0;
+                break;
+        }
+        return month;
     }
 
     public static List<Pair<Integer, Double>> getAvgs(Date startDate, Date endDate) throws SQLException {
@@ -166,13 +213,14 @@ public class CourierDBC extends UserDBC {
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
         sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
+        sqlString += "GROUP BY to_char(order_date, 'Month')";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
         while (rs.next()) {
-            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
             avgs.add(pair);
         }
         return avgs;
@@ -188,13 +236,14 @@ public class CourierDBC extends UserDBC {
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
         sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
+        sqlString += "GROUP BY to_char(order_date, 'Month')";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
         while (rs.next()) {
-            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
             mins.add(pair);
         }
         return mins;
@@ -210,35 +259,37 @@ public class CourierDBC extends UserDBC {
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
         sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
+        sqlString += "GROUP BY to_char(order_date, 'Month')";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
         while (rs.next()) {
-            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
             maxs.add(pair);
         }
         return maxs;
     }
 
-    public static List<Pair<Integer, Double>> getCounts(Date startDate, Date endDate) throws SQLException {
+    public static List<Pair<Integer, Integer>> getCounts(Date startDate, Date endDate) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
-        List<Pair<Integer, Double>> counts = new ArrayList<>();
-        Pair<Integer, Double> pair;
-        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Sum(delivery_fee) AS \"Sum Earning\" ";
+        List<Pair<Integer, Integer>> counts = new ArrayList<>();
+        Pair<Integer, Integer> pair;
+        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Count(delivery_fee) AS \"Count Earning\" ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
         sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
+        sqlString += "GROUP BY to_char(order_date, 'Month')";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
         while (rs.next()) {
-            pair = new Pair<>(rs.getInt(1), rs.getDouble(2));
+            pair = new Pair<>(getMonth(rs.getString(1)), rs.getInt(2));
             counts.add(pair);
         }
         return counts;
@@ -347,13 +398,14 @@ public class CourierDBC extends UserDBC {
         sqlString = "SELECT Sum(delivery_fee) ";
         sqlString += "FROM orders o, delivery_delivers d ";
         sqlString += "WHERE o.orderID = d.orderID AND order_status = 'COMPLETE' ";
-        sqlString += "AND (order_date BETWEEN ? AND ?) AND courierID = ?";
+        sqlString += "AND order_date >= ? AND order_date <= ? AND courierID = ?";
 
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
+        con.commit();
         if (rs.next())
             return rs.getDouble(1);
         else

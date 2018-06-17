@@ -64,7 +64,7 @@ public class CustomerDBCTest {
     }
 
     static void testGetOrder(){
-        MainUI.currentUser = (User)courier;
+        MainUI.currentUser = courier;
         try {
             List<Order> orders = CourierDBC.getOrders(Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
             for (Order order: orders) {
@@ -97,18 +97,40 @@ public class CustomerDBCTest {
 
     }
 
+    static void testGetDeliveries(){
+        MainUI.currentUser = customer;
+        try {
+            List<Order> orders = CustomerDBC.getDeliveries(744,Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
+            for (Order order: orders) {
+                System.out.println(order.getOrderID() + " " + order.getStatus() + " " + order.getAmount());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void testGetTime(){
+        try {
+            System.out.println(CourierDBC.getScheduledTime(42976));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main (String[] args) {
         Food f1 = new Food("PICK", restaurant, 10);
         Food f2 = new Food("PICK", restaurant, 10);
-        System.out.println(f1 == f2);
+        //System.out.println(f1 == f2);
         runBefore();
         ResourceManager.getInstance();
         //testCommitOrder();
         //testVerify();
         //testLogin();
 //        testGetOrder();
-        testGetPickup();
-        testIncome();
+        //testGetPickup();
+        //testIncome();
+        //testGetTime();
+        testGetDeliveries();
         System.out.println("Done!");
         DBConnection.close();
     }
