@@ -18,7 +18,7 @@ public abstract class UserDBC {
         String sqlString;
         PreparedStatement pstmt;
         sqlString = "UPDATE users SET userName = ? ";
-        sqlString += "AND userPass = ? AND phone# = ?";
+        sqlString += "AND userPass = ? AND phone# = ? WHERE userID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, user.getName());
         pstmt.setString(2, user.getPassword());

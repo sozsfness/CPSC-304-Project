@@ -78,9 +78,10 @@ public class CourierDBC extends UserDBC {
         con.setAutoCommit(false);
         Statement stmt = con.createStatement();
         if (order.getStatus() == OrderStatus.READY)
-            sqlString = "UPDATE orders SET order_status = DELIVERING WHERE ...";
+            sqlString = "UPDATE orders SET order_status = DELIVERING";
         else
             sqlString = "UPDATE orders SET order_status = DELIVERED";
+        sqlString +=  " WHERE orderID = " + order.getOrderID();
         stmt.executeUpdate(sqlString);
         con.commit();
         return true;
