@@ -285,7 +285,7 @@ public class CustomerW extends JFrame{
                 addWindowListener(new detailWindowListener());
                 toAdd.add(new Label("Order Details"));
                 toAdd.add(new Label("Order id: "+order.getOrderID()));
-                toAdd.add(new Label("Date and Time submitted: "+order.getDate()+" "+order.getTime()));
+                toAdd.add(new Label("Date and Time : "+order.getDate()+" "+order.getTime()));
                 toAdd.add(new Label("Ordered at: " + order.getRestOrderedAt()));
                 toAdd.add(new Label("Amount spent: "+order.getAmount()));
                 //panel for food and quantities
@@ -303,12 +303,12 @@ public class CustomerW extends JFrame{
                 }
                 if (isDelivery){
                     toAdd.add(new Label("Delivery fee: "+((Delivery)order).getDeliveryFee()));
-                    toAdd.add(new Label("Delivered by: "+((Delivery)order).getCourier()));
+                    toAdd.add(new Label("DELIVERED by: "+((Delivery)order).getCourier()));
                     if (!canChange){
                         toAdd.add(new Label("Arrival Time: "+((Delivery)order).getArrivalTime()));
                     }
                 }else{
-                    toAdd.add(new Label("Ready time: "+((Pickup)order).getReadyTime()));
+                    toAdd.add(new Label("READY time: "+((Pickup)order).getREADYTime()));
                 }
 
                 //Jpanel for status
@@ -468,7 +468,7 @@ public class CustomerW extends JFrame{
                 }
 
                 for (Order next : orders) {
-                    Button o = new Button(Long.toString(next.getOrderID()) + "(submitted on" + next.getDate() + ")");
+                    Button o = new Button(Long.toString(next.getOrderID()) + "( on" + next.getDate() + ")");
                     current.add(o);
                     o.addActionListener(l);
                     integerOrderMap.put(next.getOrderID(),next);
@@ -688,7 +688,11 @@ public class CustomerW extends JFrame{
         }
     private void buildNewOrder(boolean r, boolean h, boolean d, boolean t, boolean a){
 
-        restaurants=CustomerDBC.getRecommendedRestaurants();
+        try {
+            restaurants=CustomerDBC.getRecommendedRestaurants();
+        } catch (SQLException e) {
+            new ErrorMsg(e.getMessage());
+        }
         removeComponents(current);
         current.invalidate();
         current.revalidate();

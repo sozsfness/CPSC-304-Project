@@ -96,12 +96,12 @@ CREATE TABLE orders(
     order_date DATE,
     order_time CHAR(5),
     order_amount DECIMAL(10,2),
-    order_status VARCHAR(20) CHECK(order_status = 'Submitted'
-                                    OR order_status = 'Ready'
-                                    OR order_status = 'Complete'
-                                    OR order_status = 'Cancelled'
-									OR order_status = 'Delivered'
-									OR order_status = 'Delivering'),
+    order_status VARCHAR(20) CHECK(order_status = 'SUBMITTED'
+                                    OR order_status = 'READY'
+                                    OR order_status = 'COMPLETE'
+                                    OR order_status = 'CANCELLED'
+									OR order_status = 'DELIVERED'
+									OR order_status = 'DELIVERING'),
     order_customerID VARCHAR(20) NOT NULL,
     order_restaurantID INTEGER NOT NULL,
     FOREIGN KEY(order_customerID) REFERENCES customer ON DELETE SET NULL,
@@ -110,7 +110,7 @@ CREATE TABLE orders(
 
 CREATE TABLE pick_up(
     orderID INTEGER PRIMARY KEY,
-    estimated_ready_time CHAR(5),
+    estimated_READY_time CHAR(5),
     FOREIGN KEY(orderID) REFERENCES orders ON DELETE CASCADE
 );
 
@@ -428,46 +428,46 @@ INSERT INTO restaurant VALUES (672,'Ancora waterfront dining and patio ','18:00'
 INSERT INTO restaurant VALUES (683,'The Keg','18:00','00:00',3.3,'European Food',0,'n5o8e','P5V 8X0','Posuere Rd',2571);
 INSERT INTO restaurant VALUES (589,'Steveston pizza company','18:00','00:00',4.7,'European Food',1,'d5m8a','J4R 4K9','Curabitur Road',2786);
 INSERT INTO restaurant VALUES (336,'Jam café','18:00','00:00',1.9,'European Food',1,'h5c2k','T2N 2E8','Tincidunt Rd',954);
-INSERT INTO orders VALUES (20309,'2017-10-13','21:31',16,'Submitted','b9q3u',744);
-INSERT INTO orders VALUES (95288,'2018-03-29','06:52',11,'Submitted','a3a8d',907);
-INSERT INTO orders VALUES (46351,'2018-02-24','00:52',8,'Submitted','b2x1i',712);
-INSERT INTO orders VALUES (19027,'2017-07-18','08:53',2,'Ready','p4m3z',504);
-INSERT INTO orders VALUES (12799,'2018-04-26','15:56',15,'Ready','v6v1s',973);
-INSERT INTO orders VALUES (53212,'2018-02-16','02:46',14,'Ready','o5o4z',271);
-INSERT INTO orders VALUES (22511,'2018-04-02','10:50',4,'Ready','s0k9j',650);
-INSERT INTO orders VALUES (86078,'2018-03-06','17:48',5,'Ready','u0q9t',373);
-INSERT INTO orders VALUES (49960,'2018-04-11','17:03',7,'Ready','i6v6n',300);
-INSERT INTO orders VALUES (90166,'2017-07-15','09:23',7,'Ready','j3w7g',149);
-INSERT INTO orders VALUES (26402,'2018-01-21','18:59',3,'Ready','f7i2j',224);
-INSERT INTO orders VALUES (22533,'2018-01-14','15:26',9,'Completed','q9e2t',938);
-INSERT INTO orders VALUES (10792,'2017-10-11','10:02',2,'Completed','s8l7a',771);
-INSERT INTO orders VALUES (20827,'2017-07-25','16:59',5,'Completed','i4a9z',444);
-INSERT INTO orders VALUES (42779,'2018-03-26','15:20',3,'Completed','y0v3p',225);
-INSERT INTO orders VALUES (54582,'2017-09-02','11:51',4,'Completed','r0h8e',970);
-INSERT INTO orders VALUES (17858,'2018-03-09','08:06',2,'Completed','e3r0h',672);
-INSERT INTO orders VALUES (44877,'2017-11-24','21:09',7,'Completed','h7e1f',683);
-INSERT INTO orders VALUES (66193,'2018-01-24','22:09',4,'Completed','o2y1m',589);
-INSERT INTO orders VALUES (61425,'2017-10-22','14:13',8,'Cancelled','i1b6b',336);
-INSERT INTO orders VALUES (47545,'2018-01-10','03:13',5,'Ready','b9q3u',744);
-INSERT INTO orders VALUES (33190,'2017-10-30','07:03',2,'Ready','a3a8d',907);
-INSERT INTO orders VALUES (65510,'2017-09-10','08:33',4,'Complete','b2x1i',712);
-INSERT INTO orders VALUES (70542,'2017-09-13','09:53',7,'Complete','p4m3z',504);
-INSERT INTO orders VALUES (59256,'2017-10-13','19:49',3,'Complete','v6v1s',973);
-INSERT INTO orders VALUES (75166,'2017-09-26','04:00',3,'Complete','o5o4z',271);
-INSERT INTO orders VALUES (11276,'2017-12-05','14:27',5,'Complete','s0k9j',650);
-INSERT INTO orders VALUES (63876,'2017-08-18','06:08',4,'Submitted','u0q9t',373);
-INSERT INTO orders VALUES (33550,'2017-06-24','20:54',5,'Submitted','i6v6n',300);
-INSERT INTO orders VALUES (13959,'2018-04-24','21:02',3,'Cancelled','j3w7g',149);
-INSERT INTO orders VALUES (18692,'2018-03-09','04:29',4,'Submitted','f7i2j',224);
-INSERT INTO orders VALUES (91827,'2018-03-16','09:17',2,'Submitted','q9e2t',938);
-INSERT INTO orders VALUES (80243,'2018-02-16','09:58',1,'Submitted','s8l7a',771);
-INSERT INTO orders VALUES (67630,'2017-11-23','12:48',1,'Complete','i4a9z',444);
-INSERT INTO orders VALUES (40112,'2017-09-10','23:35',7,'Complete','y0v3p',225);
-INSERT INTO orders VALUES (83144,'2018-06-06','03:59',8,'Delivered','r0h8e',970);
-INSERT INTO orders VALUES (91486,'2017-11-29','09:14',1,'Delivering','e3r0h',672);
-INSERT INTO orders VALUES (11938,'2018-06-02','11:52',4,'Complete','h7e1f',683);
-INSERT INTO orders VALUES (37775,'2017-12-09','07:00',2,'Ready','o2y1m',589);
-INSERT INTO orders VALUES (55191,'2017-07-11','02:53',3,'Cancelled','i1b6b',336);
+INSERT INTO orders VALUES (20309,'2017-10-13','21:31',16,'SUBMITTED','b9q3u',744);
+INSERT INTO orders VALUES (95288,'2018-03-29','06:52',11,'SUBMITTED','a3a8d',907);
+INSERT INTO orders VALUES (46351,'2018-02-24','00:52',8,'SUBMITTED','b2x1i',712);
+INSERT INTO orders VALUES (19027,'2017-07-18','08:53',2,'READY','p4m3z',504);
+INSERT INTO orders VALUES (12799,'2018-04-26','15:56',15,'READY','v6v1s',973);
+INSERT INTO orders VALUES (53212,'2018-02-16','02:46',14,'READY','o5o4z',271);
+INSERT INTO orders VALUES (22511,'2018-04-02','10:50',4,'READY','s0k9j',650);
+INSERT INTO orders VALUES (86078,'2018-03-06','17:48',5,'READY','u0q9t',373);
+INSERT INTO orders VALUES (49960,'2018-04-11','17:03',7,'READY','i6v6n',300);
+INSERT INTO orders VALUES (90166,'2017-07-15','09:23',7,'READY','j3w7g',149);
+INSERT INTO orders VALUES (26402,'2018-01-21','18:59',3,'READY','f7i2j',224);
+INSERT INTO orders VALUES (22533,'2018-01-14','15:26',9,'COMPLETEd','q9e2t',938);
+INSERT INTO orders VALUES (10792,'2017-10-11','10:02',2,'COMPLETEd','s8l7a',771);
+INSERT INTO orders VALUES (20827,'2017-07-25','16:59',5,'COMPLETEd','i4a9z',444);
+INSERT INTO orders VALUES (42779,'2018-03-26','15:20',3,'COMPLETEd','y0v3p',225);
+INSERT INTO orders VALUES (54582,'2017-09-02','11:51',4,'COMPLETEd','r0h8e',970);
+INSERT INTO orders VALUES (17858,'2018-03-09','08:06',2,'COMPLETEd','e3r0h',672);
+INSERT INTO orders VALUES (44877,'2017-11-24','21:09',7,'COMPLETEd','h7e1f',683);
+INSERT INTO orders VALUES (66193,'2018-01-24','22:09',4,'COMPLETEd','o2y1m',589);
+INSERT INTO orders VALUES (61425,'2017-10-22','14:13',8,'CANCELLED','i1b6b',336);
+INSERT INTO orders VALUES (47545,'2018-01-10','03:13',5,'READY','b9q3u',744);
+INSERT INTO orders VALUES (33190,'2017-10-30','07:03',2,'READY','a3a8d',907);
+INSERT INTO orders VALUES (65510,'2017-09-10','08:33',4,'COMPLETE','b2x1i',712);
+INSERT INTO orders VALUES (70542,'2017-09-13','09:53',7,'COMPLETE','p4m3z',504);
+INSERT INTO orders VALUES (59256,'2017-10-13','19:49',3,'COMPLETE','v6v1s',973);
+INSERT INTO orders VALUES (75166,'2017-09-26','04:00',3,'COMPLETE','o5o4z',271);
+INSERT INTO orders VALUES (11276,'2017-12-05','14:27',5,'COMPLETE','s0k9j',650);
+INSERT INTO orders VALUES (63876,'2017-08-18','06:08',4,'SUBMITTED','u0q9t',373);
+INSERT INTO orders VALUES (33550,'2017-06-24','20:54',5,'SUBMITTED','i6v6n',300);
+INSERT INTO orders VALUES (13959,'2018-04-24','21:02',3,'CANCELLED','j3w7g',149);
+INSERT INTO orders VALUES (18692,'2018-03-09','04:29',4,'SUBMITTED','f7i2j',224);
+INSERT INTO orders VALUES (91827,'2018-03-16','09:17',2,'SUBMITTED','q9e2t',938);
+INSERT INTO orders VALUES (80243,'2018-02-16','09:58',1,'SUBMITTED','s8l7a',771);
+INSERT INTO orders VALUES (67630,'2017-11-23','12:48',1,'COMPLETE','i4a9z',444);
+INSERT INTO orders VALUES (40112,'2017-09-10','23:35',7,'COMPLETE','y0v3p',225);
+INSERT INTO orders VALUES (83144,'2018-06-06','03:59',8,'DELIVERED','r0h8e',970);
+INSERT INTO orders VALUES (91486,'2017-11-29','09:14',1,'DELIVERING','e3r0h',672);
+INSERT INTO orders VALUES (11938,'2018-06-02','11:52',4,'COMPLETE','h7e1f',683);
+INSERT INTO orders VALUES (37775,'2017-12-09','07:00',2,'READY','o2y1m',589);
+INSERT INTO orders VALUES (55191,'2017-07-11','02:53',3,'CANCELLED','i1b6b',336);
 INSERT INTO pick_up VALUES(20309,'00:50');
 INSERT INTO pick_up VALUES(95288,'00:32');
 INSERT INTO pick_up VALUES(46351,'00:25');
