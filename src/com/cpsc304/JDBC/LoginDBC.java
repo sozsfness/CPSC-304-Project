@@ -124,7 +124,7 @@ public class LoginDBC {
         ResultSet rs;
         RestaurantManager manager;
         sqlString = "SELECT users.* FROM users, restaurant_managers r";
-        sqlString += "WHERE users.userID = r.res_userID";
+        sqlString += " WHERE users.userID = r.res_userID";
         rs = stmt.executeQuery(sqlString);
         con.commit();
         while (rs.next()) {

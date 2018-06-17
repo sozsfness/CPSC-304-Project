@@ -103,8 +103,8 @@ public class CustomerDBC extends UserDBC {
         con.setAutoCommit(false);
         sqlString = "SELECT * ";
         sqlString += "FROM restaurant ";
-        sqlString += "WHERE LOWER(res_type) = LOWER(?) ";
-        sqlString += "ORDER BY res_rating DESC";
+        sqlString += " WHERE LOWER(res_type) = LOWER(?) ";
+        sqlString += " ORDER BY res_rating DESC";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, type);
         rs = pstmt.executeQuery();
@@ -166,12 +166,12 @@ public class CustomerDBC extends UserDBC {
         if (baddress)
             sqlString += ", res_postal_code, res_street, res_house#";
         sqlString += " FROM restaurant r, offers o";
-        sqlString += "WHERE o.restaurantID = r.resI";
+        sqlString += " WHERE o.restaurantID = r.resI";
         sqlString += " AND res_rating >= ?";
         for (String food: foods) {
             sqlString += " AND LOWER(o.food_name) = LOWER(" + food + ")";
         }
-        sqlString += "ORDER BY res_rating DESC";
+        sqlString += " ORDER BY res_rating DESC";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDouble(1, minRating);
         rs = pstmt.executeQuery();
@@ -252,9 +252,9 @@ public class CustomerDBC extends UserDBC {
             List<Order> pickups = new ArrayList<>();
             if (MainUI.currentUser == null) return null;
             sqlString = "SELECT o.*, estimated_ready_time";
-            sqlString += "FROM order o, pick_up p";
-            sqlString += "WHERE p.orderID = o.orderID AND order_date >= ? ";
-            sqlString += "AND order_date <= ? AND order_customerID = ?";
+            sqlString += " FROM order o, pick_up p";
+            sqlString += " WHERE p.orderID = o.orderID AND order_date >= ? ";
+            sqlString += " AND order_date <= ? AND order_customerID = ?";
             if (resID != 0)
                 sqlString += " AND order_restaurantID = " + resID;
             pstmt = con.prepareStatement(sqlString);
@@ -289,10 +289,10 @@ public class CustomerDBC extends UserDBC {
             List<Order> deliveries = new ArrayList<>();
             if (MainUI.currentUser == null) return null;
             sqlString = "SELECT o.*, delivery_fee, courierID, postal_code, street, house#";
-            sqlString += "FROM order o, customer, delivery_delivers d, courier, user";
-            sqlString += "WHERE o.orderID = d.oderID AND order_date >= ? ";
-            sqlString += "AND order_date <= ? AND order_customerID = ? ";
-            sqlString += "AND cor_userID = courierID AND cor_userID = userID";
+            sqlString += " FROM order o, customer, delivery_delivers d, courier, user";
+            sqlString += " WHERE o.orderID = d.oderID AND order_date >= ? ";
+            sqlString += " AND order_date <= ? AND order_customerID = ? ";
+            sqlString += " AND cor_userID = courierID AND cor_userID = userID";
             if (resID != 0)
                 sqlString += " AND order_restaurantID = " + resID;
             pstmt = con.prepareStatement(sqlString);
@@ -328,8 +328,8 @@ public class CustomerDBC extends UserDBC {
         PreparedStatement pstmt;
         ResultSet rs;
         sqlString = "SELECT estimated_arrival_time";
-        sqlString += "FROM delivery_delivers ";
-        sqlString += "WHERE orderID= ?";
+        sqlString += " FROM delivery_delivers ";
+        sqlString += " WHERE orderID= ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setInt(1, orderID);
         rs = pstmt.executeQuery();
@@ -369,7 +369,7 @@ public class CustomerDBC extends UserDBC {
         PreparedStatement pstmt;
         ResultSet rs;
         sqlString = "SELECT province, city";
-        sqlString += "FROM addresses, address_detail ";
+        sqlString += " FROM addresses, address_detail ";
         sqlString += "WHERE house# = ? AND street = ? AND postal_code = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setInt(1, houseNum);
@@ -391,7 +391,7 @@ public class CustomerDBC extends UserDBC {
         ResultSet rs;
         sqlString = "SELECT Sum(order_amount) ";
         sqlString += "FROM orders o";
-        sqlString += "WHERE order_status = 'Complete' ";
+        sqlString += " WHERE order_status = 'Complete' ";
         sqlString += "AND (order_date BETWEEN ? AND ?) AND order_customerID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);

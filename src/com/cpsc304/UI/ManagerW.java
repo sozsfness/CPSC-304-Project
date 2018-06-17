@@ -1,6 +1,7 @@
 package com.cpsc304.UI;
 
 import com.cpsc304.JDBC.CustomerDBC;
+import com.cpsc304.JDBC.RestaurantDBC;
 import com.cpsc304.JDBC.RestaurantManagerDBC;
 import com.cpsc304.JDBC.UserDBC;
 import com.cpsc304.model.*;
@@ -236,7 +237,7 @@ public class ManagerW extends JFrame {
     private class Menu extends Frame{
         Map<String,Food> stringFoodHashMap = new HashMap<>();
         Map<String,JPanel> stringJPanelMap = new HashMap<>();
-
+        List<Food> me;
         private Restaurant restaurant;
         private JPanel menu;
         private JPanel change;
@@ -270,18 +271,24 @@ public class ManagerW extends JFrame {
             menu.add(new Label("MENU"));
             add(menu);
             add(change);
-            stringFoodHashMap = restaurant.getOffers()==null?stringFoodHashMap:restaurant.getOffers();
+            try {
+                me = RestaurantDBC.getMenu(restaurant.getId());
+            } catch (SQLException e) {
+                new ErrorMsg(e.getMessage());
+            }
+//            stringFoodHashMap = restaurant.getOffers()==null?stringFoodHashMap:restaurant.getOffers();
             MenuBtnListener listener = new MenuBtnListener();
-            if (stringFoodHashMap!=null) {
-                for (Map.Entry<String, Food> next : stringFoodHashMap.entrySet()) {
+            if (me!=null) {
+                for (Food next : me) {
                     JPanel temp = new JPanel(new FlowLayout());
-                    temp.add(new Label("Food name: "+next.getKey()+" Price: $"+next.getValue().getPrice()));
+                    temp.add(new Label("Food name: "+next.getName()+" Price: $"+next.getPrice()));
                     menu.add(temp);
                     Button del = new Button("delete food");
-                    del.setActionCommand(next.getKey());
+                    del.setActionCommand(next.getName());
                     del.addActionListener(listener);
                     temp.add(del);
-                    stringJPanelMap.put(next.getKey(),temp);
+                    stringJPanelMap.put(next.getName(),temp);
+                    stringFoodHashMap.put(next.getName(),next);
                 }
             }
 

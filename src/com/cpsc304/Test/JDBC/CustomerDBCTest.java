@@ -52,6 +52,7 @@ public class CustomerDBCTest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        new ResourceManager();
 
         System.out.println("Done!");
         DBConnection.close();
