@@ -120,17 +120,15 @@ public class CustomerDBCTest {
     public static void main (String[] args) {
         Food f1 = new Food("PICK", restaurant, 10);
         Food f2 = new Food("PICK", restaurant, 10);
-        //System.out.println(f1 == f2);
+        System.out.println(f1 == f2);
         runBefore();
         ResourceManager.getInstance();
         //testCommitOrder();
         //testVerify();
         //testLogin();
 //        testGetOrder();
-        //testGetPickup();
-        //testIncome();
-        //testGetTime();
-        testGetDeliveries();
+        testGetPickup();
+        testIncome();
         System.out.println("Done!");
         DBConnection.close();
     }
