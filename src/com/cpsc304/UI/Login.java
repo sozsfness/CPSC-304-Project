@@ -1,6 +1,8 @@
 package com.cpsc304.UI;
+import com.cpsc304.JDBC.CourierDBC;
 import com.cpsc304.JDBC.CustomerDBC;
 import com.cpsc304.JDBC.LoginDBC;
+import com.cpsc304.JDBC.RestaurantManagerDBC;
 import com.cpsc304.model.Courier;
 import com.cpsc304.model.Customer;
 import com.cpsc304.model.RestaurantManager;
@@ -121,8 +123,12 @@ public class Login extends JFrame  {
                 if (isvalid){
                     switch (type){
                         case "customer":
-                            //TODO:HOW CONSTRUCTORS WORKS? CONSTRUCTOR CALLS METHOD IN JDBC TO RETRIEVE DATA FROM REMOTE DB
-//                            CustomerDBC.;
+                            try {
+                                MainUI.currentUser = CustomerDBC.getCustomer(id);
+                            } catch (SQLException e) {
+                                new ErrorMsg(e.getMessage());
+                                break;
+                            }
                             System.out.println("customer.");
                             MainUI.getCustomerUI();
                             t.setVisible(false);
@@ -130,14 +136,24 @@ public class Login extends JFrame  {
                         case "restaurant manager":
                             System.out.println("manager.");
                             //                            MainUI.currentUser = new Customer();
-
+                            try {
+                                MainUI.currentUser = RestaurantManagerDBC.getManager(id);
+                            } catch (SQLException e) {
+                                new ErrorMsg(e.getMessage());
+                                break;
+                            }
                             MainUI.getManagerUI();
                             t.setVisible(false);
                             break;
                         case "courier":
                             System.out.println("courier.");
                             //                            MainUI.currentUser = new Customer();
-
+                            try {
+                                MainUI.currentUser = CourierDBC.getCurier(id);
+                            } catch (SQLException e) {
+                                new ErrorMsg(e.getMessage());
+                                break;
+                            }
                             MainUI.getCourierUI();
                             t.setVisible(false);
                             break;

@@ -333,7 +333,7 @@ public class CourierDBC extends UserDBC {
         return 0;
     }
 
-//    public static double getIncome(Date startDate, Date endDate){
-//        return 0;
-//    }
+    public static double getIncome(Date startDate, Date endDate){
+        return 0;
+    }
 }

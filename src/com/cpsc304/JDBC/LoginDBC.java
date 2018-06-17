@@ -28,7 +28,6 @@ public class LoginDBC {
                 return false;
         }
         sqlString += "userID = '" + userID + "'";
-        System.out.println(sqlString);
         rs = stmt.executeQuery(sqlString);
         rs.next();
         System.out.println(rs.getRow());
@@ -48,6 +47,7 @@ public class LoginDBC {
             System.out.println("Password Error");
             return false;
         }
+        System.out.println(true);
         return true;
     }
 
