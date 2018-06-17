@@ -69,7 +69,6 @@ public class CourierDBC extends UserDBC {
         return address;
     }
 
-    //TODO:add condition
     //if the status of the order is not READY or DELIVERING currently, return false
     public static boolean updateOrder(Order order) throws SQLException {
         if (order.getStatus() != OrderStatus.READY && order.getStatus() != OrderStatus.DELIVERING)
