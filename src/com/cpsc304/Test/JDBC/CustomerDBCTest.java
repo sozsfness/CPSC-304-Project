@@ -17,7 +17,7 @@ public class CustomerDBCTest {
 
     private static Date date;
     private static Time time;
-    private static Time readyTime;
+    private static Time READYTime;
     private static Customer customer;
     private static Restaurant restaurant;
     private static Order order;
@@ -27,10 +27,10 @@ public class CustomerDBCTest {
     static void runBefore() {
         date = new Date(100000);
         time = new Time(1000);
-        readyTime = new Time(2000);
+        READYTime = new Time(2000);
         restaurant = new Restaurant(null, 5, null,null, null, 1, true, null, null, null);
         customer = new Customer("b9q3u", "Samson Mason", "Wyw3026","4964411825", 10000, 5, 100);
-        order = new Pickup(customer, new Long(10000), date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, readyTime);
+        order = new Pickup(customer, new Long(10000), date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, READYTime);
         courier = new Courier("j2g5z", "ppp","Mtb0525", "1113", null);
         DBConnection.connect();
     }
@@ -74,6 +74,15 @@ public class CustomerDBCTest {
             e.printStackTrace();
         }
     }
+    static void testIncome(){
+        MainUI.currentUser = courier;
+        try{
+            Double in = CourierDBC.getIncome(Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
+            System.out.println(in);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     static void testGetPickup(){
         MainUI.currentUser = customer;
@@ -99,6 +108,7 @@ public class CustomerDBCTest {
         //testLogin();
 //        testGetOrder();
         testGetPickup();
+        testIncome();
         System.out.println("Done!");
         DBConnection.close();
     }

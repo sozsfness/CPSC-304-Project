@@ -60,7 +60,7 @@ public class CustomerDBC extends UserDBC {
             insertString = "INSERT INTO pick_up VALUES (";
             insertString += order.getOrderID() + ", ?)";
             pstmt = con.prepareStatement(insertString);
-            time = ((Pickup)order).getReadyTime().toString();
+            time = ((Pickup)order).getREADYTime().toString();
             time = time.substring(0, 5);
             pstmt.setString(1, time);
             pstmt.executeUpdate();
@@ -189,7 +189,7 @@ public class CustomerDBC extends UserDBC {
         sqlString = "CREATE VIEW favType (res_type, times) AS ";
         sqlString += "SELECT res_type, COUNT(res_type) ";
         sqlString += "FROM orders, restaurant ";
-        sqlString += "WHERE order_customerID = ? AND order_status <> 'Cancelled' AND order_restaurantID = resID ";
+        sqlString += "WHERE order_customerID = ? AND order_status <> 'CANCELLED' AND order_restaurantID = resID ";
         sqlString += "GROUP BY res_type";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, custID);
@@ -309,7 +309,7 @@ public class CustomerDBC extends UserDBC {
             ResourceManager rm = ResourceManager.getInstance();
             List<Order> pickups = new ArrayList<>();
             if (MainUI.currentUser == null) return null;
-            sqlString = "SELECT o.*, estimated_ready_time ";
+            sqlString = "SELECT o.*, estimated_READY_time ";
             sqlString += "FROM orders o, pick_up p ";
             sqlString += "WHERE p.orderID = o.orderID AND order_date >= ? ";
             sqlString += "AND order_date <= ? AND order_customerID = ?";
@@ -330,9 +330,9 @@ public class CustomerDBC extends UserDBC {
                 OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5).toUpperCase());
                 String custID = rs.getString(6);
                 Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
-                Time readyTime = Time.valueOf(rs.getString(8) + ":00");
+                Time READYTime = Time.valueOf(rs.getString(8) + ":00");
                 pickup = new Pickup((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
-                        getFoods(orderID), readyTime);
+                        getFoods(orderID), READYTime);
                 pickups.add(pickup);
             }
             pstmt.close();
@@ -448,7 +448,7 @@ public class CustomerDBC extends UserDBC {
         ResultSet rs;
         sqlString = "SELECT Sum(order_amount) ";
         sqlString += "FROM orders o";
-        sqlString += "WHERE order_status = 'Complete' ";
+        sqlString += "WHERE order_status = 'COMPLETE' ";
         sqlString += "AND (order_date BETWEEN ? AND ?) AND order_customerID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);

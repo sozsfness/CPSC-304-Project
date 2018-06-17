@@ -202,11 +202,11 @@ public class CourierW extends JFrame{
             }
             current.add(new Label("Order Details"));
             current.add(new Label("Order id: "+delivery.getOrderID()));
-            current.add(new Label("Date and Time submitted: "+delivery.getDate()+" "+delivery.getTime()));
+            current.add(new Label("Date and Time : "+delivery.getDate()+" "+delivery.getTime()));
             current.add(new Label("Ordered at: " + delivery.getRestOrderedAt().getName()));
             Address des = delivery.getDest();
             if (des!=null) {
-                current.add(new Label("Delivered to: " + des.getHouseNum() + " " + des.getStreet() + ", " + des.getCity() + " " + des.getProvince() + ", " + des.getPostalCode()));
+                current.add(new Label("DELIVERED to: " + des.getHouseNum() + " " + des.getStreet() + ", " + des.getCity() + " " + des.getProvince() + ", " + des.getPostalCode()));
             }
             current.add(new Label("Estimated arrival time: "+delivery.getArrivalTime()));
 
@@ -531,7 +531,7 @@ public class CourierW extends JFrame{
         current.add(new Label(tmp.replace('\0','*')));
         if (orders!=null) {
             for (Order next : orders) {
-                current.add(new Label("OrderID: " + next.getOrderID() + " delivered for restaurant " + next.getRestOrderedAt().getName() + " earning: " +((Delivery)next).getDeliveryFee()));
+                current.add(new Label("OrderID: " + next.getOrderID() + " DELIVERED for restaurant " + next.getRestOrderedAt().getName() + " earning: " +((Delivery)next).getDeliveryFee()));
             }
         }
         current.add(new Label("Total income in selected time period: "+CourierDBC.getIncome(from,to)));

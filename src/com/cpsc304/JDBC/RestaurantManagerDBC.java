@@ -59,7 +59,7 @@ public class RestaurantManagerDBC extends UserDBC{
         sqlString += "VALUES (?, ?, ?)";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, food.getName());
-        pstmt.setLong(2, food.getRestaurant().getId());
+        pstmt.setInt(2, food.getRestaurant().getId());
         pstmt.setDouble(3, food.getPrice());
         pstmt.executeUpdate();
         con.commit();
@@ -73,7 +73,7 @@ public class RestaurantManagerDBC extends UserDBC{
         con.setAutoCommit(false);
         sqlString += "WHERE restaurantID = ? AND LOWER(food_name) = LOWER(?)";
         pstmt = con.prepareStatement(sqlString);
-        pstmt.setLong(1, food.getRestaurant().getId());
+        pstmt.setInt(1, food.getRestaurant().getId());
         pstmt.setString(2, food.getName());
         pstmt.executeUpdate();
         con.commit();
@@ -104,7 +104,7 @@ public class RestaurantManagerDBC extends UserDBC{
         con.setAutoCommit(false);
         sqlString = "SELECT Sum(order_amount) ";
         sqlString += "FROM orders ";
-        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND order_restaurantID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);

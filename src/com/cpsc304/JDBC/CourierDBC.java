@@ -142,7 +142,7 @@ public class CourierDBC extends UserDBC {
         Pair<Integer, Double> pair;
         sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Sum(delivery_fee) AS \"Sum Earning\" ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
-        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
@@ -164,7 +164,7 @@ public class CourierDBC extends UserDBC {
         Pair<Integer, Double> pair;
         sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Avg(delivery_fee) AS \"Avg Earning\" ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
-        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
@@ -186,7 +186,7 @@ public class CourierDBC extends UserDBC {
         Pair<Integer, Double> pair;
         sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Sum(delivery_fee) AS \"Sum Earning\" ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
-        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
@@ -208,7 +208,7 @@ public class CourierDBC extends UserDBC {
         Pair<Integer, Double> pair;
         sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Max(delivery_fee) AS \"Max Earning\" ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
-        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
@@ -230,7 +230,7 @@ public class CourierDBC extends UserDBC {
         Pair<Integer, Double> pair;
         sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Sum(delivery_fee) AS \"Sum Earning\" ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
-        sqlString += "WHERE order_status = 'Complete' AND (order_date BETWEEN ? AND ?) ";
+        sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
@@ -288,7 +288,7 @@ public class CourierDBC extends UserDBC {
         sqlString = "CREATE VIEW " + type + "Earning(resID, res_name, Earning) AS ";
         sqlString += "SELECT resID, res_name, " + type +"(delivery_fee) ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers, restaurant ";
-        sqlString += "WHERE order_restaurantID = resID AND order_status = 'Complete' ";
+        sqlString += "WHERE order_restaurantID = resID AND order_status = 'COMPLETE' ";
         sqlString += "AND courierID = ?" ;
         sqlString += " GROUP BY resID, res_name";
         pstmt = con.prepareStatement(sqlString);
@@ -346,15 +346,16 @@ public class CourierDBC extends UserDBC {
         ResultSet rs;
         sqlString = "SELECT Sum(delivery_fee) ";
         sqlString += "FROM orders o, delivery_delivers d ";
-        sqlString += "WHERE o.orderID = d.orderID AND order_status = 'Complete' ";
+        sqlString += "WHERE o.orderID = d.orderID AND order_status = 'COMPLETE' ";
         sqlString += "AND (order_date BETWEEN ? AND ?) AND courierID = ?";
+
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDate(1, startDate);
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
         if (rs.next())
-            return rs.getInt(1);
+            return rs.getDouble(1);
         else
             return 0;
     }
