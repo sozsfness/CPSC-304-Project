@@ -244,34 +244,96 @@ public class CourierDBC extends UserDBC {
     // view for check nested aggregation
     // type should be "Min""Max""Sum""Avg"
     // return list of resName and earning
-    public static List<Pair<String, Double>> getEarning(String type, String courerID) {
+    public static List<Pair<String, Double>> getEarning(String type, String courerID) throws SQLException {
         List<Pair<String, Double>> earnings = new ArrayList<>();
+        Pair<String, Double> pair;
+        creatView(type, courerID);
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT res_name, Earning FROM " + type + "Earning";
+        pstmt = con.prepareStatement(sqlString);
+        rs = pstmt.executeQuery();
+        while (rs.next()) {
+            pair = new Pair<>(rs.getString(1), rs.getDouble(2));
+            earnings.add(pair);
+        }
         return earnings;
     }
 
     // when type is "Count"
-    public static List<Pair<String, Integer>> getCount(String courerID) {
+    public static List<Pair<String, Integer>> getCount(String courerID)  throws SQLException{
         List<Pair<String, Integer>> counts = new ArrayList<>();
+        Pair<String, Integer> pair;
+        creatView("Count", courerID);
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT res_name, Earning FROM CountEarning";
+        pstmt = con.prepareStatement(sqlString);
+        rs = pstmt.executeQuery();
+        while (rs.next()) {
+            pair = new Pair<>(rs.getString(1), rs.getInt(2));
+            counts.add(pair);
+        }
         return counts;
+    }
+
+    private static void creatView(String type, String courerID) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        sqlString = "CREATE VIEW " + type + "Earning(resID, res_name, Earning) AS ";
+        sqlString += "SELECT resID, res_name, " + type +"(delivery_fee) ";
+        sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers, restaurant ";
+        sqlString += "WHERE order_restaurantID = resID AND order_status = 'Complete' ";
+        sqlString += "AND courierID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, courerID);
+        pstmt.executeUpdate();
+        pstmt.close();
     }
 
     // For nested aggregation
     // type should be "Min""Max""Sum""Avg" rather than "Count"
-    public static double getEarning(String firstType, String secondType, String courerID) {
+    public static double getEarning(String firstType, String secondType, String courerID) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT " + secondType +"(earning) from " + firstType + "Earning";
+        pstmt = con.prepareStatement(sqlString);
+        rs = pstmt.executeQuery();
+        if (rs.next())
+            return rs.getDouble(1);
         return 0;
     }
 
     // when the first type is any type rather than count, but the second type is "Count"
-    public static int getSecondCount(String firstType){
+    public static int getSecondCount(String firstType) throws SQLException{
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT Count(earning) from " + firstType + "Earning";
+        pstmt = con.prepareStatement(sqlString);
+        rs = pstmt.executeQuery();
+        if (rs.next())
+            return rs.getInt(1);
         return 0;
     }
 
     // when the first type is "Count", but the second type is any type
-    public static int getFirstCount(String secondType){
+    public static int getFirstCount(String secondType) throws SQLException{
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT " + secondType + "(earning) from CountEarning";
+        pstmt = con.prepareStatement(sqlString);
+        rs = pstmt.executeQuery();
+        if (rs.next())
+            return rs.getInt(1);
         return 0;
     }
 
-    public static double getIncome(Date startDate, Date endDate){
-        return 0;
-    }
+//    public static double getIncome(Date startDate, Date endDate){
+//        return 0;
+//    }
 }

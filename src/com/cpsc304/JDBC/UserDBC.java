@@ -1,5 +1,6 @@
 package com.cpsc304.JDBC;
 
+import com.cpsc304.UI.MainUI;
 import com.cpsc304.model.Order;
 import com.cpsc304.model.Restaurant;
 import com.cpsc304.model.User;
@@ -12,16 +13,15 @@ public abstract class UserDBC {
 
     private static Connection con = DBConnection.getCon();
 
-    public static void updateUserInfo(User user) {
-
-    }
-
-    public static Set<Order> getOrders(Restaurant restaurant) {
-        return null;
-    }
-
-    public static Order getOrder(String orderID){
-        return null;
+    public static void updateUserInfo(User user) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        sqlString = "UPDATE users SET userName = ? ";
+        sqlString += "AND userPass = ? AND phone# = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, user.getName());
+        pstmt.setString(2, user.getPassword());
+        pstmt.setInt(3, Integer.parseInt(user.getPhoneNum()));
     }
 
     public static User getUser(String userID) throws SQLException {

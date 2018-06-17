@@ -13,13 +13,16 @@ public class RestaurantManagerDBC extends UserDBC{
         return (RestaurantManager)getUser(managerID);
     }
 
-    //TODO: to be removed
-    public static void addRestaurant(Restaurant restaurant) {
-
-    }
-
-    public static void deleteRestaurant (Restaurant restaurant) throws SQLException {
-
+    //TODO:show results of cascade
+    public static void deleteRestaurant (int restID) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        sqlString = "DELETE FROM Restaurant ";
+        sqlString += "WHERE restaurantID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setInt(1, restID);
+        pstmt.executeUpdate();
+        con.commit();
     }
 
     public static List<Food> getPopularDish(Restaurant restaurant) throws SQLException {
@@ -44,7 +47,7 @@ public class RestaurantManagerDBC extends UserDBC{
         String sqlString;
         PreparedStatement pstmt;
         sqlString = "DELETE FROM offers ";
-        sqlString += "WHERE restaurantID = ? AND food_name = ?";
+        sqlString += "WHERE restaurantID = ? AND LOWER(food_name) = LOWER(?)";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setInt(1, food.getRestaurant().getId());
         pstmt.setString(2, food.getName());
