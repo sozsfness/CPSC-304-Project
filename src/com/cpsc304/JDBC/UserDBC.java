@@ -17,12 +17,18 @@ public abstract class UserDBC {
     public static void updateUserInfo(User user) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
+        ResultSet rs;
+        con.setAutoCommit(false);
         sqlString = "UPDATE users SET userName = ? ";
-        sqlString += "AND userPass = ? AND phone# = ?";
+        sqlString += ", userPass = ? , phone# = ? WHERE userID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setString(1, user.getName());
         pstmt.setString(2, user.getPassword());
-        pstmt.setInt(3, Integer.parseInt(user.getPhoneNum()));
+        pstmt.setString(4,user.getUserID());
+
+        pstmt.setLong(3, Long.parseLong(user.getPhoneNum()));
+        rs = pstmt.executeQuery();
+        con.commit();
     }
 
     public static User getUser(String userID) throws SQLException {
