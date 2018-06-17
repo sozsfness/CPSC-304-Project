@@ -1,8 +1,10 @@
 package com.cpsc304.model;
 
+import com.cpsc304.JDBC.CourierDBC;
 import com.sun.org.apache.xpath.internal.operations.Or;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Map;
 
@@ -75,12 +77,15 @@ public class Order {
         return status;
     }
 
-    // check update customer's vipLevel
-    public void setStatus(OrderStatus status) {
+     public void setStatus(OrderStatus status) {
         this.status = status;
-        if (status == OrderStatus.COMPLETE)
-            customer.addSpending(amount);
-    }
+         try {
+             CourierDBC.updateOrder(this);
+         } catch (SQLException e) {
+             System.out.println("Status setting fails");
+             e.printStackTrace();
+         }
+     }
 
     public Restaurant getRestOrderedAt() {
         return restOrderedAt;
