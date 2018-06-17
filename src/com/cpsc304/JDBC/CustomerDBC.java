@@ -136,8 +136,64 @@ public class CustomerDBC extends UserDBC {
         return restaurants;
     }
 
-    public static List<Restaurant> getRecommendedRestaurants() {
-        return null;
+    public static List<Restaurant> getRecommendedRestaurants() throws SQLException{
+        List<Restaurant> restaurants = new ArrayList<>();
+        Restaurant restaurant;
+        String sqlString;
+        ResultSet rs;
+        PreparedStatement pstmt;
+        String custID = MainUI.currentUser.getUserID();
+        createViewForRests(custID);
+        sqlString = "SELECT r.* ";
+        sqlString += "FROM restaurant r ";
+        sqlString += "WHERE res_type = (SELECT * ";
+        sqlString += "FROM (SELECT res_type ";
+        sqlString += "FROM favType ";
+        sqlString += "WHERE times >= ALL (SELECT times FROM favType)) ";
+        sqlString += "WHERE ROWNUM = 1) ";
+        sqlString += "AND r.resID NOT IN (SELECT order_restaurantID ";
+        sqlString += "FROM orders ";
+        sqlString += "WHERE order_customerID = 's8l7a') ";
+        sqlString += "ORDER BY res_rating DESC";
+        pstmt = con.prepareStatement(sqlString);
+        rs = pstmt.executeQuery();
+        int row = 5;
+        while (rs.next() && row > 0) {
+            int resID = rs.getInt(1);
+            String resName = rs.getString(2);
+            Time openTime = Time.valueOf(rs.getString(3) + ":00");
+            Time closeTime = Time.valueOf(rs.getString(4) +":00");
+            Double rating = rs.getDouble(5);
+            String type = rs.getString(6);
+            boolean deliveryOption;
+            if (rs.getInt(7) != 0)
+                deliveryOption = true;
+            else
+                deliveryOption = false;
+            String managerID = rs.getString(8);
+            String postal = rs.getString(9);
+            String street = rs.getString(10);
+            int houseNum = rs.getInt(11);
+            Address address = new Address(houseNum, street, null, null, postal);
+            restaurant = new Restaurant(null, rating, openTime, closeTime, resName, resID, deliveryOption,
+                    type, address, null);
+            restaurants.add(restaurant);
+            -- row;
+        }
+        return restaurants;
+    }
+
+    private static void createViewForRests(String custID) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        sqlString = "CREATE VIEW favType (res_type, times) AS ";
+        sqlString += "SELECT res_type, COUNT(res_type) ";
+        sqlString += "FROM orders, restaurant ";
+        sqlString += "WHERE order_customerID = ? AND order_status <> 'Cancelled' AND order_restaurantID = resID ";
+        sqlString += "GROUP BY res_type";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, custID);
+        pstmt.executeUpdate();
     }
 
     public static List<Restaurant> getRestaurantsOfRating(Integer rating,boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
