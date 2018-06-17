@@ -2,7 +2,6 @@ package com.cpsc304.UI;
 
 import com.cpsc304.JDBC.CourierDBC;
 import com.cpsc304.JDBC.CustomerDBC;
-import com.cpsc304.JDBC.RestaurantManagerDBC;
 import com.cpsc304.JDBC.UserDBC;
 import com.cpsc304.model.*;
 import javafx.util.Pair;
