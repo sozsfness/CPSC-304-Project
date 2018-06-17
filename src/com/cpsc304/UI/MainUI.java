@@ -1,10 +1,7 @@
 package com.cpsc304.UI;
 import com.cpsc304.JDBC.DBConnection;
-import com.cpsc304.model.Food;
 import com.cpsc304.model.OrderStatus;
 import com.cpsc304.model.User;
-
-import java.sql.Time;
 
 public class MainUI {
     public static User currentUser;
@@ -39,9 +36,12 @@ public class MainUI {
 
     public static void main (String[] args){
         System.out.println(OrderStatus.valueOf("READY"));
-        if (!DBConnection.connect())
+        if (DBConnection.connect()) {
+            getLoginUI();
+        }
+        else
             System.out.println("Connection failed");
-        getLoginUI();
+
     }
     public static void customerLogOut(){
         customerUI=null;
