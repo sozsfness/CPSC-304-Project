@@ -158,7 +158,7 @@ public class Login extends JFrame  {
 
 
                 }else{
-                    new ErrorMsg("Combination of user id and password invalid! Try again.");
+                    new ErrorMsg("Combination of user id, password and type is invalid! Try again.");
                 }
             }
         }

@@ -42,7 +42,7 @@ public class CustomerW extends JFrame{
     private Checkbox deliveryOption;
     private Checkbox address;
     private Checkbox ctype;
-    private Map<Integer,Order> integerOrderMap = new HashMap<>();
+    private Map<Long,Order> integerOrderMap = new HashMap<>();
     private Checkbox cdel;
     private Checkbox cpic;
 
@@ -244,13 +244,10 @@ public class CustomerW extends JFrame{
         }
         //showing details of selected order
         private void showDetailsOfOrder(String orderID){
-            if (orderID=="test") {
-                new OrderDetails(new Delivery((Customer) currentUser,1,null,null,0,OrderStatus.SUBMITTED,null,null,0,null,null,null) {
-                });
-            }else{
+
                 order = integerOrderMap.get(Integer.parseInt(orderID));
                 new OrderDetails(order);
-            }
+
         }
 
         private class OrderDetails extends Frame{
@@ -471,7 +468,7 @@ public class CustomerW extends JFrame{
                 }
 
                 for (Order next : orders) {
-                    Button o = new Button(Integer.toString(next.getOrderID()) + "(submitted on" + next.getDate() + ")");
+                    Button o = new Button(Long.toString(next.getOrderID()) + "(submitted on" + next.getDate() + ")");
                     current.add(o);
                     o.addActionListener(l);
                     integerOrderMap.put(next.getOrderID(),next);

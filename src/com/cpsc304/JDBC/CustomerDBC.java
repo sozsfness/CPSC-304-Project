@@ -84,11 +84,14 @@ public class CustomerDBC extends UserDBC {
         }
     }
 
-    public static void updateOrderStatus(int orderID, OrderStatus orderStatus) throws SQLException {
+    public static void updateOrderStatus(Long orderID, OrderStatus orderStatus) throws SQLException {
+        con.setAutoCommit(false);
         String sqlString = "UPDATE orders SET order_status = '" + orderStatus.toString() +"'";
-        sqlString += "WHERE orderID = " + orderID;
+        sqlString += " WHERE orderID = " + orderID;
         Statement stmt = con.createStatement();
+        System.out.println(sqlString);
         stmt.executeUpdate(sqlString);
+        con.commit();
         stmt.close();
     }
 
@@ -264,7 +267,7 @@ public class CustomerDBC extends UserDBC {
             rs = pstmt.executeQuery();
             con.commit();
             while (rs.next()) {
-                int orderID = rs.getInt(1);
+                Long orderID = rs.getLong(1);
                 Date date = rs.getDate(2);
                 Time time = Time.valueOf(rs.getString(3) + ":00");
                 Double amount = rs.getDouble(4);
@@ -292,6 +295,7 @@ public class CustomerDBC extends UserDBC {
             sqlString += "FROM orders o, delivery_delivers d ";
             sqlString += "WHERE o.orderID = d.orderID AND order_date >= ? ";
             sqlString += "AND order_date <= ? AND order_customerID = ? ";
+
             if (resID != 0)
                 sqlString += " AND order_restaurantID = " + resID;
             pstmt = con.prepareStatement(sqlString);
@@ -301,7 +305,7 @@ public class CustomerDBC extends UserDBC {
             rs = pstmt.executeQuery();
             con.commit();
             while (rs.next()) {
-                int orderID = rs.getInt(1);
+                Long orderID = rs.getLong(1);
                 Date date = rs.getDate(2);
                 Time time = Time.valueOf(rs.getString(3) + ":00");
                 Double amount = rs.getDouble(4);
@@ -321,7 +325,7 @@ public class CustomerDBC extends UserDBC {
             return deliveries;
         }
 
-    private static Time getArrivalTime(int orderID) throws SQLException {
+    private static Time getArrivalTime(Long orderID) throws SQLException {
         Time arivalTime;
         String sqlString;
         PreparedStatement pstmt;
@@ -330,7 +334,7 @@ public class CustomerDBC extends UserDBC {
         sqlString += "FROM delivery_delivers ";
         sqlString += "WHERE orderID= ?";
         pstmt = con.prepareStatement(sqlString);
-        pstmt.setInt(1, orderID);
+        pstmt.setLong(1, orderID);
         rs = pstmt.executeQuery();
         con.commit();
         if (rs.next())
@@ -340,7 +344,7 @@ public class CustomerDBC extends UserDBC {
         return arivalTime;
     }
 
-    private static Map<Food, Integer> getFoods(int orderID) throws SQLException {
+    private static Map<Food, Integer> getFoods(Long orderID) throws SQLException {
         Map<Food, Integer> foods = new HashMap<>();
         String sqlString;
         PreparedStatement pstmt;
@@ -352,7 +356,7 @@ public class CustomerDBC extends UserDBC {
         sqlString += "order_restaurantID = r.resID AND o.restaurantID = order_restaurantID ";
         sqlString += "AND a.food_name = o.food_name";
         pstmt = con.prepareStatement(sqlString);
-        pstmt.setInt(1, orderID);
+        pstmt.setLong(1, orderID);
         rs = pstmt.executeQuery();
         con.commit();
         while (rs.next()) {

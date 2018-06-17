@@ -86,6 +86,7 @@ public class CourierDBC extends UserDBC {
         return true;
     }
 
+
     public static List<Order> getOrders(Date startDate, Date endDate) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
@@ -108,7 +109,7 @@ public class CourierDBC extends UserDBC {
         rs = pstmt.executeQuery();
         con.commit();
         while (rs.next()) {
-            int orderID = rs.getInt(1);
+            Long orderID = rs.getLong(1);
             Date date = rs.getDate(2);
             Time time = Time.valueOf(rs.getString(3) + ":00");
             Double amount = rs.getDouble(4);

@@ -224,7 +224,7 @@ public class ManagerW extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Integer id = Integer.parseInt(e.getActionCommand());
+            Long id = Long.parseLong(e.getActionCommand());
             Restaurant toShow = integerRestaurantMap.get(id);
             showMenuForRes(toShow);
         }
@@ -485,7 +485,7 @@ public class ManagerW extends JFrame {
                 }
             }else{
                 if (!evt.equals("0")) {
-                    new resOrders(integerRestaurantMap.get(Integer.parseInt(evt)),fromDate,toDate);
+                    new resOrders(integerRestaurantMap.get(Long.parseLong(evt)),fromDate,toDate);
                 }else{
                     new resOrders(new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null),null,null);
                 }
@@ -497,8 +497,8 @@ public class ManagerW extends JFrame {
         Restaurant restaurant;
         JPanel current;
         List<Order> orders;
-        Map<Integer,Order> integerOrderMap = new HashMap<>();
-        Map<Integer,JPanel> integerJPanelMap = new HashMap<>();
+        Map<Long,Order> integerOrderMap = new HashMap<>();
+        Map<Long,JPanel> integerJPanelMap = new HashMap<>();
         resOrders(Restaurant r,Date from, Date to){
             restaurant = r;
             setLayout(new FlowLayout());
@@ -524,22 +524,14 @@ public class ManagerW extends JFrame {
                     temp.add(new Label("Order #"+ next.getOrderID()+" Status: "+next.getStatus()));
                     if (next.getStatus().equals(OrderStatus.SUBMITTED)) {
                         Button changeS = new Button("change status");
-                        changeS.setActionCommand(((Integer) next.getOrderID()).toString());
+                        changeS.setActionCommand((next.getOrderID()).toString());
                         temp.add(changeS);
                         changeS.addActionListener(listener);
                     }
                     current.add(temp);
                 }
             }else{
-                integerOrderMap.put(0,new Order(null,0,restaurant,null));
-                JPanel temp = new JPanel(new FlowLayout());
-                integerJPanelMap.put(0,temp);
-                temp.add(new Label("Order #"+ 0+" Status: "+ OrderStatus.SUBMITTED));
-                Button changeS = new Button("change status");
-                changeS.setActionCommand("0");
-                temp.add(changeS);
-                changeS.addActionListener(listener);
-                current.add(temp);
+                current.add(new Label("No results"));
             }
             add(current);
             addWindowListener(new windowListener());
@@ -590,7 +582,7 @@ public class ManagerW extends JFrame {
                 current.revalidate();
 
                 String evt = e.getActionCommand();
-                Integer orderID = Integer.parseInt(evt);
+                Long orderID = Long.parseLong(evt);
 
                 JPanel panelToChange = integerJPanelMap.get(orderID);
                 panelToChange.invalidate();
@@ -916,7 +908,7 @@ public class ManagerW extends JFrame {
                                 new ErrorMsg("Phone number must be in Canadian format!");
                             }else {
                                 try{
-                                    Integer.parseInt(newNum);
+                                    Long.parseLong(newNum);
 
                                 }catch (Exception ev){
                                     new ErrorMsg("Phone number contains letters? Incorrect");

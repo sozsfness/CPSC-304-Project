@@ -28,7 +28,7 @@ public class CourierW extends JFrame{
     private JTextField from;
     private JTextField to;
     private JTextField id;
-    private Map<Integer,Delivery> integerDeliveryMap = new HashMap<>();
+    private Map<Long,Delivery> integerDeliveryMap = new HashMap<>();
     private Choice typeChooser;
     private Choice a1;
     private Choice a2;
@@ -130,18 +130,9 @@ public class CourierW extends JFrame{
         current.add(new Label("Orders to deliver"));
         current.add(new Label(tmp.replace('\0','*')));
 //        current.add(new Label("Click on order id to see details/change status"));
-        List<Delivery> deliveries = ((Courier)currentUser).getDeliveries();
+
         OrderBtnListener l = new OrderBtnListener();
-        if (deliveries!=null) {
-            for (Delivery next : deliveries) {
-                integerDeliveryMap.put(next.getOrderID(), next);
-//                Button de = new Button(((Integer) next.getOrderID()).toString());
-//                current.add(de);
-//                de.addActionListener(l);
-            }
-        }else{
-            integerDeliveryMap.put(0, new Delivery(null,0,null,null,0,OrderStatus.READY,null,null,0,null,(Courier) currentUser,null));
-        }
+
         current.add(new Label("Please type in the order id to view the order"));
         id = new JTextField("",10);
         Button submit = new Button("Submit");
@@ -156,13 +147,33 @@ public class CourierW extends JFrame{
         public void actionPerformed(ActionEvent e) {
             String evt = id.getText();
             try{
-                Integer.parseInt(evt);
-                Integer id = Integer.parseInt(evt);
-                Delivery delivery = integerDeliveryMap.get(id);
-                new OrderDetail(delivery);
+                Long.parseLong(evt);
+
             }catch (Exception ev){
                 new ErrorMsg("Please type in one integer only");
             }
+            List<Order> deliveries = null;
+            try {
+                deliveries = CourierDBC.getOrders(Date.valueOf("2001-01-01"),Date.valueOf("2020-01-01"));
+            } catch (SQLException e1) {
+                new ErrorMsg(e1.getMessage());
+            }
+
+            if (deliveries!=null) {
+                for (Order next : deliveries) {
+                    integerDeliveryMap.put(next.getOrderID(), (Delivery) next);
+//                Button de = new Button(((Integer) next.getOrderID()).toString());
+//                current.add(de);
+//                de.addActionListener(l);
+                }
+            }
+            Long id = Long.parseLong(evt);
+            Delivery delivery = integerDeliveryMap.get(id);
+            if (delivery==null){
+                new ErrorMsg("No delivery found. try another id");
+                return;
+            }
+            new OrderDetail(delivery);
 
         }
     }
@@ -177,6 +188,7 @@ public class CourierW extends JFrame{
             //initializing basic view
             setLayout(new FlowLayout());
             current = new JPanel(new FlowLayout());
+            add(current);
             Container c = getContentPane();
             c.setPreferredSize(new Dimension(500,500));
             setSize(500,500);
@@ -191,7 +203,7 @@ public class CourierW extends JFrame{
             current.add(new Label("Order Details"));
             current.add(new Label("Order id: "+delivery.getOrderID()));
             current.add(new Label("Date and Time submitted: "+delivery.getDate()+" "+delivery.getTime()));
-            current.add(new Label("Ordered at: " + delivery.getRestOrderedAt()));
+            current.add(new Label("Ordered at: " + delivery.getRestOrderedAt().getName()));
             Address des = delivery.getDest();
             if (des!=null) {
                 current.add(new Label("Delivered to: " + des.getHouseNum() + " " + des.getStreet() + ", " + des.getCity() + " " + des.getProvince() + ", " + des.getPostalCode()));
@@ -205,7 +217,6 @@ public class CourierW extends JFrame{
                 current.add(change);
                 change.addActionListener(new DetailBtnListener());
             }
-            add(current);
             pack();
 
         }
@@ -603,7 +614,7 @@ public class CourierW extends JFrame{
                             new ErrorMsg("Password must be longer than 6 characters!");
                         }else {
                             try{
-                                Integer.parseInt(newNum);
+                                Long.parseLong(newNum);
 
                             }catch (Exception ev){
                                 new ErrorMsg("Phone number contains letters? Incorrect");

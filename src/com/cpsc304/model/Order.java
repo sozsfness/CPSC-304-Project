@@ -9,7 +9,7 @@ import java.util.Map;
 public class Order {
 
     protected Customer customer;
-    protected int orderID;
+    protected Long orderID;
     protected Date date;
     protected Time time;
     protected double amount;
@@ -17,7 +17,7 @@ public class Order {
     protected Restaurant restOrderedAt;
     protected Map<Food, Integer> quantity;
 
-    protected Order(Customer customer, int orderID, Date date, Time time, double amount, OrderStatus status, Restaurant restOrderedAt, Map<Food, Integer> quantity) {
+    protected Order(Customer customer, Long orderID, Date date, Time time, double amount, OrderStatus status, Restaurant restOrderedAt, Map<Food, Integer> quantity) {
         this.customer = customer;
         this.orderID = orderID;
         this.date = date;
@@ -39,11 +39,11 @@ public class Order {
         this.customer = customer;
     }
 
-    public int getOrderID() {
+    public Long getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(int orderID) {
+    public void setOrderID(Long orderID) {
         this.orderID = orderID;
     }
 

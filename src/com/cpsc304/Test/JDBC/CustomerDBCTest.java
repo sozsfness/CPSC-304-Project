@@ -30,7 +30,7 @@ public class CustomerDBCTest {
         readyTime = new Time(2000);
         restaurant = new Restaurant(null, 5, null,null, null, 1, true, null, null, null);
         customer = new Customer("b9q3u", "Samson Mason", "Wyw3026","4964411825", 10000, 5, 100);
-        order = new Pickup(customer, 10000, date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, readyTime);
+        order = new Pickup(customer, new Long(10000), date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, readyTime);
         courier = new Courier("j2g5z", "ppp","Mtb0525", "1113", null);
         DBConnection.connect();
     }
@@ -75,6 +75,19 @@ public class CustomerDBCTest {
         }
     }
 
+    static void testGetPickup(){
+        MainUI.currentUser = customer;
+        try {
+            List<Order> orders = CustomerDBC.getDeliveries(744,Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
+            for (Order order: orders) {
+                System.out.println(order.getOrderID() + " " + order.getStatus() + " " + order.getAmount());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public static void main (String[] args) {
         Food f1 = new Food("PICK", restaurant, 10);
         Food f2 = new Food("PICK", restaurant, 10);
@@ -84,7 +97,8 @@ public class CustomerDBCTest {
         //testCommitOrder();
         //testVerify();
         //testLogin();
-        testGetOrder();
+//        testGetOrder();
+        testGetPickup();
         System.out.println("Done!");
         DBConnection.close();
     }
