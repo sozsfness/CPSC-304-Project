@@ -384,4 +384,23 @@ public class CustomerDBC extends UserDBC {
             return null;
         return address;
     }
+
+    public static double getSpending(Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT Sum(order_amount) ";
+        sqlString += "FROM orders o";
+        sqlString += "WHERE order_status = 'Complete' ";
+        sqlString += "AND (order_date BETWEEN ? AND ?) AND order_customerID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setString(3, MainUI.currentUser.getUserID());
+        rs = pstmt.executeQuery();
+        if (rs.next())
+            return rs.getInt(1);
+        else
+            return 0;
+    }
 }
