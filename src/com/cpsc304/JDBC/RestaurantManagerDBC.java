@@ -169,7 +169,7 @@ public class RestaurantManagerDBC extends UserDBC{
             String custID = rs.getString(6);
             Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
             Time READYTime = Time.valueOf(rs.getString(8) + ":00");
-            pickup = new Pickup((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
+            pickup = new Pickup(null, orderID, date, time, amount, orderStatus, restaurant,
                     getFoods(orderID), READYTime);
             pickups.add(pickup);
         }
@@ -208,7 +208,7 @@ public class RestaurantManagerDBC extends UserDBC{
             String postal = rs.getString(10);
             String street = rs.getString(11);
             int houseNum = rs.getInt(12);
-            delivery = new Delivery((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
+            delivery = new Delivery(null, orderID, date, time, amount, orderStatus, restaurant,
                     getFoods(orderID), deliverFee, getArrivalTime(orderID), courier, getAddress(postal, street, houseNum));
             deliveries.add(delivery);
         }

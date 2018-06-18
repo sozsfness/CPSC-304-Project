@@ -134,7 +134,7 @@ public class ManagerW extends JFrame {
                 case "Reports":
                     beforeBuildingReport(current);
                     break;
-                case "delete":
+                default:
 
                     try {
                         RestaurantManagerDBC.deleteRestaurant(Integer.parseInt(e.getActionCommand()));
@@ -142,11 +142,11 @@ public class ManagerW extends JFrame {
                         new ErrorMsg(e1.getMessage());
                         break;
                     }
-
+                    restaurants.remove(integerRestaurantMap.get(Integer.parseInt(e.getActionCommand())));
+                    integerRestaurantMap.remove(Integer.parseInt(e.getActionCommand()));
                     removeComponents(current);
                     current.invalidate();
                     current.revalidate();
-                    current.add(new Label("\n\n\n"));
                     buildRestaurants(current);
                     break;
 //                case "Add new restaurant":
@@ -197,7 +197,7 @@ public class ManagerW extends JFrame {
             for (Restaurant next : restaurants) {
                 JPanel p = new JPanel(new FlowLayout());
                 current.add(p);
-                p.add(new Label("Name: " + next.getName()+"ID: "));
+                p.add(new Label("Name: " + next.getName()+" ID: "));
                 Button id = new Button(((Integer)next.getId()).toString());
                 p.add(id);
                 id.addActionListener(m);
@@ -329,6 +329,12 @@ public class ManagerW extends JFrame {
                     if (evt.equals("confirm")){
                         menu.invalidate();
                         menu.revalidate();
+                        try{
+                            Double.parseDouble(pr.getText());
+                        }catch (Exception e1){
+                            new ErrorMsg("Please type in integers only for price!");
+                            return;
+                        }
                         Food toA = new Food(na.getText(),restaurant,Double.parseDouble(pr.getText()));
                         try {
                             RestaurantManagerDBC.addToMenu(toA);
@@ -504,7 +510,7 @@ public class ManagerW extends JFrame {
             current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
             try {
                 orders = RestaurantManagerDBC.getOrders(restaurant,from,to);
-                System.out.println(orders.size());
+
             } catch (SQLException e) {
                 new ErrorMsg(e.getMessage());
             }
@@ -514,7 +520,7 @@ public class ManagerW extends JFrame {
                     integerOrderMap.put(next.getOrderID(),next);
                     JPanel temp = new JPanel(new FlowLayout());
                     integerJPanelMap.put(next.getOrderID(),temp);
-                    temp.add(new Label("Order #"+ next.getOrderID()+" Status: "+next.getStatus()));
+                    temp.add(new Label("Order #"+ next.getOrderID()+" Ordered on "+next.getDate()+" Status: "+next.getStatus()));
                     if (next.getStatus().equals(OrderStatus.SUBMITTED)) {
                         Button changeS = new Button("change status");
                         changeS.setActionCommand((next.getOrderID()).toString());
@@ -772,7 +778,7 @@ public class ManagerW extends JFrame {
                     new ErrorMsg(e.getMessage());
                 }
                 for (Order next: orders){
-                    current.add(new Label("Order id: "+next.getOrderID()+ " Amount: "+next.getAmount()+ " Ordered At: "+next.getDate()));
+                    current.add(new Label("Order id: "+next.getOrderID()+ " Amount: "+next.getAmount()+ " Ordered on: "+next.getDate()+ " Status: "+next.getStatus()));
                 }
                 add(current);
                 try {
@@ -905,6 +911,10 @@ public class ManagerW extends JFrame {
 
                                 }catch (Exception ev){
                                     new ErrorMsg("Phone number contains letters? Incorrect");
+                                    break;
+                                }
+                                if (Long.parseLong(newNum)<0){
+                                    new ErrorMsg("Please put in positive numbers!");
                                     break;
                                 }
                                 currentUser.setName(newName);

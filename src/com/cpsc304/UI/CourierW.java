@@ -658,6 +658,10 @@ public class CourierW extends JFrame{
                                 new ErrorMsg("Phone number contains letters? Incorrect");
                                 break;
                             }
+                            if (Long.parseLong(newNum)<0){
+                                new ErrorMsg("Please put in positive numbers!");
+                                break;
+                            }
                             currentUser.setName(newName);
                             currentUser.setPassword(newPw);
                             currentUser.setPhoneNum(newNum);

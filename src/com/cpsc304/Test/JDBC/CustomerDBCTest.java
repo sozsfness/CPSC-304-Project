@@ -35,7 +35,7 @@ public class CustomerDBCTest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        customer = new Customer("b9q3u", "Samson Mason", "Wyw3026","4964411825", 10000, 5, 100);
+        customer = new Customer("o5o4z", "Samson Mason", "Kgk0257","4964411825", 10000, 5, 100);
         order = new Pickup(customer, new Long(10000), date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, READYTime);
         courier = new Courier("a0a0a", "ppp","123456", "1113", null);
         restaurantManager = new RestaurantManager("h5c2k",".","Uft5964","1111",null);

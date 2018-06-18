@@ -68,7 +68,7 @@ public class CustomerW extends JFrame{
         btnListner b = new btnListner();
         Button l1 = new Button("Order History");
         l1.addActionListener(b);
-        Button l3 = new Button("New Order");
+        Button l3 = new Button("View Menu");
         l3.addActionListener(b);
         Button l4 = new Button("My INFO");
         l4.addActionListener(b);
@@ -139,7 +139,7 @@ public class CustomerW extends JFrame{
                         current.add(new Label("\n\n\n"));
                         beforeBuidlingHistoryOrder(current);
                         break;
-                    case "New Order":
+                    case "View Menu":
 
                         beforeBuildingNewOrder(current);
                         break;
@@ -529,7 +529,7 @@ public class CustomerW extends JFrame{
             String tmp = new String(new char[80]);
             current.add(new Label(tmp.replace('\0','*')));
 
-            current.add(new Label("New orders? Searching for restaurants..."));
+            current.add(new Label("Searching for restaurants..."));
             //panel for food list
             JPanel f = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
@@ -957,6 +957,10 @@ public class CustomerW extends JFrame{
 
                                     }catch (Exception ev){
                                         new ErrorMsg("Phone number contains letters? Incorrect");
+                                        break;
+                                    }
+                                    if (Long.parseLong(newNum)<=0){
+                                        new ErrorMsg("Please put in positive numbers!");
                                         break;
                                     }
                                     currentUser.setName(newName);
