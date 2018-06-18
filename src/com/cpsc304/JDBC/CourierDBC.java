@@ -242,7 +242,6 @@ public class CourierDBC extends UserDBC {
         rs = pstmt.executeQuery();
         while (rs.next()) {
             pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
-            System.out.println(pair.getKey());
             mins.add(pair);
         }
         return mins;

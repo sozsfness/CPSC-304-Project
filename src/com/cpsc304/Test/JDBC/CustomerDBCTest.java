@@ -130,7 +130,7 @@ public class CustomerDBCTest {
         }
         MainUI.currentUser = courier;
         try{
-            CourierDBC.getMins(Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
+            CourierDBC.getMaxs(Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
