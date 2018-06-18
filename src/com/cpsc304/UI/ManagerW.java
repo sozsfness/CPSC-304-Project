@@ -14,10 +14,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static com.cpsc304.UI.MainUI.currentUser;
 
@@ -30,7 +28,7 @@ public class ManagerW extends JFrame {
     private JTextField from;
     private JTextField to;
 
-    private Map<Integer,Restaurant> integerRestaurantMap;
+    private Map<Integer,Restaurant> integerRestaurantMap = new HashMap<>();
     private Set<Restaurant> restaurants;
     Date fromDate;
     Date toDate;
@@ -38,13 +36,19 @@ public class ManagerW extends JFrame {
     public ManagerW(Login l){
         this.l = l;
 
-        restaurants = ((RestaurantManager)currentUser).getRestaurants();
+        try {
+            restaurants = RestaurantManagerDBC.getResS(currentUser.getUserID());
+        } catch (SQLException e) {
+            new ErrorMsg(e.getMessage());
+        }
         if (restaurants!=null) {
             for (Restaurant next : restaurants) {
 
                 integerRestaurantMap.put(next.getId(), next);
             }
         }
+
+
         //initializing basic view
         setLayout(new FlowLayout());
         current = new JPanel(new FlowLayout());
@@ -73,6 +77,7 @@ public class ManagerW extends JFrame {
         b4.addActionListener(a1);
         pack();
         addWindowListener(new windowListener());
+
 
 
     }
@@ -181,7 +186,6 @@ public class ManagerW extends JFrame {
         current.revalidate();
         current.setLayout(null);
         current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
-        integerRestaurantMap = new HashMap<>();
         String tmp = new String(new char[80]);
         current.add(new Label(tmp.replace('\0','*')));
         current.add(new Label("Restaurants"));
@@ -214,8 +218,9 @@ public class ManagerW extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Long id = Long.parseLong(e.getActionCommand());
+            Integer id = Integer.parseInt(e.getActionCommand());
             Restaurant toShow = integerRestaurantMap.get(id);
+
             showMenuForRes(toShow);
         }
     }
@@ -227,7 +232,7 @@ public class ManagerW extends JFrame {
     private class Menu extends Frame{
         Map<String,Food> stringFoodHashMap = new HashMap<>();
         Map<String,JPanel> stringJPanelMap = new HashMap<>();
-        List<Food> me;
+        List<Food> me = new ArrayList<>();
         private Restaurant restaurant;
         private JPanel menu;
         private JPanel change;
@@ -335,6 +340,7 @@ public class ManagerW extends JFrame {
                             temp.add(new Label("Food name: " + na.getText() + " Price: $" + Double.parseDouble(pr.getText())));
                         }catch (Exception ex){
                             new ErrorMsg(ex.getMessage());
+                            return;
                         }
                         menu.add(temp);
                         Button del = new Button("delete food");
@@ -359,6 +365,7 @@ public class ManagerW extends JFrame {
                             RestaurantManagerDBC.deleteInMenu(restaurant, todel);
                         } catch (SQLException e1) {
                             new ErrorMsg(e1.getMessage());
+                            return;
                         }
                         menu.invalidate();
                         menu.revalidate();
@@ -427,6 +434,7 @@ public class ManagerW extends JFrame {
         p1.add(new Label("From: "));
         from = new JTextField("all",8);
         p1.add(from);
+        p1.add(new Label(" To: "));
         to = new JTextField("all",8);
         p1.add(to);
         Button sbmt = new Button("Get orders");
@@ -471,7 +479,7 @@ public class ManagerW extends JFrame {
                 }
             }else{
 
-                    new resOrders(new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null),null,null);
+                    new resOrders(integerRestaurantMap.get(Integer.parseInt(evt)),Date.valueOf(from.getText()),Date.valueOf(to.getText()));
 
             }
         }
@@ -496,6 +504,7 @@ public class ManagerW extends JFrame {
             current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
             try {
                 orders = RestaurantManagerDBC.getOrders(restaurant,from,to);
+                System.out.println(orders.size());
             } catch (SQLException e) {
                 new ErrorMsg(e.getMessage());
             }

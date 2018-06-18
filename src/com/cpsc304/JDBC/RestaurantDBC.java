@@ -19,6 +19,7 @@ public class RestaurantDBC {
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
+        con.setAutoCommit(false);
         ResourceManager rm = ResourceManager.getInstance();
         sqlString = "SELECT food_name, price ";
         sqlString += "FROM offers ";
@@ -26,6 +27,7 @@ public class RestaurantDBC {
         pstmt = con.prepareStatement(sqlString);
         pstmt.setInt(1, restID);
         rs = pstmt.executeQuery();
+        con.commit();
         while (rs.next()) {
             Food food = new Food(rs.getString(1), rm.getRestaurant(restID), rs.getDouble(2));
             foods.add(food);

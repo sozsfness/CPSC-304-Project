@@ -45,11 +45,14 @@ public class MainUI {
     }
     public static void customerLogOut(){
         customerUI=null;
+        MainUI.currentUser = null;
     }
     public static void managerLogOut(){
         managerUI=null;
+        MainUI.currentUser = null;
     }
     public static void courierLogOut(){
         courierUI=null;
+        MainUI.currentUser = null;
     }
 }

@@ -1,10 +1,10 @@
 package com.cpsc304.model;
 
+import com.cpsc304.JDBC.RestaurantDBC;
+
+import java.sql.SQLException;
 import java.sql.Time;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Restaurant {
 
@@ -17,10 +17,10 @@ public class Restaurant {
     private boolean deliveryOption;
     private String type;
     private Address address;
-    private Map<String, Food> offers;
+    private List<Food> offers ;
     private Set<Courier> resCouriers;
 
-    public Restaurant(RestaurantManager manager, double rating, Time openTime, Time closeTime, String name, int id, boolean deliveryOption, String type, Address address, Map<String, Food> offers) {
+    public Restaurant(RestaurantManager manager, double rating, Time openTime, Time closeTime, String name, int id, boolean deliveryOption, String type, Address address,List<Food> offers) throws SQLException {
         this.manager = manager;
         this.rating = rating;
         this.openTime = openTime;
@@ -107,14 +107,20 @@ public class Restaurant {
     }
 
     public void addFood(Food food) {
-        offers.put(food.getName(), food);
+        if (offers==null){
+            offers = new ArrayList<>();
+        }
+        offers.add(food);
     }
 
     public void deleteFood(Food food) {
-        offers.remove(food.getName());
+        if (offers==null){
+            offers = new ArrayList<>();
+        }
+        offers.remove(food);
     }
 
-    public Map<String, Food> getOffers() {
+    public List<Food> getOffers() {
         return offers;
     }
 

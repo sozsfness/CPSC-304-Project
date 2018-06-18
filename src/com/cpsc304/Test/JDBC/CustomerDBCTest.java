@@ -29,7 +29,11 @@ public class CustomerDBCTest {
         date = new Date(100000);
         time = new Time(1000);
         READYTime = new Time(2000);
-        restaurant = new Restaurant(null, 5, null,null, null, 1, true, null, null, null);
+        try {
+            restaurant = new Restaurant(null, 5, null,null, null, 1, true, null, null, null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         customer = new Customer("b9q3u", "Samson Mason", "Wyw3026","4964411825", 10000, 5, 100);
         order = new Pickup(customer, new Long(10000), date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, READYTime);
         courier = new Courier("a0a0a", "ppp","123456", "1113", null);
@@ -134,9 +138,9 @@ public class CustomerDBCTest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        MainUI.currentUser = restaurantManager;
         try {
-            RestaurantManagerDBC.getResS("l9z4g");
+            List<Order> orders = CustomerDBC.getOrders(336,Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
+            System.out.println(orders.size());
         } catch (SQLException e) {
             e.printStackTrace();
         }
