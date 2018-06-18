@@ -17,21 +17,21 @@ DROP TABLE addresses;
 DROP TABLE address_detail;
 
 CREATE TABLE users(
-     userID VARCHAR(20),
-     userPass VARCHAR(18) NOT NULL,
+     userID CHAR(5),
+     userPass VARCHAR(18) NOT NULL CHECK(length(userPass) >= 6),
      phone# INTEGER,
      userName VARCHAR(255) NOT NULL,
      PRIMARY KEY(userID)
 );
 
 CREATE TABLE restaurant_managers(
-    res_userID VARCHAR(20),
+    res_userID CHAR(5),
     PRIMARY KEY(res_userID),
     FOREIGN KEY(res_userID) REFERENCES users ON DELETE CASCADE
 );
 
 CREATE TABLE courier(
-    cor_userID VARCHAR(20),
+    cor_userID CHAR(5),
     PRIMARY KEY(cor_userID),
     FOREIGN KEY(cor_userID) REFERENCES users ON DELETE CASCADE
 );
@@ -49,7 +49,7 @@ CREATE TABLE points(
 );
 
 CREATE TABLE customer(
-    cus_userID VARCHAR(20),
+    cus_userID CHAR(5),
     cus_spending DECIMAL(10,2),
     PRIMARY KEY(cus_userID),
     FOREIGN KEY(cus_userID) REFERENCES users on DELETE CASCADE,
@@ -81,7 +81,7 @@ CREATE TABLE restaurant(
                                 OR res_type = 'European Food'
                                 OR res_type = 'Coffee Shop'),
     res_delivery_option INTEGER,
-    res_managerID VARCHAR(20) NOT NULL,
+    res_managerID CHAR(5) NOT NULL,
     res_postal_code CHAR(7) NOT NULL,
     res_street VARCHAR(20) NOT NULL,
     res_house# SMALLINT NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE orders(
                                     OR order_status = 'CANCELLED'
 									OR order_status = 'DELIVERED'
 									OR order_status = 'DELIVERING'),
-    order_customerID VARCHAR(20) NOT NULL,
+    order_customerID CHAR(5) NOT NULL,
     order_restaurantID INTEGER NOT NULL,
     FOREIGN KEY(order_customerID) REFERENCES customer ON DELETE SET NULL,
     FOREIGN KEY(order_restaurantID) REFERENCES restaurant ON DELETE CASCADE
@@ -110,7 +110,7 @@ CREATE TABLE orders(
 
 CREATE TABLE pick_up(
     orderID INTEGER PRIMARY KEY,
-    estimated_READY_time CHAR(5),
+    estimated_ready_time CHAR(5),
     FOREIGN KEY(orderID) REFERENCES orders ON DELETE CASCADE
 );
 
@@ -118,7 +118,7 @@ CREATE TABLE delivery_delivers(
     orderID INTEGER PRIMARY KEY NOT NULL,
     estimated_arrival_time CHAR(5),
     delivery_fee DECIMAL(10,2),
-    courierID VARCHAR(20) NOT NULL,
+    courierID CHAR(5) NOT NULL,
     postal_code CHAR(7) NOT NULL,
     street VARCHAR(20) NOT NULL,
     house# INTEGER NOT NULL,
@@ -132,7 +132,7 @@ CREATE TABLE food(
 );
 
 CREATE TABLE works_for(
-    courierID VARCHAR(20),
+    courierID CHAR(5),
     restaurantID INTEGER,
     PRIMARY KEY(courierID,restaurantID),
     FOREIGN KEY(courierID) REFERENCES courier ON DELETE CASCADE,
@@ -143,7 +143,7 @@ CREATE TABLE lives_at(
     postal_code CHAR(7),
     street VARCHAR(20),
     house# INTEGER,
-    customerID VARCHAR(20),
+    customerID CHAR(5),
     PRIMARY KEY(postal_code,street,house#,customerID),
     FOREIGN KEY(postal_code,street,house#)REFERENCES addresses on DELETE SET NULL,
     FOREIGN KEY(customerID) REFERENCES customer ON DELETE CASCADE
@@ -166,6 +166,31 @@ CREATE TABLE added_in(
     FOREIGN KEY(food_name) REFERENCES food ON DELETE CASCADE,
     FOREIGN KEY(orderID) REFERENCES orders ON DELETE CASCADE
 );
+
+CREATE OR REPLACE TRIGGER spendingUpdate
+AFTER UPDATE OF order_status ON orders
+FOR EACH ROW
+WHEN (new.order_status = 'COMPLETE')
+DECLARE newSpending DECIMAL(10,2);
+BEGIN
+SELECT cus_spending + :new.order_amount
+INTO newSpending
+FROM customer
+WHERE cus_userID =:new.order_customerID;
+INSERT INTO vip_level
+SELECT newSpending, newSpending/100
+FROM DUAL
+WHERE NOT EXISTS (SELECT * FROM vip_level WHERE vip_points = newSpending);
+INSERT INTO points
+SELECT newSpending, newSpending
+FROM DUAL
+WHERE NOT EXISTS (SELECT * FROM points WHERE points = newSpending);
+UPDATE customer
+SET cus_spending = newSpending
+WHERE cus_userID =:new.order_customerID;
+END;
+/
+
 
 
 INSERT INTO address_detail VALUES('M5N 6G7', 'Vancouver', 'BC');
@@ -348,6 +373,7 @@ INSERT INTO users VALUES('u9f2w', 'Maq0802',4007840140,'Audra Foley');
 INSERT INTO users VALUES('n5o8e', 'Yyy4062',7823640834,'Dorothy Robinson');
 INSERT INTO users VALUES('d5m8a', 'Pyh3308',5992158136,'Kathleen Mckenzie');
 INSERT INTO users VALUES('h5c2k', 'Uft5964',5805243098,'Rafael Nixon');
+INSERT INTO users VALUES('a0a0a', '123456',1546654165,'James Gong');
 INSERT INTO customer VALUES('b9q3u',349.05);
 INSERT INTO customer VALUES('a3a8d',85.05);
 INSERT INTO customer VALUES('b2x1i',249.05);
@@ -388,6 +414,7 @@ INSERT INTO courier VALUES('v3l9z');
 INSERT INTO courier VALUES('i4o2c');
 INSERT INTO courier VALUES('f4g2h');
 INSERT INTO courier VALUES('y3s1r');
+INSERT INTO courier VALUES('a0a0a');
 INSERT INTO restaurant_managers VALUES('o0n6k');
 INSERT INTO restaurant_managers VALUES('q8v8q');
 INSERT INTO restaurant_managers VALUES('v9j0n');
@@ -427,7 +454,7 @@ INSERT INTO restaurant VALUES (970,'The Acorn','18:00','00:00',2.5,'European Foo
 INSERT INTO restaurant VALUES (672,'Ancora waterfront dining and patio ','18:00','00:00',1.6,'European Food',0,'u9f2w','P0Z 8M3','Mauris Av',3023);
 INSERT INTO restaurant VALUES (683,'The Keg','18:00','00:00',3.3,'European Food',0,'n5o8e','P5V 8X0','Posuere Rd',2571);
 INSERT INTO restaurant VALUES (589,'Steveston pizza company','18:00','00:00',4.7,'European Food',1,'d5m8a','J4R 4K9','Curabitur Road',2786);
-INSERT INTO restaurant VALUES (336,'Jam café','18:00','00:00',1.9,'European Food',1,'h5c2k','T2N 2E8','Tincidunt Rd',954);
+INSERT INTO restaurant VALUES (336,'Jam cafe','18:00','00:00',1.9,'European Food',1,'h5c2k','T2N 2E8','Tincidunt Rd',954);
 INSERT INTO orders VALUES (20309,'2017-10-13','21:31',16,'SUBMITTED','b9q3u',744);
 INSERT INTO orders VALUES (95288,'2018-03-29','06:52',11,'SUBMITTED','a3a8d',907);
 INSERT INTO orders VALUES (46351,'2018-02-24','00:52',8,'SUBMITTED','b2x1i',712);
@@ -439,14 +466,14 @@ INSERT INTO orders VALUES (86078,'2018-03-06','17:48',5,'READY','u0q9t',373);
 INSERT INTO orders VALUES (49960,'2018-04-11','17:03',7,'READY','i6v6n',300);
 INSERT INTO orders VALUES (90166,'2017-07-15','09:23',7,'READY','j3w7g',149);
 INSERT INTO orders VALUES (26402,'2018-01-21','18:59',3,'READY','f7i2j',224);
-INSERT INTO orders VALUES (22533,'2018-01-14','15:26',9,'COMPLETEd','q9e2t',938);
-INSERT INTO orders VALUES (10792,'2017-10-11','10:02',2,'COMPLETEd','s8l7a',771);
-INSERT INTO orders VALUES (20827,'2017-07-25','16:59',5,'COMPLETEd','i4a9z',444);
-INSERT INTO orders VALUES (42779,'2018-03-26','15:20',3,'COMPLETEd','y0v3p',225);
-INSERT INTO orders VALUES (54582,'2017-09-02','11:51',4,'COMPLETEd','r0h8e',970);
-INSERT INTO orders VALUES (17858,'2018-03-09','08:06',2,'COMPLETEd','e3r0h',672);
-INSERT INTO orders VALUES (44877,'2017-11-24','21:09',7,'COMPLETEd','h7e1f',683);
-INSERT INTO orders VALUES (66193,'2018-01-24','22:09',4,'COMPLETEd','o2y1m',589);
+INSERT INTO orders VALUES (22533,'2018-01-14','15:26',9,'COMPLETE','q9e2t',938);
+INSERT INTO orders VALUES (10792,'2017-10-11','10:02',2,'COMPLETE','s8l7a',771);
+INSERT INTO orders VALUES (20827,'2017-07-25','16:59',5,'COMPLETE','i4a9z',444);
+INSERT INTO orders VALUES (42779,'2018-03-26','15:20',3,'COMPLETE','y0v3p',225);
+INSERT INTO orders VALUES (54582,'2017-09-02','11:51',4,'COMPLETE','r0h8e',970);
+INSERT INTO orders VALUES (17858,'2018-03-09','08:06',2,'COMPLETE','e3r0h',672);
+INSERT INTO orders VALUES (44877,'2017-11-24','21:09',7,'COMPLETE','h7e1f',683);
+INSERT INTO orders VALUES (66193,'2018-01-24','22:09',4,'COMPLETE','o2y1m',589);
 INSERT INTO orders VALUES (61425,'2017-10-22','14:13',8,'CANCELLED','i1b6b',336);
 INSERT INTO orders VALUES (47545,'2018-01-10','03:13',5,'READY','b9q3u',744);
 INSERT INTO orders VALUES (33190,'2017-10-30','07:03',2,'READY','a3a8d',907);
@@ -463,11 +490,41 @@ INSERT INTO orders VALUES (91827,'2018-03-16','09:17',2,'SUBMITTED','q9e2t',938)
 INSERT INTO orders VALUES (80243,'2018-02-16','09:58',1,'SUBMITTED','s8l7a',771);
 INSERT INTO orders VALUES (67630,'2017-11-23','12:48',1,'COMPLETE','i4a9z',444);
 INSERT INTO orders VALUES (40112,'2017-09-10','23:35',7,'COMPLETE','y0v3p',225);
-INSERT INTO orders VALUES (83144,'2018-06-06','03:59',8,'DELIVERED','r0h8e',970);
-INSERT INTO orders VALUES (91486,'2017-11-29','09:14',1,'DELIVERING','e3r0h',672);
+INSERT INTO orders VALUES (83144,'2018-06-06','03:59',8,'COMPLETE','r0h8e',970);
+INSERT INTO orders VALUES (91486,'2017-11-29','09:14',1,'COMPLETE','e3r0h',672);
 INSERT INTO orders VALUES (11938,'2018-06-02','11:52',4,'COMPLETE','h7e1f',683);
 INSERT INTO orders VALUES (37775,'2017-12-09','07:00',2,'READY','o2y1m',589);
 INSERT INTO orders VALUES (55191,'2017-07-11','02:53',3,'CANCELLED','i1b6b',336);
+INSERT INTO orders VALUES (39425,'2017-10-05','10:14',1,'COMPLETE','b9q3u',744);
+INSERT INTO orders VALUES (76386,'2017-10-06','07:51',3,'COMPLETE','a3a8d',907);
+INSERT INTO orders VALUES (49063,'2017-10-07','02:36',5,'COMPLETE','b2x1i',712);
+INSERT INTO orders VALUES (84822,'2017-10-08','21:22',4,'COMPLETE','p4m3z',504);
+INSERT INTO orders VALUES (23131,'2017-10-09','11:27',3,'COMPLETE','v6v1s',973);
+INSERT INTO orders VALUES (12830,'2017-10-10','01:58',1,'COMPLETE','o5o4z',271);
+INSERT INTO orders VALUES (78277,'2018-01-01','02:42',4,'COMPLETE','s0k9j',650);
+INSERT INTO orders VALUES (16790,'2018-01-19','20:23',1,'COMPLETE','u0q9t',373);
+INSERT INTO orders VALUES (18816,'2018-01-12','00:56',6,'COMPLETE','i6v6n',300);
+INSERT INTO orders VALUES (72429,'2018-01-14','17:46',6,'COMPLETE','j3w7g',149);
+INSERT INTO orders VALUES (70987,'2018-02-21','02:44',5,'COMPLETE','f7i2j',224);
+INSERT INTO orders VALUES (42553,'2018-02-25','10:33',1,'COMPLETE','q9e2t',744);
+INSERT INTO orders VALUES (11545,'2018-03-08','10:47',1,'COMPLETE','s8l7a',907);
+INSERT INTO orders VALUES (92948,'2018-03-10','01:29',1,'COMPLETE','i4a9z',712);
+INSERT INTO orders VALUES (58946,'2018-03-14','23:51',1,'COMPLETE','y0v3p',504);
+INSERT INTO orders VALUES (73511,'2018-03-21','22:55',2,'COMPLETE','r0h8e',973);
+INSERT INTO orders VALUES (59537,'2018-04-02','21:05',4,'COMPLETE','e3r0h',271);
+INSERT INTO orders VALUES (97787,'2018-04-01','13:27',1,'COMPLETE','h7e1f',650);
+INSERT INTO orders VALUES (42435,'2018-05-31','14:13',1,'COMPLETE','o2y1m',373);
+INSERT INTO orders VALUES (76700,'2018-06-05','13:54',1,'CANCELLED','i1b6b',744);
+INSERT INTO orders VALUES (53187,'2018-07-09','14:21',4,'COMPLETE','b9q3u',907);
+INSERT INTO orders VALUES (62970,'2018-08-11','10:52',4,'COMPLETE','a3a8d',712);
+INSERT INTO orders VALUES (35917,'2018-08-17','04:34',5,'COMPLETE','b2x1i',504);
+INSERT INTO orders VALUES (25834,'2018-08-24','06:03',4,'COMPLETE','p4m3z',973);
+INSERT INTO orders VALUES (49973,'2018-08-28','17:48',1,'COMPLETE','v6v1s',271);
+INSERT INTO orders VALUES (90212,'2018-08-30','01:30',6,'COMPLETE','o5o4z',650);
+INSERT INTO orders VALUES (57157,'2018-08-31','04:29',5,'COMPLETE','s0k9j',373);
+INSERT INTO orders VALUES (83061,'2018-10-02','00:33',1,'COMPLETE','u0q9t',300);
+INSERT INTO orders VALUES (44627,'2018-12-21','04:34',4,'DELIVERED','i6v6n',149);
+INSERT INTO orders VALUES (42976,'2018-12-25','06:31',1,'DELIVERING','j3w7g',224);
 INSERT INTO pick_up VALUES(20309,'00:50');
 INSERT INTO pick_up VALUES(95288,'00:32');
 INSERT INTO pick_up VALUES(46351,'00:25');
@@ -508,6 +565,36 @@ INSERT INTO delivery_delivers VALUES (91486,'00:00',8.68,'v3l9z','H1R 6G6','Nisl
 INSERT INTO delivery_delivers VALUES (11938,'00:00',8.37,'i4o2c','L2H 5T4','Magnis Rd','7271');
 INSERT INTO delivery_delivers VALUES (37775,'00:24',9.39,'f4g2h','V3M 6K4','Quam Street','2923');
 INSERT INTO delivery_delivers VALUES (55191,'00:00',7.96,'y3s1r','V5X 7B6','Odio Road','5779');
+INSERT INTO delivery_delivers VALUES (39425,'00:00',8.18,'a0a0a','V0B 8K8','Mauris St','9070');
+INSERT INTO delivery_delivers VALUES (76386,'00:00',6.6,'a0a0a','M3J 4X7','Odio Road','4187');
+INSERT INTO delivery_delivers VALUES (49063,'00:00',9.99,'a0a0a','J1A 1X6','Eget Road','5866');
+INSERT INTO delivery_delivers VALUES (84822,'00:00',7.48,'a0a0a','S3L 5R0','Dolor Avenue','9546');
+INSERT INTO delivery_delivers VALUES (23131,'00:00',6.44,'a0a0a','S2V 8B4','Nec St','1394');
+INSERT INTO delivery_delivers VALUES (12830,'00:00',12.68,'a0a0a','G2S 2T1','Augue Av','3374');
+INSERT INTO delivery_delivers VALUES (78277,'00:00',5.06,'a0a0a','Y1N 6E2','Auctor Avenue','7469');
+INSERT INTO delivery_delivers VALUES (16790,'00:00',6.67,'a0a0a','V0K 1E8','Lacus Road','7295');
+INSERT INTO delivery_delivers VALUES (18816,'00:00',12.07,'a0a0a','J5K 6W9','Nulla Ave','5688');
+INSERT INTO delivery_delivers VALUES (72429,'00:00',9.37,'a0a0a','R0A 3E3','Nullam St','3539');
+INSERT INTO delivery_delivers VALUES (70987,'00:00',9.63,'a0a0a','N3J 6Y7','Elit Rd','6303');
+INSERT INTO delivery_delivers VALUES (42553,'00:00',6.6,'a0a0a','R5C 6W3','Pharetra Street','7850');
+INSERT INTO delivery_delivers VALUES (11545,'00:00',12.46,'a0a0a','T9N 0Z3','Sed Ave','6851');
+INSERT INTO delivery_delivers VALUES (92948,'00:00',10.83,'a0a0a','H7X 7N4','Sem Av','4374');
+INSERT INTO delivery_delivers VALUES (58946,'00:00',8.35,'a0a0a','S3B 5C6','Ac St','7024');
+INSERT INTO delivery_delivers VALUES (73511,'00:00',10.74,'a0a0a','S2V 8B4','Nec St','1394');
+INSERT INTO delivery_delivers VALUES (59537,'00:00',8.36,'a0a0a','G2S 2T1','Augue Av','3374');
+INSERT INTO delivery_delivers VALUES (97787,'00:00',12.78,'a0a0a','Y1N 6E2','Auctor Avenue','7469');
+INSERT INTO delivery_delivers VALUES (42435,'00:00',5.42,'a0a0a','V0K 1E8','Lacus Road','7295');
+INSERT INTO delivery_delivers VALUES (76700,'00:00',10.96,'a0a0a','J5K 6W9','Nulla Ave','5688');
+INSERT INTO delivery_delivers VALUES (53187,'00:00',4.33,'a0a0a','R0A 3E3','Nullam St','3539');
+INSERT INTO delivery_delivers VALUES (62970,'00:00',12.34,'a0a0a','N3J 6Y7','Elit Rd','6303');
+INSERT INTO delivery_delivers VALUES (35917,'00:00',8.14,'a0a0a','R5C 6W3','Pharetra Street','7850');
+INSERT INTO delivery_delivers VALUES (25834,'00:00',4.51,'a0a0a','T9N 0Z3','Sed Ave','6851');
+INSERT INTO delivery_delivers VALUES (49973,'00:00',9.78,'a0a0a','H7X 7N4','Sem Av','4374');
+INSERT INTO delivery_delivers VALUES (90212,'00:00',7.14,'a0a0a','S3B 5C6','Ac St','7024');
+INSERT INTO delivery_delivers VALUES (57157,'00:00',4.52,'a0a0a','S2V 8B4','Nec St','1394');
+INSERT INTO delivery_delivers VALUES (83061,'00:00',10.33,'a0a0a','G2S 2T1','Augue Av','3374');
+INSERT INTO delivery_delivers VALUES (44627,'00:00',12.68,'a0a0a','Y1N 6E2','Auctor Avenue','7469');
+INSERT INTO delivery_delivers VALUES (42976,'00:15',8.41,'a0a0a','V0K 1E8','Lacus Road','7295');
 INSERT INTO food VALUES('Lattes');
 INSERT INTO food VALUES('Americanos');
 INSERT INTO food VALUES('Cappuccinos');
@@ -545,7 +632,18 @@ INSERT INTO works_for VALUES('b8r6b',970);
 INSERT INTO works_for VALUES('v3l9z',672);
 INSERT INTO works_for VALUES('i4o2c',683);
 INSERT INTO works_for VALUES('f4g2h',589);
-INSERT INTO works_for VALUES('y3s1r',744);
+INSERT INTO works_for VALUES('y3s1r',336);
+INSERT INTO works_for VALUES('a0a0a',744);
+INSERT INTO works_for VALUES('a0a0a',907);
+INSERT INTO works_for VALUES('a0a0a',712);
+INSERT INTO works_for VALUES('a0a0a',504);
+INSERT INTO works_for VALUES('a0a0a',973);
+INSERT INTO works_for VALUES('a0a0a',271);
+INSERT INTO works_for VALUES('a0a0a',650);
+INSERT INTO works_for VALUES('a0a0a',373);
+INSERT INTO works_for VALUES('a0a0a',300);
+INSERT INTO works_for VALUES('a0a0a',149);
+INSERT INTO works_for VALUES('a0a0a',224);
 INSERT INTO lives_at VALUES ('V0B 8K8','Mauris St',9070,'b9q3u');
 INSERT INTO lives_at VALUES ('M3J 4X7','Odio Road',4187,'a3a8d');
 INSERT INTO lives_at VALUES ('J1A 1X6','Eget Road',5866,'b2x1i');
@@ -567,21 +665,38 @@ INSERT INTO lives_at VALUES ('L2H 5T4','Magnis Rd',7271,'h7e1f');
 INSERT INTO lives_at VALUES ('V3M 6K4','Quam Street',2923,'o2y1m');
 INSERT INTO lives_at VALUES ('V5X 7B6','Odio Road',5779,'i1b6b');
 INSERT INTO offers VALUES ('Lattes',744,6.55);
-INSERT INTO offers VALUES ('Americanos',907,5.68);
-INSERT INTO offers VALUES ('Cappuccinos',712,7.21);
-INSERT INTO offers VALUES ('Mochas',504,6.5);
+INSERT INTO offers VALUES ('Americanos',744,7.03);
+INSERT INTO offers VALUES ('Cappuccinos',744,6.25);
+INSERT INTO offers VALUES ('Mochas',744,6.22);
+INSERT INTO offers VALUES ('Lattes',907,8.24);
+INSERT INTO offers VALUES ('Americanos',907,5.51);
+INSERT INTO offers VALUES ('Cappuccinos',907,7.55);
+INSERT INTO offers VALUES ('Americanos',712,6.3);
+INSERT INTO offers VALUES ('Cappuccinos',712,8.28);
+INSERT INTO offers VALUES ('Mochas',712,8.43);
+INSERT INTO offers VALUES ('Lattes',504,8.14);
+INSERT INTO offers VALUES ('Americanos',504,8.67);
+INSERT INTO offers VALUES ('Cappuccinos',504,5.68);
+INSERT INTO offers VALUES ('Mochas',504,7.21);
 INSERT INTO offers VALUES ('Mochas',973,6.5);
-INSERT INTO offers VALUES ('Frech Fries',271,4.2);
-INSERT INTO offers VALUES ('Frech Fries',650,4.2);
-INSERT INTO offers VALUES ('Hamburger',373,6.3);
-INSERT INTO offers VALUES ('Ice Cream',300,2.26);
-INSERT INTO offers VALUES ('Soft Drinks',149,1);
-INSERT INTO offers VALUES ('Sandwich',149,6.2);
-INSERT INTO offers VALUES ('Hot Chocolate',149,3.2);
-INSERT INTO offers VALUES ('Sushi',224,18);
-INSERT INTO offers VALUES ('Sushi',938,19);
-INSERT INTO offers VALUES ('Sushi',771,17);
-INSERT INTO offers VALUES ('Ramen',444,15.63);
+INSERT INTO offers VALUES ('Frech Fries',271,3.2);
+INSERT INTO offers VALUES ('Frech Fries',650,3.2);
+INSERT INTO offers VALUES ('Hamburger',650,5.3);
+INSERT INTO offers VALUES ('Ice Cream',650,1.5);
+INSERT INTO offers VALUES ('Soft Drinks',650,1.2);
+INSERT INTO offers VALUES ('Hamburger',373,4.6);
+INSERT INTO offers VALUES ('Ice Cream',300,4.2);
+INSERT INTO offers VALUES ('Soft Drinks',149,4.2);
+INSERT INTO offers VALUES ('Sandwich',149,6.3);
+INSERT INTO offers VALUES ('Hot Chocolate',149,2.26);
+INSERT INTO offers VALUES ('Sushi',224,12.5);
+INSERT INTO offers VALUES ('Sushi',938,16.4);
+INSERT INTO offers VALUES ('Sushi',771,8.98);
+INSERT INTO offers VALUES ('Sushi',444,15.8);
+INSERT INTO offers VALUES ('Ramen',444,18);
+INSERT INTO offers VALUES ('Sashimi',444,19);
+INSERT INTO offers VALUES ('Sushi',225,17);
+INSERT INTO offers VALUES ('Ramen',225,15.63);
 INSERT INTO offers VALUES ('Sashimi',225,27.86);
 INSERT INTO offers VALUES ('Steak',970,25);
 INSERT INTO offers VALUES ('Pop Corn',672,21.32);

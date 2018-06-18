@@ -17,7 +17,7 @@ public class CustomerDBC extends UserDBC {
         String sqlString;
         PreparedStatement pstmt;
         User user = getUser(custID);
-        System.out.println("user constructed");
+        System.out.println("Customer constructed");
         Customer customer = null;
         //Statement stmt = con.createStatement();
         ResultSet rs;
@@ -295,6 +295,8 @@ public class CustomerDBC extends UserDBC {
     public static List<Restaurant> getRankedRestaurants(List<String> foods, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         return getRankedRestaurants(foods,0, brating, bhours, bdeliveryOption, btype, baddress);
     }
+
+    //TODO: to be modified
     public static List<Restaurant> getRankedRestaurants(List<String> foods,double minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
