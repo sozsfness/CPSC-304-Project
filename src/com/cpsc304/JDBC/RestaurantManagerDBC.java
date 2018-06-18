@@ -5,9 +5,8 @@ import com.cpsc304.model.*;
 import com.sun.org.apache.regexp.internal.RE;
 
 import java.sql.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Date;
+import java.util.*;
 
 public class RestaurantManagerDBC extends UserDBC{
 
@@ -129,7 +128,153 @@ public class RestaurantManagerDBC extends UserDBC{
     }
 
     public static List<Order> getOrders(Restaurant restaurant, Date startDate, Date endDate) throws SQLException {
-        return CustomerDBC.getOrders(restaurant.getId(), startDate, endDate);
+        List<Order> orders = new ArrayList<>();
+        List<Order> pickups = getPickups(restaurant.getId(), startDate, endDate);
+        List<Order> deliveries = getDeliveries(restaurant.getId(), startDate, endDate);
+        con.setAutoCommit(false);
+        for (Order order : pickups) {
+            orders.add(order);
+        }
+        for (Order order : deliveries) {
+            orders.add(order);
+        }
+        return orders;
+    }
+
+    public static List<Order> getPickups(int resID, Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        Pickup pickup;
+        ResourceManager rm = ResourceManager.getInstance();
+        List<Order> pickups = new ArrayList<>();
+        if (MainUI.currentUser == null) return null;
+        sqlString = "SELECT o.*, estimated_READY_time ";
+        sqlString += "FROM orders o, pick_up p ";
+        sqlString += "WHERE p.orderID = o.orderID AND order_date >= ? ";
+        sqlString += "AND order_date <= ? AND order_restaurantID = ?";
+        System.out.println(sqlString);
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setInt(3, resID);
+        rs = pstmt.executeQuery();
+        con.commit();
+        while (rs.next()) {
+            Long orderID = rs.getLong(1);
+            Date date = rs.getDate(2);
+            Time time = Time.valueOf(rs.getString(3) + ":00");
+            Double amount = rs.getDouble(4);
+            OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5).toUpperCase());
+            String custID = rs.getString(6);
+            Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
+            Time READYTime = Time.valueOf(rs.getString(8) + ":00");
+            pickup = new Pickup((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
+                    getFoods(orderID), READYTime);
+            pickups.add(pickup);
+        }
+        pstmt.close();
+        return pickups;
+    }
+
+    public static List<Order> getDeliveries(int resID, Date startDate, Date endDate) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        Delivery delivery;
+        ResourceManager rm = ResourceManager.getInstance();
+        List<Order> deliveries = new ArrayList<>();
+        if (MainUI.currentUser == null) return null;
+        sqlString = "SELECT o.*, delivery_fee, courierID, postal_code, street, house# ";
+        sqlString += "FROM orders o, delivery_delivers d ";
+        sqlString += "WHERE o.orderID = d.orderID AND order_date >= ? ";
+        sqlString += "AND order_date <= ? AND order_restaurantID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setDate(1, startDate);
+        pstmt.setDate(2, endDate);
+        pstmt.setInt(3, resID);
+        rs = pstmt.executeQuery();
+        con.commit();
+        while (rs.next()) {
+            Long orderID = rs.getLong(1);
+            Date date = rs.getDate(2);
+            Time time = Time.valueOf(rs.getString(3) + ":00");
+            Double amount = rs.getDouble(4);
+            OrderStatus orderStatus = OrderStatus.valueOf(rs.getString(5).toUpperCase());
+            String custID = rs.getString(6);
+            Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
+            double deliverFee = rs.getDouble(8);
+            Courier courier = rm.getCourier(rs.getString(9));
+            String postal = rs.getString(10);
+            String street = rs.getString(11);
+            int houseNum = rs.getInt(12);
+            delivery = new Delivery((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
+                    getFoods(orderID), deliverFee, getArrivalTime(orderID), courier, getAddress(postal, street, houseNum));
+            deliveries.add(delivery);
+        }
+        pstmt.close();
+        return deliveries;
+    }
+
+    private static Time getArrivalTime(Long orderID) throws SQLException {
+        Time arivalTime;
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT estimated_arrival_time ";
+        sqlString += "FROM delivery_delivers ";
+        sqlString += "WHERE orderID= ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setLong(1, orderID);
+        rs = pstmt.executeQuery();
+        con.commit();
+        if (rs.next())
+            arivalTime = Time.valueOf(rs.getString(1) + ":00");
+        else
+            return null;
+        return arivalTime;
+    }
+
+    private static Map<Food, Integer> getFoods(Long orderID) throws SQLException {
+        Map<Food, Integer> foods = new HashMap<>();
+        String sqlString;
+        PreparedStatement pstmt;
+        ResourceManager rm = ResourceManager.getInstance();
+        ResultSet rs;
+        sqlString = "SELECT a.food_name, r.resID, o.price, a.quantity ";
+        sqlString += "FROM orders, added_in a, restaurant r, offers o ";
+        sqlString += "WHERE a.orderID = ? AND orders.orderID = a.orderID AND ";
+        sqlString += "order_restaurantID = r.resID AND o.restaurantID = order_restaurantID ";
+        sqlString += "AND a.food_name = o.food_name";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setLong(1, orderID);
+        rs = pstmt.executeQuery();
+        con.commit();
+        while (rs.next()) {
+            Food food = new Food(rs.getString(1), rm.getRestaurant(rs.getInt(2)), rs.getDouble(3));
+            foods.put(food, rs.getInt(4));
+        }
+        return foods;
+    }
+
+    private static Address getAddress(String postal, String street, int houseNum) throws SQLException {
+        Address address;
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT province, city ";
+        sqlString += "FROM address_detail ";
+        sqlString += "WHERE postal_code = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, postal);
+        rs = pstmt.executeQuery();
+        con.commit();
+        if (rs.next()) {
+            address = new Address(houseNum, street, rs.getString(1), rs.getString(2), postal);
+        }
+        else
+            return null;
+        return address;
     }
 
     public static double getRevenue(Restaurant restaurant, Date startDate, Date endDate) throws SQLException {

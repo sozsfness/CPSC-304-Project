@@ -170,12 +170,12 @@ public class CustomerDBCTest {
         //testCommitOrder();
         //testVerify();
         //testLogin();
-//        testGetOrder();
+        testGetOrder();
 //        testGetPickup();
 //        testIncome();
         //testGetSpd();
         //testRecommend();
-        testGetRankedRestaurants();
+        //testGetRankedRestaurants();
 
         System.out.println("Done!");
         DBConnection.close();
