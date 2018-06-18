@@ -123,6 +123,15 @@ public class CustomerDBCTest {
         }
     }
 
+    static void testGetEarning(){
+        MainUI.currentUser = courier;
+        try {
+            System.out.println(CourierDBC.getEarning("Min", "Min", courier.getUserID()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main (String[] args) {
         Food f1 = new Food("PICK", restaurant, 10);
         Food f2 = new Food("PICK", restaurant, 10);
@@ -136,7 +145,8 @@ public class CustomerDBCTest {
 //        testGetPickup();
 //        testIncome();
         //testGetSpd();
-        testGetSums();
+        //testGetSums();
+        testGetEarning();
         System.out.println("Done!");
         DBConnection.close();
     }

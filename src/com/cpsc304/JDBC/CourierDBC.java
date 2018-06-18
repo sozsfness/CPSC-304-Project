@@ -156,6 +156,7 @@ public class CourierDBC extends UserDBC {
 
     private static Integer getMonth(String string){
         int month;
+        System.out.println(string);
         switch (string) {
             case "January  ":
                 month = 1;
@@ -216,6 +217,7 @@ public class CourierDBC extends UserDBC {
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
+        con.commit();
         while (rs.next()) {
 
             pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
@@ -240,6 +242,7 @@ public class CourierDBC extends UserDBC {
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
+        con.commit();
         while (rs.next()) {
             pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
             System.out.println(pair.getKey());
@@ -264,6 +267,7 @@ public class CourierDBC extends UserDBC {
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
+        con.commit();
         while (rs.next()) {
             pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
             maxs.add(pair);
@@ -287,6 +291,7 @@ public class CourierDBC extends UserDBC {
         pstmt.setDate(2, endDate);
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
+        con.commit();
         while (rs.next()) {
             pair = new Pair<>(getMonth(rs.getString(1)), rs.getInt(2));
             counts.add(pair);
@@ -307,6 +312,7 @@ public class CourierDBC extends UserDBC {
         sqlString = "SELECT res_name, Earning FROM " + type + "Earning";
         pstmt = con.prepareStatement(sqlString);
         rs = pstmt.executeQuery();
+        con.commit();
         while (rs.next()) {
             pair = new Pair<>(rs.getString(1), rs.getDouble(2));
             earnings.add(pair);
@@ -325,6 +331,7 @@ public class CourierDBC extends UserDBC {
         sqlString = "SELECT res_name, Earning FROM CountEarning";
         pstmt = con.prepareStatement(sqlString);
         rs = pstmt.executeQuery();
+        con.commit();
         while (rs.next()) {
             pair = new Pair<>(rs.getString(1), rs.getInt(2));
             counts.add(pair);
@@ -334,17 +341,30 @@ public class CourierDBC extends UserDBC {
 
     private static void creatView(String type, String courerID) throws SQLException {
         String sqlString;
-        PreparedStatement pstmt;
+        Statement stmt;
+        dropView(type);
         sqlString = "CREATE VIEW " + type + "Earning(resID, res_name, Earning) AS ";
         sqlString += "SELECT resID, res_name, " + type +"(delivery_fee) ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers, restaurant ";
         sqlString += "WHERE order_restaurantID = resID AND order_status = 'COMPLETE' ";
-        sqlString += "AND courierID = ?" ;
-        sqlString += " GROUP BY resID, res_name";
+        sqlString += "AND courierID = '" + courerID + "' " ;
+        sqlString += "GROUP BY resID, res_name";
+        stmt = con.createStatement();
+        stmt.execute(sqlString);
+        con.commit();
+    }
+
+    private static void dropView(String type) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        sqlString = "DROP VIEW " + type + "Earning";
         pstmt = con.prepareStatement(sqlString);
-        pstmt.setString(1, courerID);
-        pstmt.executeUpdate();
-        pstmt.close();
+        try {
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            // nothing
+        }
+        con.commit();
     }
 
     // For nested aggregation
@@ -357,6 +377,7 @@ public class CourierDBC extends UserDBC {
         sqlString = "SELECT " + secondType +"(earning) from " + firstType + "Earning";
         pstmt = con.prepareStatement(sqlString);
         rs = pstmt.executeQuery();
+        con.commit();
         if (rs.next())
             return rs.getDouble(1);
         return 0;
@@ -371,6 +392,7 @@ public class CourierDBC extends UserDBC {
         sqlString = "SELECT Count(earning) from " + firstType + "Earning";
         pstmt = con.prepareStatement(sqlString);
         rs = pstmt.executeQuery();
+        con.commit();
         if (rs.next())
             return rs.getInt(1);
         return 0;
@@ -385,6 +407,7 @@ public class CourierDBC extends UserDBC {
         sqlString = "SELECT " + secondType + "(earning) from CountEarning";
         pstmt = con.prepareStatement(sqlString);
         rs = pstmt.executeQuery();
+        con.commit();
         if (rs.next())
             return rs.getInt(1);
         return 0;
