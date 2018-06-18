@@ -169,7 +169,7 @@ public class RestaurantManagerDBC extends UserDBC{
             String custID = rs.getString(6);
             Restaurant restaurant = rm.getRestaurant(rs.getInt(7));
             Time READYTime = Time.valueOf(rs.getString(8) + ":00");
-            pickup = new Pickup((Customer) MainUI.currentUser, orderID, date, time, amount, orderStatus, restaurant,
+            pickup = new Pickup(null, orderID, date, time, amount, orderStatus, restaurant,
                     getFoods(orderID), READYTime);
             pickups.add(pickup);
         }
