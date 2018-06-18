@@ -121,6 +121,7 @@ public class RestaurantManagerDBC extends UserDBC{
         PreparedStatement pstmt;
         sqlString = "INSERT INTO food VALUES(?)";
         pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, food.getName());
         pstmt.executeUpdate();
         con.commit();
     }

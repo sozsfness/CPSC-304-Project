@@ -231,9 +231,10 @@ public class CustomerDBC extends UserDBC {
         sqlString += "WHERE ROWNUM = 1) ";
         sqlString += "AND r.resID NOT IN (SELECT order_restaurantID ";
         sqlString += "FROM orders ";
-        sqlString += "WHERE order_customerID = 's8l7a') ";
+        sqlString += "WHERE order_customerID = ?) ";
         sqlString += "ORDER BY res_rating DESC";
         pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, custID);
         rs = pstmt.executeQuery();
         int row = 5;
         while (rs.next() && row > 0) {
@@ -304,6 +305,7 @@ public class CustomerDBC extends UserDBC {
         Restaurant rest;
         List<Restaurant> restaurants = new ArrayList<>();
         con.setAutoCommit(false);
+        createViewForRest(foods);
         sqlString = "SELECT resID, res_name";
         if (brating)
             sqlString += ", res_rating";
@@ -315,20 +317,20 @@ public class CustomerDBC extends UserDBC {
             sqlString += ", res_delivery_option";
         if (baddress)
             sqlString += ", res_postal_code, res_street, res_house#";
-        sqlString += " FROM restaurant r, offers o";
-        sqlString += " WHERE o.restaurantID = r.resID";
-        sqlString += " AND res_rating >= ?";
-        for (String food: foods) {
-            sqlString += " AND LOWER(o.food_name) = LOWER(?)";
-        }
-        sqlString += " ORDER BY res_rating DESC";
+        sqlString += " FROM restaurant r";
+        sqlString += " WHERE NOT EXISTS ((SELECT food_name";
+        sqlString += " FROM food_filter)";
+        sqlString += " MINUS";
+        sqlString += " (SELECT o.food_name";
+        sqlString += " FROM offers o";
+        sqlString += " WHERE o.restaurantID = r.resID AND";
+        sqlString += " o.food_name IN (SELECT food_name";
+        sqlString += " FROM food_filter)))";
+        sqlString += " AND res_rating > ?";
+        sqlString += " ORDER BY r.res_rating DESC";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDouble(1, minRating);
         int i = 1;
-        for (String food: foods) {
-            ++ i;
-            pstmt.setString(i, food);
-        }
         rs = pstmt.executeQuery();
         con.commit();
         while (rs.next()) {
@@ -367,6 +369,22 @@ public class CustomerDBC extends UserDBC {
             restaurants.add(rest);
         }
         return restaurants;
+    }
+
+    private static void createViewForRest(List<String> foods) throws SQLException {
+        String sqlString;
+        Statement stmt;
+        sqlString = "CREATE OR REPLACE TABLE food_filter( ";
+        sqlString += "food_name VARCHAR(20) PRIMARY KEY ";
+        sqlString += ")";
+        stmt = con.createStatement();
+        stmt.addBatch(sqlString);
+        for (String food: foods){
+            sqlString = "INSERT INTO food_filter VALUES ('"+ food +"')";
+            stmt.addBatch(sqlString);
+        }
+        stmt.executeBatch();
+        con.commit();
     }
 
     public static List<Order> getOrders(Date startDate, Date endDate) throws SQLException {
