@@ -33,7 +33,8 @@ public class CustomerW extends JFrame{
     private JTextField rating;
     private JTextField status;
     private Order order;
-    private Order currentOrder;
+
+
     private List<Restaurant> restaurants=null;
     private JTextField reportFrom;
     private JTextField reportTo;
@@ -263,15 +264,13 @@ public class CustomerW extends JFrame{
                     canCancel = true;
                 }
 
-                if (order.getStatus().equals(OrderStatus.DELIVERED)||order.getStatus().equals(OrderStatus.READY)){
+                if (order.getStatus().equals(OrderStatus.DELIVERED)||(order.getStatus().equals(OrderStatus.READY)&&order instanceof Pickup)){
                     canChange = true;
                 }
                 if (order  instanceof Delivery){
                     isDelivery = true;
                 }
-                if (order instanceof  Pickup){
 
-                }
                 toAdd.invalidate();
                 toAdd.revalidate();
                 toAdd.setLayout(null);
@@ -762,12 +761,20 @@ public class CustomerW extends JFrame{
             private Map<Food,JTextField> fields;
             private Map<String,Food> offers = new HashMap<>();
             private List<Food> menu;
+            private submitListener l = new submitListener();
             JPanel j;
+            Button submit = new Button();
+            Choice del = new Choice();
             private Restaurant restaurant;
             public showRestaurant (Restaurant r){
                 restaurant = r;
+                del.add("Yes");
+                del.add("No");
+                del.select("No");
                 setLayout(new FlowLayout());
-                setSize(1000,800);
+                setSize(800,800);
+                Container ct = getContentPane();
+                ct.setPreferredSize(new Dimension(800,800));
                 setVisible(true);
                 fields = new HashMap<>();
 
@@ -794,7 +801,7 @@ public class CustomerW extends JFrame{
                         tmpFood.add(new Label(next.getName() + " "));
                         tmpFood.add(new Label("Price: " + next.getPrice()));
                         tmpFood.add(new Label("Quantity: "));
-                        JTextField quantity = new JTextField("0");
+                        JTextField quantity = new JTextField("0",4);
                         quantity.setName(next.getName());
                         tmpFood.add(quantity);
                         j.add(tmpFood);
@@ -806,20 +813,20 @@ public class CustomerW extends JFrame{
                 if (r.isDeliveryOption()){
                     JPanel de = new JPanel(new FlowLayout());
                     de.add(new Label("Delivery?"));
-                    JTextField delivery = new JTextField("No");
-                    delivery.setName("delivery");
-                    de.add(delivery);
+
+                    de.add(del);
                     j.add(de);
                 }
                 add(j);
-                subtotal = new JTextField("0");
-                subtotal.setVisible(false);
-                add(subtotal);
                 Button comfirm = new Button("Calculate subtotal");
-                comfirm.addActionListener(new submitListener());
-                add(comfirm);
+                comfirm.addActionListener(l);
+                j.add(comfirm);
+                subtotal = new JTextField("0",10);
+                subtotal.setVisible(false);
+                subtotal.setEditable(false);
+                j.add(subtotal);
+
                 addWindowListener(new windowListener());
-                pack();
 
             }
             private class windowListener implements WindowListener{
@@ -862,7 +869,16 @@ public class CustomerW extends JFrame{
                     if (evt.equals("Calculate subtotal")){
                         total = new Double(0);
                         for (Map.Entry<Food,JTextField> next: fields.entrySet()){
-                            total+=next.getKey().getPrice()*Integer.parseInt(next.getValue().getText());
+                            try {
+                                total += next.getKey().getPrice() * Integer.parseInt(next.getValue().getText());
+                            }catch (Exception ex){
+                                new ErrorMsg("Please put in integers only for quantity!");
+                                return;
+                            }
+                            if (Integer.parseInt(next.getValue().getText())<0){
+                                new ErrorMsg("Please put in positive numbers only");
+                                return;
+                            }
                             quantity.put(next.getKey(),Integer.parseInt(next.getValue().getText()));
                         }
                         j.invalidate();
@@ -871,17 +887,35 @@ public class CustomerW extends JFrame{
                         subtotal.setVisible(true);
                         if (!isSubmitShown) {
                             isSubmitShown = true;
-                            Button submit = new Button("Submit");
-                            submit.addActionListener(new submitListener());
-                            add(submit);
+//                            submit = new Button("Submit");
+                            submit = new Button("Close Window");
+                            submit.addActionListener(l);
+                            j.add(submit);
                         }
                     }else{
-                        currentOrder = new Order((Customer) currentUser,total,restaurant,quantity);
-                        try {
-                            CustomerDBC.commitOrder(currentOrder);
-                        } catch (SQLException e1) {
-                            new ErrorMsg(e1.getMessage());
-                        }
+//                        if (Double.parseDouble(subtotal.getText())==0){
+//                            new ErrorMsg("Cannot submit an order of nothing!");
+//                            return;
+//                        }
+//                        Random rnd = new Random();
+//                        Integer id = 10000+rnd.nextInt(90000);
+//
+//                        if (del.getSelectedItem().equals("No")){
+//                            Pickup toAdd = new Pickup((Customer) currentUser,new Long(id),null,null,total,OrderStatus.SUBMITTED,restaurant,quantity,null);
+//                            try {
+//                                CustomerDBC.commitOrder(toAdd);
+//                            } catch (SQLException e1) {
+//                                new ErrorMsg(e1.getMessage());
+//                            }
+//                        }else{
+//                            Delivery toAdd = new Delivery((Customer) currentUser,new Long(id),null,null,total,OrderStatus.SUBMITTED,restaurant,quantity,8,null,null,null);
+//                            try {
+//                                CustomerDBC.commitOrder(toAdd);
+//                            } catch (SQLException e1) {
+//                                new ErrorMsg(e1.getMessage());
+//                            }
+//                        }
+
                         dispose();
                     }
                 }

@@ -46,7 +46,11 @@ public class CustomerDBC extends UserDBC {
         String time;
         con.setAutoCommit(false);
         insertString = "INSERT INTO orders VALUES (";
-        time = order.getTime().toString();
+        if (order.getTime()!=null) {
+            time = order.getTime().toString();
+        }else{
+            time = "";
+        }
         time = time.substring(0, 5);
         insertString += order.getOrderID() + ", ?, ?, ";
         insertString += order.getAmount() + ", '";

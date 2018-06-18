@@ -456,8 +456,19 @@ public class CourierW extends JFrame{
                 }
             }
         }
-//        current.add(new Label())
-
+        current.add(new Label(tmp.replace('\0','*')));
+        current.add(new Label("min/min returns the minimum delivery fee among the lowest-delivery-fee-orders across all restaurants"));
+        current.add(new Label("min/max returns the maximum delivery fee among the lowest-delivery-fee-orders across all restaurants"));
+        current.add(new Label("min/count returns count of restaurant the courier worked at"));
+        current.add(new Label("min/avg returns the average of lowest-delivery-fee-orders across all restaurants the courier worked at"));
+        current.add(new Label("min/sum returns the sum of lowest-delivery-fee-orders across all restaurants the courier worked at"));
+        current.add(new Label("Queries where the first aggregation operator is one of MAX, AVG, SUM are analogous to the previous case"));
+        current.add(new Label("count/Min returns the least number of orders across all restaurants the courier worked at"));
+        current.add(new Label("count/Max returns the most number of orders across all restaurants the courier worked at"));
+        current.add(new Label("count/count returns the number of restaurant the courier worked at"));
+        current.add(new Label("count/avg returns the average delivery count across all restaurants the courier worked at"));
+        current.add(new Label("count/sum returns count of total delivery by the courier across all restaurants the courier worked at"));
+        current.add(new Label(tmp.replace('\0','*')));
 
     }
     private void buildReport(Date from, Date to, String type){
