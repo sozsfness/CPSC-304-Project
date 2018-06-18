@@ -4,6 +4,7 @@ import com.cpsc304.JDBC.*;
 import com.cpsc304.UI.MainUI;
 import com.cpsc304.model.*;
 import com.sun.org.apache.xpath.internal.operations.Or;
+import javafx.util.Pair;
 import org.junit.jupiter.api.*;
 import sun.applet.Main;
 import sun.rmi.runtime.Log;
@@ -32,7 +33,7 @@ public class CustomerDBCTest {
         restaurant = new Restaurant(null, 5, null,null, null, 1, true, null, null, null);
         customer = new Customer("b9q3u", "Samson Mason", "Wyw3026","4964411825", 10000, 5, 100);
         order = new Pickup(customer, new Long(10000), date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, READYTime);
-        courier = new Courier("j2g5z", "ppp","Mtb0525", "1113", null);
+        courier = new Courier("a0a0a", "ppp","123456", "1113", null);
         restaurantManager = new RestaurantManager("h5c2k",".","Uft5964","1111",null);
         DBConnection.connect();
     }
@@ -89,6 +90,18 @@ public class CustomerDBCTest {
         }
     }
 
+    static void testGetSums(){
+        MainUI.currentUser = courier;
+        try{
+            List<Pair<Integer, Double>> list = CourierDBC.getSums(Date.valueOf("2001-01-01"),Date.valueOf("2020-12-12"));
+            for (Pair<Integer, Double> pair : list) {
+                System.out.println(pair.getKey() + ", " + pair.getValue());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     static void testGetPickup(){
         MainUI.currentUser = customer;
         try {
@@ -122,7 +135,8 @@ public class CustomerDBCTest {
 //        testGetOrder();
 //        testGetPickup();
 //        testIncome();
-        testGetSpd();
+        //testGetSpd();
+        testGetSums();
         System.out.println("Done!");
         DBConnection.close();
     }
