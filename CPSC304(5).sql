@@ -85,7 +85,7 @@ CREATE TABLE restaurant(
     res_postal_code CHAR(7) NOT NULL,
     res_street VARCHAR(20) NOT NULL,
     res_house# SMALLINT NOT NULL,
-    FOREIGN KEY(res_managerID) REFERENCES restaurant_managers ON DELETE ON ACTION,
+    FOREIGN KEY(res_managerID) REFERENCES restaurant_managers ON DELETE NO ACTION,
     FOREIGN KEY(res_postal_code,res_street,res_house#) REFERENCES addresses ON DELETE NO ACTION
 );
 
