@@ -647,7 +647,7 @@ public class CustomerW extends JFrame{
                         info+="Address: ";
                         String temp = "";
 
-                        temp = next.getAddress().getHouseNum() + " " + next.getAddress().getStreet() + ", " + next.getAddress().getCity() + " " + next.getAddress().getProvince() + ", " + next.getAddress().getPostalCode();
+                        temp = next.getAddress().getHouseNum() + " " + next.getAddress().getStreet() + ", "  + next.getAddress().getPostalCode();
                         info+=temp;
                         info+=" ";
                     }
@@ -657,11 +657,13 @@ public class CustomerW extends JFrame{
                     Button resB = new Button(((Integer)next.getId()).toString());
                     resB.addActionListener(new resSelectListener());
                     m.add(resB);
-                    m.add(new Label(info));
+                    if (!info.equals("()")) {
+                        m.add(new Label(info));
+                    }
                     current.add(m);
                 }
             }else{
-
+                    current.add(new Label("No restaurant found. Try other names/types/etc"));
 
             }
         }
@@ -717,7 +719,7 @@ public class CustomerW extends JFrame{
                         info+="Address: ";
                         String temp = "";
 
-                        temp = next.getAddress().getHouseNum() + " " + next.getAddress().getStreet() + ", " + next.getAddress().getCity() + " " + next.getAddress().getProvince() + ", " + next.getAddress().getPostalCode();
+                        temp = next.getAddress().getHouseNum() + " " + next.getAddress().getStreet() + ", "  + next.getAddress().getPostalCode();
                         info+=temp;
                         info+=" ";
                     }
@@ -727,7 +729,10 @@ public class CustomerW extends JFrame{
                     Button resB = new Button(((Integer)next.getId()).toString());
                     resB.addActionListener(new resSelectListener());
                     m.add(resB);
-                    m.add(new Label(info));
+
+                    if (!info.equals("()")) {
+                        m.add(new Label(info));
+                    }
                     current.add(m);
                 }
             }

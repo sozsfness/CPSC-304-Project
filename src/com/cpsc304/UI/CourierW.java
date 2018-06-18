@@ -456,6 +456,7 @@ public class CourierW extends JFrame{
                 }
             }
         }
+//        current.add(new Label())
 
 
     }
