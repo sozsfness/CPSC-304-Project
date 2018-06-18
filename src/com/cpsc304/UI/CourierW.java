@@ -341,18 +341,16 @@ public class CourierW extends JFrame{
             String fromDate = from.getText();
             String toDate = to.getText();
             String evt = e.getActionCommand();
-            try{
-                Date.valueOf(fromDate);
-                Date.valueOf(toDate);
-            }catch (Exception ev){
-                new ErrorMsg("Date format is incorrect. Please provide dates of format YYYY-MM-DD");
-                return;
-            }
 
-            Date from = Date.valueOf(fromDate);
-            Date to = Date.valueOf(toDate);
             switch (evt) {
                 case "View Report":
+                    try{
+                        Date.valueOf(fromDate);
+                        Date.valueOf(toDate);
+                    }catch (Exception ev){
+                        new ErrorMsg("Date format is incorrect. Please provide dates of format YYYY-MM-DD");
+                        return;
+                    }
 
                     if (fromDate.equals("all") && toDate.equals("all")) {
                         try {
@@ -361,6 +359,8 @@ public class CourierW extends JFrame{
                             e1.printStackTrace();
                         }
                     } else {
+                        Date from = Date.valueOf(fromDate);
+                        Date to = Date.valueOf(toDate);
 
                         try {
                             buildReport(from, to);
@@ -370,6 +370,15 @@ public class CourierW extends JFrame{
                     }
                     break;
                 case "View monthly income report":
+                    try{
+                        Date.valueOf(fromDate);
+                        Date.valueOf(toDate);
+                    }catch (Exception ev){
+                        new ErrorMsg("Date format is incorrect. Please provide dates of format YYYY-MM-DD");
+                        return;
+                    }
+                    Date from = Date.valueOf(fromDate);
+                    Date to = Date.valueOf(toDate);
                     buildReport(from, to,typeChooser.getSelectedItem());
                     break;
                 case "View stats":
@@ -379,7 +388,7 @@ public class CourierW extends JFrame{
                     break;
                 case "stats":
                     isInS = false;
-                    buildStats(from, to);
+                    buildStats();
 
             }
         }
@@ -412,7 +421,7 @@ public class CourierW extends JFrame{
         current.add(s);
 
     }
-    private void buildStats(Date from, Date to){
+    private void buildStats(){
 
         removeComponents(current);
         current.invalidate();
@@ -421,8 +430,8 @@ public class CourierW extends JFrame{
             current.setLayout(new BoxLayout(current,BoxLayout.PAGE_AXIS));
         String tmp = new String(new char[100]);
         current.add(new Label(tmp.replace('\0','*')));
-        current.add(new Label("Statistics for delivery fees in the specified time period"));
-        current.add(new Label("From "+from+ " To "+to));
+        current.add(new Label("Statistics for delivery fees over the whole time period"));
+
         current.add(new Label(tmp.replace('\0','*')));
         current.add(new Label("Selected options: "+a1.getSelectedItem()+" with "+a2.getSelectedItem()));
         if (!a1.getSelectedItem().equals("Count")&&!a2.getSelectedItem().equals("Count")){

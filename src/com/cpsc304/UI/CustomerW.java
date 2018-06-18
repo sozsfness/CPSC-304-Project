@@ -1059,7 +1059,7 @@ public class CustomerW extends JFrame{
             current.add(new Label("REPORT FOR CUSTOMER "+ currentUser.getUserID()+ " FROM DATE "+from+" TO "+to));
             if (orders!=null) {
                 for (Order next : orders) {
-                    current.add(new Label("OrderID: " + next.getOrderID() + " ordered at restaurant " + next.getRestOrderedAt().getName() + " total amount: " + next.getAmount()));
+                    current.add(new Label("OrderID: " + next.getOrderID() + " ordered at restaurant " + next.getRestOrderedAt().getName() + " total amount: " + next.getAmount()+ " Order Status: "+next.getStatus()));
                 }
             }else{
                 current.add(new Label("No orders found. Try again?"));

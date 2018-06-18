@@ -33,8 +33,8 @@ public class RestaurantManagerDBC extends UserDBC{
             int resID = rs.getInt(1);
             String resN = rs.getString(2);
             System.out.println(resN);
-            Time o = rs.getTime(3);
-            Time cl = rs.getTime(4);
+            Time o = Time.valueOf(rs.getString(3) + ":00");
+            Time cl = Time.valueOf(rs.getString(4) + ":00");
             Double r = rs.getDouble(5);
             String ty = rs.getString(6);
             boolean del = rs.getInt(7)==1;
