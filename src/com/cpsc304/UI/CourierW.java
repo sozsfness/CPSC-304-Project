@@ -510,16 +510,26 @@ public class CourierW extends JFrame{
         String [] months = dfs.getMonths();
 
             if (sp==null) {
-                for (Pair<Integer, Double> next : specify) {
+                System.out.println(specify.size());
+                for (int i=1;i<=12;i++) {
+                    for (Pair<Integer, Double> next : specify) {
+                        if (i==next.getKey()) {
+                            current.add(new Label("Month: " + months[next.getKey() - 1] + " Data: " + next.getValue()));
+                            continue;
+                        }
 
-                    current.add(new Label("Month: " + months[next.getKey() -1] + " Data: " + next.getValue()));
-
+                    }
                 }
             }else{
-                for (Pair<Integer, Integer> next : sp) {
+                System.out.println(sp.size());
+                for (int i=1;i<=12;i++) {
+                    for (Pair<Integer, Integer> next : sp) {
+                        if (i==next.getKey()) {
+                            current.add(new Label("Month: " + months[next.getKey() - 1] + " Data: " + next.getValue()));
+                            continue;
+                        }
 
-                    current.add(new Label("Month: " + months[next.getKey()-1 ] + " Data: " + next.getValue()) );
-
+                    }
                 }
             }
 
