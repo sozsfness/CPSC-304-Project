@@ -512,13 +512,13 @@ public class CourierW extends JFrame{
             if (sp==null) {
                 for (Pair<Integer, Double> next : specify) {
 
-                    current.add(new Label("Month: " + months[next.getKey() ] + " Data: " + next.getValue()));
+                    current.add(new Label("Month: " + months[next.getKey() -1] + " Data: " + next.getValue()));
 
                 }
             }else{
                 for (Pair<Integer, Integer> next : sp) {
 
-                    current.add(new Label("Month: " + months[next.getKey() ] + " Data: " + next.getValue()) );
+                    current.add(new Label("Month: " + months[next.getKey()-1 ] + " Data: " + next.getValue()) );
 
                 }
             }

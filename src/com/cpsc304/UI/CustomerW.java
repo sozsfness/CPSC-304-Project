@@ -29,7 +29,7 @@ public class CustomerW extends JFrame{
     private JTextField datet;
     private JTextField res;
     private JTextField food;
-    private JTextField type;
+    private Choice type;
     private JTextField rating;
     private JTextField status;
     private Order order;
@@ -506,7 +506,7 @@ public class CustomerW extends JFrame{
                 switch (evt){
                     case "Search":
                         try {
-                            buildNewOrder(food.getText(),type.getText(),rating.getText(),isRateSelected,isHoursSelected,isD,isTypeSelected,isAddSelected);
+                            buildNewOrder(food.getText(),type.getSelectedItem(),rating.getText(),isRateSelected,isHoursSelected,isD,isTypeSelected,isAddSelected);
                         } catch (SQLException e1) {
                             new ErrorMsg(e1.getMessage());
                         }
@@ -543,7 +543,11 @@ public class CustomerW extends JFrame{
             JPanel t = new JPanel(new FlowLayout(FlowLayout.LEFT));
             current.add(t);
             t.add(new Label("Type: "));
-            type = new JTextField("all",8);
+            type = new Choice();
+            type.add("Fast Food");
+            type.add("Asian Food");
+            type.add("European Food");
+            type.add("Coffee Shop");
             t.add(type);
             //panel for rating
             JPanel r = new JPanel(new FlowLayout(FlowLayout.LEFT));
