@@ -440,7 +440,7 @@ INSERT INTO restaurant VALUES (907,'Notch 8 restaurant','09:00','22:00',4.5,'Cof
 INSERT INTO restaurant VALUES (712,'Strike','09:00','22:00',1.8,'Coffee Shop',1,'v9j0n','L8H 0W0','Nulla Ave',3790);
 INSERT INTO restaurant VALUES (504,'The holy crab Canada ','09:00','22:00',0.8,'Coffee Shop',1,'r6i7m','T4C 2L4','Luctus Av',9233);
 INSERT INTO restaurant VALUES (973,'Tony oyster ','09:00','22:00',4.1,'Coffee Shop',0,'n1c4g','L2R 3W3','Nunc St',3010);
-INSERT INTO restaurant VALUES (271,'Lobster man','12:00','22:00',7.6,'Fast Food',0,'q6c4u','H2L 5G9','Libero Street',3924);
+INSERT INTO restaurant VALUES (271,'Lobster man','12:00','22:00',4.6,'Fast Food',0,'q6c4u','H2L 5G9','Libero Street',3924);
 INSERT INTO restaurant VALUES (650,'Cambie Street ','12:00','22:00',1.3,'Fast Food',1,'h7x4c','K2N 2A4','Vel Rd',4929);
 INSERT INTO restaurant VALUES (373,'Market by Jean-Georges ','12:00','22:00',7.9,'Fast Food',0,'p3o0j','J7W 4X2','Vel Street',9571);
 INSERT INTO restaurant VALUES (300,'Zen','12:00','22:00',1.0,'Fast Food',1,'e5s7g','N7Y 6X7','Orci Av',2001);
