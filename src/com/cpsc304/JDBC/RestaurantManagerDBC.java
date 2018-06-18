@@ -89,6 +89,7 @@ public class RestaurantManagerDBC extends UserDBC{
         String sqlString;
         PreparedStatement pstmt;
         con.setAutoCommit(false);
+        checkFoodTable(food);
         sqlString = "INSERT INTO offers ";
         sqlString += "VALUES (?, ?, ?)";
         pstmt = con.prepareStatement(sqlString);
@@ -98,6 +99,30 @@ public class RestaurantManagerDBC extends UserDBC{
         pstmt.executeUpdate();
         con.commit();
         food.getRestaurant().addFood(food);
+    }
+
+    private static void checkFoodTable(Food food) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        ResultSet rs;
+        sqlString = "SELECT COUNT(*) FROM food ";
+        sqlString += "WHERE food_name = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, food.getName());
+        rs = pstmt.executeQuery();
+        con.commit();
+        if (rs.next())
+            if (rs.getInt(1) == 0)
+                insertFood(food);
+    }
+
+    private static void insertFood(Food food) throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        sqlString = "INSERT INTO food VALUES(?)";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.executeUpdate();
+        con.commit();
     }
 
     public static void deleteInMenu(Restaurant restaurant, Food food) throws SQLException {
