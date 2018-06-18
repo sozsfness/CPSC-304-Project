@@ -1,9 +1,13 @@
 package com.cpsc304.JDBC;
 
+import com.cpsc304.UI.MainUI;
 import com.cpsc304.model.*;
+import com.sun.org.apache.regexp.internal.RE;
 
 import java.sql.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RestaurantManagerDBC extends UserDBC{
 
@@ -11,7 +15,37 @@ public class RestaurantManagerDBC extends UserDBC{
 
     public static RestaurantManager getManager(String managerID) throws SQLException {
         User user = getUser(managerID);
-        return new RestaurantManager(user.getUserID(),user.getName(),user.getPassword(),user.getPhoneNum(),null);
+        return new RestaurantManager(user.getUserID(),user.getName(),user.getPassword(),user.getPhoneNum(),getResS(managerID));
+    }
+
+    public static Set<Restaurant> getResS(String managerID) throws SQLException {
+        Set<Restaurant> toRet = new HashSet<>();
+        String sqlString;
+        ResultSet rs;
+        con.setAutoCommit(false);
+        PreparedStatement pstmt;
+        sqlString = "SELECT * FROM restaurant r, restaurant_managers rm WHERE res_managerID =  res_userID AND res_userID = ?";
+        pstmt = con.prepareStatement(sqlString);
+        pstmt.setString(1, managerID);
+        rs = pstmt.executeQuery();
+        con.commit();
+        while (rs.next()){
+            int resID = rs.getInt(1);
+            String resN = rs.getString(2);
+            System.out.println(resN);
+            Time o = Time.valueOf(rs.getString(3) + ":00");
+            Time cl = Time.valueOf(rs.getString(4) + ":00");
+            Double r = rs.getDouble(5);
+            String ty = rs.getString(6);
+            boolean del = rs.getInt(7)==1;
+            String pos = rs.getString(9);
+            String str = rs.getString(10);
+            int hnum = rs.getInt(11);
+            toRet.add(new Restaurant((RestaurantManager) MainUI.currentUser,r,o,cl,resN,resID,del,ty,new Address(hnum,str,null,null,pos),null));
+
+        }
+        System.out.println(toRet.size());
+        return toRet;
     }
 
     //TODO:show results of cascade

@@ -354,6 +354,7 @@ public class CourierDBC extends UserDBC {
         ResultSet rs;
         creatView(firstType, courerID);
         sqlString = "SELECT " + secondType +"(earning) from " + firstType + "Earning";
+
         pstmt = con.prepareStatement(sqlString);
         rs = pstmt.executeQuery();
         if (rs.next())

@@ -134,6 +134,12 @@ public class CustomerDBCTest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        MainUI.currentUser = restaurantManager;
+        try {
+            RestaurantManagerDBC.getResS("l9z4g");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         System.out.println("Done!");
         DBConnection.close();
     }
