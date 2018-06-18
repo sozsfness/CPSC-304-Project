@@ -204,17 +204,7 @@ public class ManagerW extends JFrame {
                 temp.addActionListener(b);
             }
         }else{
-            JPanel p = new JPanel(new FlowLayout());
-            current.add(p);
-            p.add(new Label("Name: test " +"ID: "));
-            Button id = new Button("0");
-            p.add(id);
-            id.addActionListener(m);
-            Button temp = new Button("delete");
-            temp.setActionCommand("0");
-            p.add(temp);
-            temp.addActionListener(b);
-            integerRestaurantMap.put(0,new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null));
+            current.add(new Label("It seems like you are not working for any restaurant!"));
         }
 //        Button addNew = new Button("Add new restaurant");
 //        addNew.addActionListener(new btnListner());
@@ -478,17 +468,11 @@ public class ManagerW extends JFrame {
                         temp.addActionListener(o);
                         current.add(temp);
                     }
-                }else{
-                    Button temp = new Button("0");
-                    temp.addActionListener(o);
-                    current.add(temp);
                 }
             }else{
-                if (!evt.equals("0")) {
-                    new resOrders(integerRestaurantMap.get(Long.parseLong(evt)),fromDate,toDate);
-                }else{
+
                     new resOrders(new Restaurant((RestaurantManager) currentUser,0,null,null,null,0,false,null,null,null),null,null);
-                }
+
             }
         }
     }

@@ -130,9 +130,6 @@ public class CourierDBC extends UserDBC {
         return deliveries;
     }
 
-    public static Map<Integer, Double> getMonthlyIncomes(Date startDate, Date endDate) {
-        return null;
-    }
 
     public static List<Pair<Integer, Double>> getSums(Date startDate, Date endDate) throws SQLException {
         String sqlString;
@@ -160,40 +157,40 @@ public class CourierDBC extends UserDBC {
     private static Integer getMonth(String string){
         int month;
         switch (string) {
-            case "January":
+            case "January  ":
                 month = 1;
                 break;
-            case "Feburary":
+            case "February ":
                 month = 2;
                 break;
-            case "March":
+            case "March    ":
                 month = 3;
                 break;
-            case "April":
+            case "April    ":
                 month = 4;
                 break;
-            case "May":
+            case "May      ":
                 month = 5;
                 break;
-            case "June":
+            case "June     ":
                 month = 6;
                 break;
-            case "July":
+            case "July     ":
                 month = 7;
                 break;
-            case "August":
+            case "August   ":
                 month = 8;
                 break;
             case "September":
                 month = 9;
                 break;
-            case "October":
+            case "October  ":
                 month = 10;
                 break;
-            case "November":
+            case "November ":
                 month = 11;
                 break;
-            case "December":
+            case "December ":
                 month = 12;
                 break;
             default:
@@ -220,6 +217,7 @@ public class CourierDBC extends UserDBC {
         pstmt.setString(3, MainUI.currentUser.getUserID());
         rs = pstmt.executeQuery();
         while (rs.next()) {
+
             pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
             avgs.add(pair);
         }
@@ -232,7 +230,7 @@ public class CourierDBC extends UserDBC {
         ResultSet rs;
         List<Pair<Integer, Double>> mins = new ArrayList<>();
         Pair<Integer, Double> pair;
-        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Sum(delivery_fee) AS \"Sum Earning\" ";
+        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Min(delivery_fee) AS \"Min Earning\" ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
         sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
@@ -244,6 +242,7 @@ public class CourierDBC extends UserDBC {
         rs = pstmt.executeQuery();
         while (rs.next()) {
             pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
+            System.out.println(pair.getKey());
             mins.add(pair);
         }
         return mins;
