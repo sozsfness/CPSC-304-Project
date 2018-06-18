@@ -11,6 +11,7 @@ import sun.rmi.runtime.Log;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDBCTest {
@@ -114,19 +115,19 @@ public class CustomerDBCTest {
         }
     }
 
-    public static void main (String[] args) {
-        Food f1 = new Food("PICK", restaurant, 10);
-        Food f2 = new Food("PICK", restaurant, 10);
-        System.out.println(f1 == f2);
-        runBefore();
-        ResourceManager.getInstance();
-        //testCommitOrder();
-        //testVerify();
-        //testLogin();
-//        testGetOrder();
-//        testGetPickup();
-//        testIncome();
-        testGetSpd();
+    static void testRecommend(){
+        MainUI.currentUser = customer;
+        try {
+            List<Restaurant> list = CustomerDBC.getRecommendedRestaurants();
+            for (Restaurant rest : list)
+                System.out.println(rest.getId() + " " + rest.getName());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void testRest(){
+        MainUI.currentUser = courier;
         try {
             RestaurantManagerDBC.deleteRestaurant(744);
         } catch (SQLException e) {
@@ -144,6 +145,38 @@ public class CustomerDBCTest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    static void testGetRankedRestaurants(){
+        MainUI.currentUser = customer;
+        List<String> names = new ArrayList<>();
+        names.add("Sushi");
+        try {
+            List<Restaurant> list = CustomerDBC.getRankedRestaurants(names, false, false, false ,false, false);
+            for (Restaurant rest : list) {
+                System.out.println(rest.getId() + " " + rest.getName());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main (String[] args) {
+        Food f1 = new Food("PICK", restaurant, 10);
+        Food f2 = new Food("PICK", restaurant, 10);
+        System.out.println(f1 == f2);
+        runBefore();
+        ResourceManager.getInstance();
+        //testCommitOrder();
+        //testVerify();
+        //testLogin();
+//        testGetOrder();
+//        testGetPickup();
+//        testIncome();
+        //testGetSpd();
+        //testRecommend();
+        testGetRankedRestaurants();
+
         System.out.println("Done!");
         DBConnection.close();
     }

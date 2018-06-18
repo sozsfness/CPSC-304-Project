@@ -125,6 +125,7 @@ public class CustomerDBC extends UserDBC {
 
     }
 
+    //TODO: to be modified
     public static List<Restaurant> getBestRestaurants(String type,boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
@@ -256,15 +257,29 @@ public class CustomerDBC extends UserDBC {
 
     private static void createViewForRests(String custID) throws SQLException {
         String sqlString;
-        PreparedStatement pstmt;
+        Statement stmt;
+        dropView();
         sqlString = "CREATE VIEW favType (res_type, times) AS ";
         sqlString += "SELECT res_type, COUNT(res_type) ";
         sqlString += "FROM orders, restaurant ";
-        sqlString += "WHERE order_customerID = ? AND order_status <> 'CANCELLED' AND order_restaurantID = resID ";
+        sqlString += "WHERE order_customerID = '" + custID +"' AND order_status <> 'CANCELLED' AND order_restaurantID = resID ";
         sqlString += "GROUP BY res_type";
+        stmt = con.createStatement();
+        stmt.executeUpdate(sqlString);
+        con.commit();
+    }
+
+    private static void dropView() throws SQLException {
+        String sqlString;
+        PreparedStatement pstmt;
+        sqlString = "DROP VIEW favType";
         pstmt = con.prepareStatement(sqlString);
-        pstmt.setString(1, custID);
-        pstmt.executeUpdate();
+        try {
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            // nothing
+        }
+        con.commit();
     }
 
     public static List<Restaurant> getRestaurantsOfRating(Integer rating,boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
@@ -294,20 +309,25 @@ public class CustomerDBC extends UserDBC {
         if (baddress)
             sqlString += ", res_postal_code, res_street, res_house#";
         sqlString += " FROM restaurant r, offers o";
-        sqlString += " WHERE o.restaurantID = r.resI";
+        sqlString += " WHERE o.restaurantID = r.resID";
         sqlString += " AND res_rating >= ?";
         for (String food: foods) {
-            sqlString += " AND LOWER(o.food_name) = LOWER(" + food + ")";
+            sqlString += " AND LOWER(o.food_name) = LOWER(?)";
         }
         sqlString += " ORDER BY res_rating DESC";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setDouble(1, minRating);
+        int i = 1;
+        for (String food: foods) {
+            ++ i;
+            pstmt.setString(i, food);
+        }
         rs = pstmt.executeQuery();
         con.commit();
         while (rs.next()) {
             int resID = rs.getInt(1);
             String resName = rs.getString(2);
-            Double rating = null;
+            double rating = 0;
             Time openTime = null;
             Time closeTime = null;
             String type =null;
@@ -339,7 +359,7 @@ public class CustomerDBC extends UserDBC {
                     type, address, null);
             restaurants.add(rest);
         }
-        return null;
+        return restaurants;
     }
 
     public static List<Order> getOrders(Date startDate, Date endDate) throws SQLException {
