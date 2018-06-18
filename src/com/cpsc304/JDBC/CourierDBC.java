@@ -130,9 +130,6 @@ public class CourierDBC extends UserDBC {
         return deliveries;
     }
 
-    public static Map<Integer, Double> getMonthlyIncomes(Date startDate, Date endDate) {
-        return null;
-    }
 
     public static List<Pair<Integer, Double>> getSums(Date startDate, Date endDate) throws SQLException {
         String sqlString;
@@ -232,7 +229,7 @@ public class CourierDBC extends UserDBC {
         ResultSet rs;
         List<Pair<Integer, Double>> mins = new ArrayList<>();
         Pair<Integer, Double> pair;
-        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Sum(delivery_fee) AS \"Sum Earning\" ";
+        sqlString = "SELECT to_char(order_date, 'Month') AS \"Month\", Min(delivery_fee) AS \"Min Earning\" ";
         sqlString += "FROM orders NATURAL INNER JOIN delivery_delivers ";
         sqlString += "WHERE order_status = 'COMPLETE' AND (order_date BETWEEN ? AND ?) ";
         sqlString += "AND courierID = ?";
@@ -244,6 +241,7 @@ public class CourierDBC extends UserDBC {
         rs = pstmt.executeQuery();
         while (rs.next()) {
             pair = new Pair<>(getMonth(rs.getString(1)), rs.getDouble(2));
+            System.out.println(pair.getKey());
             mins.add(pair);
         }
         return mins;

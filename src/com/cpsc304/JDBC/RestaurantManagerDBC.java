@@ -19,8 +19,8 @@ public class RestaurantManagerDBC extends UserDBC{
         String sqlString;
         con.setAutoCommit(false);
         PreparedStatement pstmt;
-        sqlString = "DELETE FROM Restaurant ";
-        sqlString += "WHERE restaurantID = ?";
+        sqlString = "DELETE FROM restaurant ";
+        sqlString += "WHERE resID = ?";
         pstmt = con.prepareStatement(sqlString);
         pstmt.setInt(1, restID);
         pstmt.executeUpdate();

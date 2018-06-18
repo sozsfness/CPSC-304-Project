@@ -32,7 +32,7 @@ public class CustomerDBCTest {
         restaurant = new Restaurant(null, 5, null,null, null, 1, true, null, null, null);
         customer = new Customer("b9q3u", "Samson Mason", "Wyw3026","4964411825", 10000, 5, 100);
         order = new Pickup(customer, new Long(10000), date, time, 1000, OrderStatus.SUBMITTED, restaurant, null, READYTime);
-        courier = new Courier("j2g5z", "ppp","Mtb0525", "1113", null);
+        courier = new Courier("a0a0a", "ppp","123456", "1113", null);
         restaurantManager = new RestaurantManager("h5c2k",".","Uft5964","1111",null);
         DBConnection.connect();
     }
@@ -123,6 +123,17 @@ public class CustomerDBCTest {
 //        testGetPickup();
 //        testIncome();
         testGetSpd();
+        try {
+            RestaurantManagerDBC.deleteRestaurant(744);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        MainUI.currentUser = courier;
+        try{
+            CourierDBC.getMins(Date.valueOf("2016-01-01"),Date.valueOf("2018-12-12"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         System.out.println("Done!");
         DBConnection.close();
     }
