@@ -335,6 +335,9 @@ public class ManagerW extends JFrame {
                             new ErrorMsg("Please type in integers only for price!");
                             return;
                         }
+                        if (Double.parseDouble(pr.getText())<=0){
+                            new ErrorMsg("Price cannot be negative!");
+                        }
                         Food toA = new Food(na.getText(),restaurant,Double.parseDouble(pr.getText()));
                         try {
                             RestaurantManagerDBC.addToMenu(toA);

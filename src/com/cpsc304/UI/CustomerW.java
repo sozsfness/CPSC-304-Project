@@ -552,7 +552,7 @@ public class CustomerW extends JFrame{
             JPanel r = new JPanel(new FlowLayout(FlowLayout.LEFT));
             current.add(r);
             r.add(new Label("rating(1 to 5): "));
-            rating = new JTextField("all");
+            rating = new JTextField("");
             r.add(rating);
             //checkbox
             current.add(new Label("Please select extra info of restaurant you'd like to see in the restaurant list in search result"));
@@ -1070,9 +1070,7 @@ public class CustomerW extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 String fromDate = reportFrom.getText();
                 String toDate = reportTo.getText();
-                if (fromDate.equals("all")&&toDate.equals("all")){
-                    buildReport(null,null);
-                }else {
+
                     try {
                         Date from = Date.valueOf(fromDate);
                         Date to = Date.valueOf(toDate);
@@ -1081,7 +1079,7 @@ public class CustomerW extends JFrame{
                         new ErrorMsg("Wrong date format. Only supports form of YYYY-MM-DD");
                     }
 
-                }
+
             }
         }
 
