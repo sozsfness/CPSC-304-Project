@@ -535,7 +535,7 @@ public class CourierW extends JFrame{
                 for (int i=1;i<=12;i++) {
                     for (Pair<Integer, Double> next : specify) {
                         if (i==next.getKey()) {
-                            current.add(new Label("Month: " + months[next.getKey() - 1] + " Data: " + next.getValue()));
+                            current.add(new Label(" " + months[next.getKey() - 1] + " Data: " + next.getValue()));
                             continue;
                         }
 
@@ -546,7 +546,7 @@ public class CourierW extends JFrame{
                 for (int i=1;i<=12;i++) {
                     for (Pair<Integer, Integer> next : sp) {
                         if (i==next.getKey()) {
-                            current.add(new Label("Month: " + months[next.getKey() - 1] + " Data: " + next.getValue()));
+                            current.add(new Label(" " + months[next.getKey() - 1] + " Data: " + next.getValue()));
                             continue;
                         }
 

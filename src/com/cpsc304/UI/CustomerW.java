@@ -504,6 +504,16 @@ public class CustomerW extends JFrame{
                 boolean isD = deliveryOption.getState();
                 switch (evt){
                     case "Search":
+                        if (!rating.getText().equals("all")){
+                            try{
+                                Integer.parseInt(rating.getText());
+                            }catch (Exception e1){
+                                new ErrorMsg("Rate can only be all or integers");
+                                return;
+                            }
+                        }
+
+
                         try {
                             buildNewOrder(food.getText(),type.getSelectedItem(),rating.getText(),isRateSelected,isHoursSelected,isD,isTypeSelected,isAddSelected);
                         } catch (SQLException e1) {
@@ -552,7 +562,7 @@ public class CustomerW extends JFrame{
             JPanel r = new JPanel(new FlowLayout(FlowLayout.LEFT));
             current.add(r);
             r.add(new Label("rating(1 to 5): "));
-            rating = new JTextField("");
+            rating = new JTextField("all",3);
             r.add(rating);
             //checkbox
             current.add(new Label("Please select extra info of restaurant you'd like to see in the restaurant list in search result"));
@@ -584,6 +594,9 @@ public class CustomerW extends JFrame{
         private void buildNewOrder(String food, String resType, String rating, boolean r, boolean h, boolean d, boolean t, boolean a) throws SQLException {
 
             List<String> foodList = Arrays.asList(food.split(","));
+            for (String next: foodList){
+                System.out.println(next);
+            }
             String type = resType;
             String rate = rating;
             removeComponents(current);
@@ -602,6 +615,7 @@ public class CustomerW extends JFrame{
                 if (rate.equals("all")){
                     restaurants = CustomerDBC.getRankedRestaurants(foodList,r,h,d,t,a);
                 }else {
+
                     restaurants = CustomerDBC.getRankedRestaurants(foodList,Integer.parseInt(rating),r,h,d,t,a);
                 }
             }else{
@@ -883,6 +897,11 @@ public class CustomerW extends JFrame{
                         }
                         j.invalidate();
                         j.revalidate();
+                        if (del.getSelectedItem().equals("Yes")){
+                            Random rnd = new Random();
+                            Integer deF = 2+rnd.nextInt(8);
+                            total+=deF;
+                        }
                         subtotal.setText(total.toString());
                         subtotal.setVisible(true);
                         if (!isSubmitShown) {
