@@ -124,7 +124,7 @@ public class CourierDBC extends UserDBC {
             String postal = rs.getString(13);
             address = new Address(houseNum, street, province, city, postal);
             delivery = new Delivery(null, orderID, date, time, amount, orderStatus, restaurant,
-                    null, deliverFee, null, (Courier) MainUI.currentUser, address);
+                    null, deliverFee, getScheduledTime(orderID.intValue()), (Courier) MainUI.currentUser, address);
             deliveries.add(delivery);
         }
         return deliveries;
