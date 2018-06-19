@@ -137,24 +137,24 @@ public class LoginDBC {
         }
         return managerMap;
     }
-
-    public static void testCount() throws SQLException {
-        String sqlString;
-        ResultSet rs;
-        con.setAutoCommit(true);
-        con.commit();
-        Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        sqlString = "SELECT * FROM users";
-        rs = stmt.executeQuery(sqlString);
-        con.commit();
-//        rs.next();
-//        System.out.println("Count: " + rs.getInt(1));
-//        rs.last();
-//        System.out.println("ROW: " + rs.getRow());
-//        rs.beforeFirst();
-        int count = 0;
-        while (rs.next())
-            ++ count;
-
-    }
+//
+//    public static void testCount() throws SQLException {
+//        String sqlString;
+//        ResultSet rs;
+//        con.setAutoCommit(true);
+//        con.commit();
+//        Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+//        sqlString = "SELECT * FROM users";
+//        rs = stmt.executeQuery(sqlString);
+//        con.commit();
+////        rs.next();
+////        System.out.println("Count: " + rs.getInt(1));
+////        rs.last();
+////        System.out.println("ROW: " + rs.getRow());
+////        rs.beforeFirst();
+//        int count = 0;
+//        while (rs.next())
+//            ++ count;
+//
+//    }
 }
