@@ -531,7 +531,7 @@ public class CourierW extends JFrame{
         String [] months = dfs.getMonths();
 
             if (sp==null) {
-                System.out.println(specify.size());
+
                 for (int i=1;i<=12;i++) {
                     for (Pair<Integer, Double> next : specify) {
                         if (i==next.getKey()) {
@@ -542,7 +542,7 @@ public class CourierW extends JFrame{
                     }
                 }
             }else{
-                System.out.println(sp.size());
+
                 for (int i=1;i<=12;i++) {
                     for (Pair<Integer, Integer> next : sp) {
                         if (i==next.getKey()) {

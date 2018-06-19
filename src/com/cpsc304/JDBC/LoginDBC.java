@@ -37,7 +37,7 @@ public class LoginDBC {
         }
         sqlString += "userID = '" + userID + "'";
         rs = stmt.executeQuery(sqlString);
-        System.out.println(sqlString);
+
         rs.next();
         //System.out.println(rs.getRow());
         if (rs.getInt(1) != 1) {
@@ -56,7 +56,7 @@ public class LoginDBC {
             System.out.println("Password Error");
             return false;
         }
-        System.out.println(true);
+
         return true;
     }
 
@@ -155,6 +155,6 @@ public class LoginDBC {
         int count = 0;
         while (rs.next())
             ++ count;
-        System.out.println("count: " + count);
+
     }
 }
