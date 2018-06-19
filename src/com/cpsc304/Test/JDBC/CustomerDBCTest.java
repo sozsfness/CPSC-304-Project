@@ -61,14 +61,15 @@ public class CustomerDBCTest {
         }
     }
 
-    static void testLogin(){
-        try {
-            LoginDBC.testCount();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("sql Exception");
-        }
-    }
+//    static void testLogin(){
+//        try {
+//            LoginDBC.testCount();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            System.out.println("sql Exception");
+//        }
+//    }
+
     static void testManager(){
         MainUI.currentUser = restaurantManager;
     }

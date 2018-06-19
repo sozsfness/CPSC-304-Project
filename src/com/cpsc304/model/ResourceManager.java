@@ -18,7 +18,6 @@ public class ResourceManager {
         return ourInstance;
     }
 
-    //TODO:
     private ResourceManager() {
         try {
             courierMap = LoginDBC.getCouriers();

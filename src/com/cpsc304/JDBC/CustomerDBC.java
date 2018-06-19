@@ -297,7 +297,6 @@ public class CustomerDBC extends UserDBC {
         return getRankedRestaurants(foods,0, brating, bhours, bdeliveryOption, btype, baddress);
     }
 
-    //TODO: to be modified
     public static List<Restaurant> getRankedRestaurants(List<String> foods,double minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
@@ -318,13 +317,13 @@ public class CustomerDBC extends UserDBC {
         if (baddress)
             sqlString += ", res_postal_code, res_street, res_house#";
         sqlString += " FROM restaurant r";
-        sqlString += " WHERE NOT EXISTS ((SELECT food_name";
+        sqlString += " WHERE NOT EXISTS ((SELECT LOWER(food_name)";
         sqlString += " FROM food_filter)";
         sqlString += " MINUS";
-        sqlString += " (SELECT o.food_name";
+        sqlString += " (SELECT LOWER(o.food_name)";
         sqlString += " FROM offers o";
         sqlString += " WHERE o.restaurantID = r.resID AND";
-        sqlString += " o.food_name IN (SELECT food_name";
+        sqlString += " LOWER(o.food_name) IN (SELECT LOWER(food_name)";
         sqlString += " FROM food_filter)))";
         sqlString += " AND res_rating > ?";
         sqlString += " ORDER BY r.res_rating DESC";
