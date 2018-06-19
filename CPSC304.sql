@@ -103,7 +103,7 @@ CREATE TABLE orders(
 									OR order_status = 'DELIVERED'
 									OR order_status = 'DELIVERING'),
     order_customerID CHAR(5) NOT NULL,
-    order_restaurantID INTEGER NOT NULL,
+    order_restaurantID INTEGER,
     FOREIGN KEY(order_customerID) REFERENCES customer ON DELETE SET NULL,
     FOREIGN KEY(order_restaurantID) REFERENCES restaurant ON DELETE SET NULL
 );
