@@ -170,7 +170,7 @@ CREATE TABLE added_in(
 CREATE OR REPLACE TRIGGER spendingUpdate
 AFTER UPDATE OF order_status ON orders
 FOR EACH ROW
-WHEN (new.order_status = 'Complete')
+WHEN (new.order_status = 'COMPLETE')
 DECLARE newSpending DECIMAL(10,2);
 BEGIN
 SELECT cus_spending + :new.order_amount
@@ -178,7 +178,7 @@ INTO newSpending
 FROM customer
 WHERE cus_userID =:new.order_customerID;
 INSERT INTO vip_level
-SELECT newSpending, newSpending/100
+SELECT newSpending, FLOOR(newSpending/100)
 FROM DUAL
 WHERE NOT EXISTS (SELECT * FROM vip_level WHERE vip_points = newSpending);
 INSERT INTO points
