@@ -102,7 +102,7 @@ CREATE TABLE orders(
                                     OR order_status = 'CANCELLED'
 									OR order_status = 'DELIVERED'
 									OR order_status = 'DELIVERING'),
-    order_customerID CHAR(5) NOT NULL,
+    order_customerID CHAR(5),
     order_restaurantID INTEGER,
     FOREIGN KEY(order_customerID) REFERENCES customer ON DELETE SET NULL,
     FOREIGN KEY(order_restaurantID) REFERENCES restaurant ON DELETE SET NULL
@@ -118,10 +118,10 @@ CREATE TABLE delivery_delivers(
     orderID INTEGER PRIMARY KEY NOT NULL,
     estimated_arrival_time CHAR(5),
     delivery_fee DECIMAL(10,2),
-    courierID CHAR(5) NOT NULL,
-    postal_code CHAR(7) NOT NULL,
-    street VARCHAR(20) NOT NULL,
-    house# INTEGER NOT NULL,
+    courierID CHAR(5),
+    postal_code CHAR(7),
+    street VARCHAR(20),
+    house# INTEGER,
     FOREIGN KEY(orderID) REFERENCES orders on DELETE CASCADE,
     FOREIGN KEY(courierID) REFERENCES courier ON DELETE SET NULL,
     FOREIGN KEY(postal_code,street,house#) REFERENCES addresses on DELETE SET NULL
@@ -190,6 +190,7 @@ SET cus_spending = newSpending
 WHERE cus_userID =:new.order_customerID;
 END;
 /
+
 
 
 INSERT INTO address_detail VALUES('M5N 6G7', 'Vancouver', 'BC');
@@ -546,6 +547,7 @@ INSERT INTO orders VALUES (75030,'2018-08-24','00:33',22.5,'COMPLETE','b1b1b',58
 INSERT INTO orders VALUES (36035,'2018-05-17','07:24',66,'COMPLETE','b1b1b',336);
 INSERT INTO orders VALUES (72856,'2018-07-22','22:52',45,'COMPLETE','b1b1b',946);
 INSERT INTO orders VALUES (87800,'2018-08-27','16:27',34,'SUBMITTED','b1b1b',946);
+INSERT INTO orders VALUES (13886,'2018-05-11','23:36',13,'COMPLETE','b1b1b',684);
 INSERT INTO pick_up VALUES(20309,'00:50');
 INSERT INTO pick_up VALUES(95288,'00:32');
 INSERT INTO pick_up VALUES(46351,'00:25');
@@ -566,6 +568,7 @@ INSERT INTO pick_up VALUES(17858,'00:00');
 INSERT INTO pick_up VALUES(44877,'00:00');
 INSERT INTO pick_up VALUES(66193,'00:00');
 INSERT INTO pick_up VALUES(61425,'00:00');
+INSERT INTO pick_up VALUES(13886,'00:00');
 INSERT INTO delivery_delivers VALUES (47545,'00:15',6.2,'j2g5z','V0B 8K8','Mauris St','9070');
 INSERT INTO delivery_delivers VALUES (33190,'00:26',13.44,'u8c2s','M3J 4X7','Odio Road','4187');
 INSERT INTO delivery_delivers VALUES (65510,'00:00',8.13,'f8i4u','J1A 1X6','Eget Road','5866');
@@ -811,6 +814,7 @@ INSERT INTO added_in VALUES ('Pasta',75030,3);
 INSERT INTO added_in VALUES ('Pizza',36035,8);
 INSERT INTO added_in VALUES ('Salad',72856,9);
 INSERT INTO added_in VALUES ('Pasta',87800,4);
+INSERT INTO added_in VALUES ('Pizza',13886,2);
 
 
 
