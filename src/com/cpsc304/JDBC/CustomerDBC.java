@@ -508,7 +508,7 @@ public class CustomerDBC extends UserDBC {
         }
 
     private static Time getArrivalTime(Long orderID) throws SQLException {
-        Time arivalTime;
+        Time arivalTime = null;
         String sqlString;
         PreparedStatement pstmt;
         ResultSet rs;
@@ -520,9 +520,13 @@ public class CustomerDBC extends UserDBC {
         rs = pstmt.executeQuery();
         con.commit();
         if (rs.next())
-            arivalTime = Time.valueOf(rs.getString(1) + ":00");
-        else
+            try{
+                Time.valueOf(rs.getString(1) +":00");
+            }catch (Exception e1){
             return null;
+            }
+            arivalTime = Time.valueOf(rs.getString(1) + ":00");
+
         return arivalTime;
     }
 

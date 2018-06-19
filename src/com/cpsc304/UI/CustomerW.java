@@ -255,10 +255,13 @@ public class CustomerW extends JFrame{
             boolean canCancel = false;
             boolean isDelivery = false;
             boolean canChange = false;
+            Button changeStatus;
+            JPanel toAdd;
+            Button cancel;
 
             OrderDetails(Order order){
                 setLayout(new FlowLayout());
-                JPanel toAdd = new JPanel(new FlowLayout());
+                toAdd = new JPanel(new FlowLayout());
                 add(toAdd);
                 if (order.getStatus().equals(OrderStatus.SUBMITTED)){
                     canCancel = true;
@@ -322,12 +325,12 @@ public class CustomerW extends JFrame{
                 s.add(status);
                 toAdd.add(s);
                 if (canChange){
-                    Button changeStatus = new Button("Change status");
+                     changeStatus = new Button("Change status");
                     toAdd.add(changeStatus);
                     changeStatus.addActionListener(new changeListener());
                 }
                 if (canCancel){
-                    Button cancel = new Button("Cancel order");
+                     cancel = new Button("Cancel order");
                     toAdd.add(cancel);
                     cancel.addActionListener(new cancelListener());
                 }
@@ -337,16 +340,23 @@ public class CustomerW extends JFrame{
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Container p = status.getParent();
-                    p.invalidate();
-                    p.revalidate();
-                    status.setText(OrderStatus.CANCELLED.toString());
-                    try {
-                        CustomerDBC.updateOrderStatus(order.getOrderID(),OrderStatus.CANCELLED);
-                    } catch (SQLException e1) {
-                        new ErrorMsg(e1.getMessage());
+                    if (order.getStatus().equals(OrderStatus.SUBMITTED)) {
+                        Container p = status.getParent();
+                        p.invalidate();
+                        p.revalidate();
+                        status.setText(OrderStatus.CANCELLED.toString());
+                        try {
+                            CustomerDBC.updateOrderStatus(order.getOrderID(), OrderStatus.CANCELLED);
+                        } catch (SQLException e1) {
+                            new ErrorMsg(e1.getMessage());
+                        }
+                        order.setStatus(OrderStatus.CANCELLED);
+                        toAdd.invalidate();
+                        toAdd.revalidate();
+                        toAdd.remove(cancel);
+                    }else{
+
                     }
-                    order.setStatus(OrderStatus.CANCELLED);
                 }
             }
 
@@ -366,6 +376,7 @@ public class CustomerW extends JFrame{
                             p.revalidate();
                             status.setText(OrderStatus.COMPLETE.toString());
                             order.setStatus(OrderStatus.COMPLETE);
+                            toAdd.remove(changeStatus);
                         case READY:
                             try {
                                 CustomerDBC.updateOrderStatus(order.getOrderID(),OrderStatus.COMPLETE);
@@ -377,6 +388,7 @@ public class CustomerW extends JFrame{
                             c.revalidate();
                             status.setText(OrderStatus.COMPLETE.toString());
                             order.setStatus(OrderStatus.COMPLETE);
+                            toAdd.remove(changeStatus);
                             break;
                     }
                 }
