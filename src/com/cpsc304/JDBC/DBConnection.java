@@ -5,8 +5,8 @@ import java.sql.*;
 
 public class DBConnection {
     private static Connection con;
-    private static String username = "ora_h6f1b";
-    private static String password = "a41428160";
+    private static String username = "ora_w6o1b";
+    private static String password = "a55903421";
 
     public static Connection getCon() {
         return con;

@@ -518,7 +518,7 @@ public class ManagerW extends JFrame {
                 new ErrorMsg(e.getMessage());
             }
             resOrderBtnListener listener = new resOrderBtnListener();
-            if (orders!=null){
+            if (orders.size()!=0){
                 for (Order next: orders){
                     integerOrderMap.put(next.getOrderID(),next);
                     JPanel temp = new JPanel(new FlowLayout());
@@ -533,7 +533,7 @@ public class ManagerW extends JFrame {
                     current.add(temp);
                 }
             }else{
-                current.add(new Label("No results"));
+                current.add(new Label("Orders not found in selected time period."));
             }
             add(current);
             addWindowListener(new windowListener());

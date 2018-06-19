@@ -285,7 +285,11 @@ public class CustomerW extends JFrame{
                 toAdd.add(new Label("Order Details"));
                 toAdd.add(new Label("Order id: "+order.getOrderID()));
                 toAdd.add(new Label("Date and Time : "+order.getDate()+" "+order.getTime()));
-                toAdd.add(new Label("Ordered at: " + order.getRestOrderedAt().getName()));
+                if (order.getRestOrderedAt()==null){
+                    toAdd.add(new Label("Ordered at: Restaurant DELETED by manager"));
+                }else {
+                    toAdd.add(new Label("Ordered at: " + order.getRestOrderedAt().getName()));
+                }
                 toAdd.add(new Label("Amount spent: "+order.getAmount()));
                 //panel for food and quantities
                 JPanel foodq = new JPanel(new FlowLayout());
@@ -1116,7 +1120,8 @@ public class CustomerW extends JFrame{
             current.add(new Label("REPORT FOR CUSTOMER "+ currentUser.getUserID()+ " FROM DATE "+from+" TO "+to));
             if (orders!=null) {
                 for (Order next : orders) {
-                    current.add(new Label("OrderID: " + next.getOrderID() + " ordered at restaurant " + next.getRestOrderedAt().getName() + " total amount: " + next.getAmount()+ " Order Status: "+next.getStatus()));
+
+                    current.add(new Label("OrderID: " + next.getOrderID() + " ordered at restaurant " + (next.getRestOrderedAt()==null?"restaurant DELETED by manager":next.getRestOrderedAt().getName()) + " total amount: " + next.getAmount()+ " Order Status: "+next.getStatus()));
                 }
             }else{
                 current.add(new Label("No orders found. Try again?"));
