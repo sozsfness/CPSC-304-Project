@@ -47,7 +47,6 @@ public class RestaurantManagerDBC extends UserDBC{
         return toRet;
     }
 
-    //TODO:show results of cascade
     public static void deleteRestaurant (int restID) throws SQLException {
         String sqlString;
         con.setAutoCommit(false);

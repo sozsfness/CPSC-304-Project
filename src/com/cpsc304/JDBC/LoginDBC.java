@@ -82,7 +82,6 @@ public class LoginDBC {
         return courierMap;
     }
 
-    //TODO:remove all autocommit
     public static Map<Integer, Restaurant> getRestaurants() throws SQLException {
         Map<Integer, Restaurant> restMap = new HashMap<>();
         String sqlString;

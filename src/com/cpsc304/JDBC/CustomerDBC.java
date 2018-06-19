@@ -297,7 +297,6 @@ public class CustomerDBC extends UserDBC {
         return getRankedRestaurants(foods,0, brating, bhours, bdeliveryOption, btype, baddress);
     }
 
-    //TODO: to be modified
     public static List<Restaurant> getRankedRestaurants(List<String> foods,double minRating, boolean brating, boolean bhours, boolean bdeliveryOption, boolean btype, boolean baddress) throws SQLException {
         String sqlString;
         PreparedStatement pstmt;
