@@ -594,9 +594,7 @@ public class CustomerW extends JFrame{
         private void buildNewOrder(String food, String resType, String rating, boolean r, boolean h, boolean d, boolean t, boolean a) throws SQLException {
 
             List<String> foodList = Arrays.asList(food.split(","));
-            for (String next: foodList){
-                System.out.println(next);
-            }
+
             String type = resType;
             String rate = rating;
             removeComponents(current);
@@ -776,11 +774,14 @@ public class CustomerW extends JFrame{
             private Map<String,Food> offers = new HashMap<>();
             private List<Food> menu;
             private submitListener l = new submitListener();
+            Integer deF;
             JPanel j;
             Button submit = new Button();
             Choice del = new Choice();
             private Restaurant restaurant;
             public showRestaurant (Restaurant r){
+                Random rnd = new Random();
+                deF = 2+rnd.nextInt(8);
                 restaurant = r;
                 del.add("Yes");
                 del.add("No");
@@ -806,8 +807,6 @@ public class CustomerW extends JFrame{
                 String tmp = new String(new char[100]);
                 j.add(new Label(tmp.replace('\0','*')));
                 j.add(new Label("Restaurant: " +r.getName() ));
-                j.add(new Label(" Hours: "+r.getOpenTime()+ " to "+r.getCloseTime()));
-                j.add(new Label(" Rating: "+r.getRating()));
                 j.add(new Label(tmp.replace('\0','*')));
                 if (menu!=null) {
                     for (Food next : menu) {
@@ -898,8 +897,6 @@ public class CustomerW extends JFrame{
                         j.invalidate();
                         j.revalidate();
                         if (del.getSelectedItem().equals("Yes")){
-                            Random rnd = new Random();
-                            Integer deF = 2+rnd.nextInt(8);
                             total+=deF;
                         }
                         subtotal.setText(total.toString());
