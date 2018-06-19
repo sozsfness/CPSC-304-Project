@@ -374,7 +374,16 @@ public class CustomerDBC extends UserDBC {
     private static void createViewForRest(List<String> foods) throws SQLException {
         String sqlString;
         Statement stmt;
-        sqlString = "CREATE OR REPLACE TABLE food_filter( ";
+        sqlString = "DROP TABLE food_filter";
+        stmt = con.createStatement();
+        try {
+            stmt.executeUpdate(sqlString);
+        } catch (SQLException e) {
+            //nothing
+        }
+        con.commit();
+        stmt.close();
+        sqlString = "CREATE TABLE food_filter( ";
         sqlString += "food_name VARCHAR(20) PRIMARY KEY ";
         sqlString += ")";
         stmt = con.createStatement();
