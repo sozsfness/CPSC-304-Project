@@ -378,7 +378,10 @@ public class CustomerDBC extends UserDBC {
         sqlString += "food_name VARCHAR(20) PRIMARY KEY ";
         sqlString += ")";
         stmt = con.createStatement();
-        stmt.addBatch(sqlString);
+        stmt.executeUpdate(sqlString);
+        con.commit();
+        stmt.close();
+        stmt = con.createStatement();
         for (String food: foods){
             sqlString = "INSERT INTO food_filter VALUES ('"+ food +"')";
             stmt.addBatch(sqlString);
